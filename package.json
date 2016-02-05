@@ -1,0 +1,26 @@
+{
+  "name": "art_sharer",
+  "version": "1.0.0",
+  "description": "Nothing Now",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WarpPrism/ArtSharer.git"
+  },
+  "keywords": [
+    "image"
+  ],
+  "author": "Jiawei Jihao Yifan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/WarpPrism/ArtSharer/issues"
+  },
+  "homepage": "https://github.com/WarpPrism/ArtSharer#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "jade": "^1.11.0"
+  }
+}
