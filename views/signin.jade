@@ -1,0 +1,33 @@
+doctype
+html
+	head
+		include ./include/head
+		link(rel="stylesheet", href="/css/signin.css")
+	body
+		.ui.middle.aligned.center.aligned.grid
+			.column
+				h2.ui.blue.image.header
+					img.image(src="/imgs/favicon.png", alt="")
+					.content Sign In To Your Account
+				form.ui.large.form.error
+					.ui.stacked.segment
+						.field
+							.ui.left.icon.input
+								i.user.icon
+								input(type="text" name="email" placeholder="E-mail Address")
+						.field
+							.ui.left.icon.input
+								i.lock.icon
+								input(type="password" name="password" placeholder="Password")
+						.ui.fluid.large.blue.submit.button Sign In
+
+					.ui.error.message
+						ul.list
+							li Error Message1
+							li Error Message2
+				.ui.message
+					|New to us?&nbsp;
+					a(href="#") Sign Up
+				#button
+		include ./include/script
+		script(src="/dist/bundle.js")
