@@ -7,6 +7,7 @@ module.exports = function(app) {
 	app.get("/", Index.index);
 
 	// User
-	app.get("/signin", User.showSignIn);
+	app.get("/sign_in", User.showSignIn);
 	/*app.get("/signup", User.showSignUp);*/
+	app.post("/handle_sign_in", User.handleSignIn);
 }

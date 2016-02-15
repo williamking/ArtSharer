@@ -2,17 +2,18 @@ var webpack = require('webpack');
 
 module.exports = {
     watch: true,
-    entry: [
-        "./controller/entry.js"
-    ],
+    entry: {
+        "signin": __dirname + "/public/react_view/signin_v.js"
+    },
     output: {
         path: __dirname + '/public/dist',
-        filename: 'bundle.js',
+        filename: '[name].bundle.js',
     },
     module: {
         loaders: [
             { test: /\.css$/, loader: 'style!css' },
-            { test: /\.jsx?$/, loader: 'babel-loader!jsx-loader?harmony', exclude: /node_modules/ }
+            { test: /\.js$/, loader: 'babel-loader!jsx-loader?harmony', exclude: /node_modules/ },
+            { test: /\.jsx$/, loader: 'babel-loader!jsx-loader?harmony', exclude: /node_modules/ }
         ]
     },
     resolve: {
