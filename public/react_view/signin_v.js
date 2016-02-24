@@ -2,7 +2,6 @@
 
 var React = require("react");
 var ReactDOM = require("react-dom");
-require("../css/signin.css");
 
 var AccountField = React.createClass({
 	getInitialState: function() {

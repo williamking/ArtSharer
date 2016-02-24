@@ -1,6 +1,9 @@
 doctype
 html
-	head
-		include ./include/head
-	body
-		srcipt(type="text/jsx" src="components/editor.js")
+    head
+        include ./include/head
+    body
+        div#main(style="width: 700px; height: 1000px")
+        include ./include/script
+
+        script(src="/dist/editor.bundle.js")
