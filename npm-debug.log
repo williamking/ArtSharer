@@ -1,0 +1,84 @@
+4283 silly lockFile a45a8938-object-inspect-0-4-0 object-inspect@0.4.0
+4284 silly lockFile a45a8938-object-inspect-0-4-0 object-inspect@0.4.0
+4285 silly resolved [ { name: 'object-inspect',
+4285 silly resolved     version: '0.4.0',
+4285 silly resolved     description: 'string representations of objects in node and the browser',
+4285 silly resolved     main: 'index.js',
+4285 silly resolved     devDependencies: { tape: '~2.6.0' },
+4285 silly resolved     scripts: { test: 'tape test/*.js' },
+4285 silly resolved     testling: { files: [Object], browsers: [Object] },
+4285 silly resolved     repository:
+4285 silly resolved      { type: 'git',
+4285 silly resolved        url: 'git://github.com/substack/object-inspect.git' },
+4285 silly resolved     homepage: 'https://github.com/substack/object-inspect',
+4285 silly resolved     keywords: [ 'inspect', 'util.inspect', 'object', 'stringify', 'pretty' ],
+4285 silly resolved     author:
+4285 silly resolved      { name: 'James Halliday',
+4285 silly resolved        email: 'mail@substack.net',
+4285 silly resolved        url: 'http://substack.net' },
+4285 silly resolved     license: 'MIT',
+4285 silly resolved     bugs: { url: 'https://github.com/substack/object-inspect/issues' },
+4285 silly resolved     _id: 'object-inspect@0.4.0',
+4285 silly resolved     dist:
+4285 silly resolved      { shasum: 'f5157c116c1455b243b06ee97703392c5ad89fec',
+4285 silly resolved        tarball: 'http://registry.npmjs.org/object-inspect/-/object-inspect-0.4.0.tgz' },
+4285 silly resolved     _from: 'object-inspect@0.4.0',
+4285 silly resolved     _npmVersion: '1.4.4',
+4285 silly resolved     _npmUser: { name: 'substack', email: 'mail@substack.net' },
+4285 silly resolved     maintainers: [ [Object] ],
+4285 silly resolved     directories: {},
+4285 silly resolved     _shasum: 'f5157c116c1455b243b06ee97703392c5ad89fec',
+4285 silly resolved     _resolved: 'https://registry.npmjs.org/object-inspect/-/object-inspect-0.4.0.tgz',
+4285 silly resolved     readme: 'ERROR: No README data found!' } ]
+4286 info install object-inspect@0.4.0 into /usr/lib/node_modules/brfs/node_modules/static-module
+4287 info installOne object-inspect@0.4.0
+4288 verbose lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect unbuild
+4289 verbose tar unpack /home/william/.npm/object-inspect/0.4.0/package.tgz
+4290 silly lockFile e76e1ea1-dule-node-modules-object-inspect tar:///usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect
+4291 verbose lock tar:///usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect /home/william/.npm/e76e1ea1-dule-node-modules-object-inspect.lock
+4292 silly lockFile ae398f0b-object-inspect-0-4-0-package-tgz tar:///home/william/.npm/object-inspect/0.4.0/package.tgz
+4293 verbose lock tar:///home/william/.npm/object-inspect/0.4.0/package.tgz /home/william/.npm/ae398f0b-object-inspect-0-4-0-package-tgz.lock
+4294 silly gunzTarPerm modes [ '755', '644' ]
+4295 http 304 https://registry.npmjs.org/readable-stream
+4296 silly registry.get cb [ 304,
+4296 silly registry.get   { date: 'Thu, 25 Feb 2016 13:25:39 GMT',
+4296 silly registry.get     via: '1.1 varnish',
+4296 silly registry.get     'cache-control': 'max-age=300',
+4296 silly registry.get     etag: '"4W2K9FJS7DIUZXJOV284B8NZQ"',
+4296 silly registry.get     age: '85',
+4296 silly registry.get     connection: 'keep-alive',
+4296 silly registry.get     'x-served-by': 'cache-sjc3123-SJC',
+4296 silly registry.get     'x-cache': 'HIT',
+4296 silly registry.get     'x-cache-hits': '6',
+4296 silly registry.get     'x-timer': 'S1456406739.345381,VS0,VE0',
+4296 silly registry.get     vary: 'Accept' } ]
+4297 verbose etag https://registry.npmjs.org/readable-stream from cache
+4298 error Error: EACCES, mkdir '/usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect'
+4298 error  { [Error: EACCES, mkdir '/usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect']
+4298 error   errno: 3,
+4298 error   code: 'EACCES',
+4298 error   path: '/usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect',
+4298 error   fstream_type: 'Directory',
+4298 error   fstream_path: '/usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect',
+4298 error   fstream_class: 'DirWriter',
+4298 error   fstream_stack:
+4298 error    [ '/usr/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
+4298 error      '/usr/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
+4298 error      'Object.oncomplete (fs.js:108:15)' ] }
+4299 error Please try running this command again as root/Administrator.
+4300 error System Linux 3.19.0-32-generic
+4301 error command "/usr/bin/node" "/usr/bin/npm" "-g" "update"
+4302 error cwd /home/william/ArtSharer
+4303 error node -v v0.10.37
+4304 error npm -v 1.4.28
+4305 error path /usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect
+4306 error fstream_path /usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect
+4307 error fstream_type Directory
+4308 error fstream_class DirWriter
+4309 error code EACCES
+4310 error errno 3
+4311 error stack Error: EACCES, mkdir '/usr/lib/node_modules/brfs/node_modules/static-module/node_modules/object-inspect'
+4312 error fstream_stack /usr/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
+4312 error fstream_stack /usr/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
+4312 error fstream_stack Object.oncomplete (fs.js:108:15)
+4313 verbose exit [ 3, true ]

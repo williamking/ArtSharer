@@ -23,8 +23,8 @@ gulp.task("webpack2", function() {
         },
         module: {
             loaders: [
-                { test: /\.js$/, loader: 'babel-loader!jsx-loader?harmony', exclude: /node_modules/ },
-                { test: /\.css$/, loader: 'style!css' }
+                { test: /\.css$/, loader: 'style!css' },
+                { test: /\.js$/, loader: 'babel-loader!jsx-loader?harmony', exclude: /node_modules/ }
             ],
             postLoaders: [
                 { loader: 'transform?brfs' }
