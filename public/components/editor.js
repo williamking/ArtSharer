@@ -7,9 +7,43 @@ var Surface = ReactCanvas.Surface;
 var Text = ReactCanvas.Text;
 var Group = ReactCanvas.Group;
 var FontFace = ReactCanvas.FontFace;
+var CImage = ReactCanvas.Image;
 
 /*-----Load css-----*/
 require('../css/imageEditor.css');
+
+var ImageButton = React.createClass({
+
+    render: function() {
+        return (
+            <Group style={this.getButtonStyle()}>
+                <CImage style={this.getImageStyle()} src={this.props.imgSrc + '.png'} fadeIn={true} />
+            </Group>
+        );
+    },
+
+    getButtonStyle: function() {
+        var height = this.props.size;
+        var width = this.props.size;
+        return {
+            position: 'relative',
+            width: width,
+            height: height,
+            border: 2
+        };
+    },
+
+    getImageStyle: function() {
+        return {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0
+        };
+    }
+
+});
 
 var ImageEditor = React.createClass({
 
@@ -57,7 +91,7 @@ var ImageEditor = React.createClass({
     getImageGroupStyle: function() {
         return {
             position: 'relative',
-            flex: 9,
+            flex: 1,
             backgroundColor: '#eee'
         };
     },
@@ -77,10 +111,27 @@ var ImageEditor = React.createClass({
 
 var EditorMenu = React.createClass({
 
+    src: {
+        pen: '/imgs/editor-icons/iconfont-pen',
+        eraser: '/imgs/editor-icons/iconfont-eraser',
+        text: '/imgs/editor-icons/iconfont-text',
+        select: '/imgs/editor-icons/iconfont-select'
+    },
+
+    getInitialState: function() {
+        return {
+            src: this.src
+        }
+    },
+
     render: function() {
         return(
             <Surface width={this.props.width} height={this.props.height} left={0} top={0} enableCSSLayout={true}>
                 <Group style={this.getPageStyle()}>
+                    <ImageButton size={this.props.height} imgSrc={this.state.src.pen} onClick={this.handleButtonClick('pen')} />
+                    <ImageButton size={this.props.height} imgSrc={this.state.src.eraser} onClick={this.handleButtonClick('eraser')} />
+                    <ImageButton size={this.props.height} imgSrc={this.state.src.text} onClick={this.handleButtonClick('text')} />
+                    <ImageButton size={this.props.height} imgSrc={this.state.src.select} onClick={this.handleButtonClick('select')} />
                 </Group>
             </Surface>
         );
@@ -97,15 +148,26 @@ var EditorMenu = React.createClass({
         var size = this.getSize();
         return {
             position: 'relative',
-            padding: 0,
+            padding: 2,
             width: size.width,
             height: size.height,
-            backgroundColor: '#f7f7f7',
-            flexDirection: 'column'
+            flexDirection: 'row'
+        };
+    },
+
+    handleButtonClick: function(name) {
+        var src = this.src;
+        return function(event) {
+            console.log('asdas');
+            src[name] += '-active';
+            this.setState({
+               src: src
+            });
         };
     }
 
 }); 
+
 
 var EditorCanvas = React.createClass({
 

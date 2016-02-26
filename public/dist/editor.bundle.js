@@ -53,9 +53,39 @@
 	var Text = ReactCanvas.Text;
 	var Group = ReactCanvas.Group;
 	var FontFace = ReactCanvas.FontFace;
+	var CImage = ReactCanvas.Image;
 
 	/*-----Load css-----*/
-	__webpack_require__(203);
+	__webpack_require__(199);
+
+	var ImageButton = React.createClass({ displayName: "ImageButton",
+
+	    render: function () {
+	        return React.createElement(Group, { style: this.getButtonStyle() }, React.createElement(CImage, { style: this.getImageStyle(), src: this.props.imgSrc + '.png', fadeIn: true }));
+	    },
+
+	    getButtonStyle: function () {
+	        var height = this.props.size;
+	        var width = this.props.size;
+	        return {
+	            position: 'relative',
+	            width: width,
+	            height: height,
+	            border: 2
+	        };
+	    },
+
+	    getImageStyle: function () {
+	        return {
+	            position: 'absolute',
+	            left: 0,
+	            top: 0,
+	            right: 0,
+	            bottom: 0
+	        };
+	    }
+
+	});
 
 	var ImageEditor = React.createClass({ displayName: "ImageEditor",
 
@@ -97,7 +127,7 @@
 	    getImageGroupStyle: function () {
 	        return {
 	            position: 'relative',
-	            flex: 9,
+	            flex: 1,
 	            backgroundColor: '#eee'
 	        };
 	    },
@@ -117,8 +147,21 @@
 
 	var EditorMenu = React.createClass({ displayName: "EditorMenu",
 
+	    src: {
+	        pen: '/imgs/editor-icons/iconfont-pen',
+	        eraser: '/imgs/editor-icons/iconfont-eraser',
+	        text: '/imgs/editor-icons/iconfont-text',
+	        select: '/imgs/editor-icons/iconfont-select'
+	    },
+
+	    getInitialState: function () {
+	        return {
+	            src: this.src
+	        };
+	    },
+
 	    render: function () {
-	        return React.createElement(Surface, { width: this.props.width, height: this.props.height, left: 0, top: 0, enableCSSLayout: true }, React.createElement(Group, { style: this.getPageStyle() }));
+	        return React.createElement(Surface, { width: this.props.width, height: this.props.height, left: 0, top: 0, enableCSSLayout: true }, React.createElement(Group, { style: this.getPageStyle() }, React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.pen, onClick: this.handleButtonClick('pen') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.eraser, onClick: this.handleButtonClick('eraser') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.text, onClick: this.handleButtonClick('text') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.select, onClick: this.handleButtonClick('select') })));
 	    },
 
 	    getSize: function () {
@@ -132,11 +175,21 @@
 	        var size = this.getSize();
 	        return {
 	            position: 'relative',
-	            padding: 0,
+	            padding: 2,
 	            width: size.width,
 	            height: size.height,
-	            backgroundColor: '#f7f7f7',
-	            flexDirection: 'column'
+	            flexDirection: 'row'
+	        };
+	    },
+
+	    handleButtonClick: function (name) {
+	        var src = this.src;
+	        return function (event) {
+	            console.log('asdas');
+	            src[name] += '-active';
+	            this.setState({
+	                src: src
+	            });
 	        };
 	    }
 
@@ -27443,8 +27496,46 @@
 
 
 /***/ },
-/* 199 */,
-/* 200 */,
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(200);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(202)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./imageEditor.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./imageEditor.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(201)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".image-editor {\n    border: solid 1px;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
 /* 201 */
 /***/ function(module, exports) {
 
@@ -27752,46 +27843,6 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
-
-
-/***/ },
-/* 203 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(204);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(202)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./imageEditor.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./imageEditor.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 204 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(201)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".image-editor {\n    border: solid 1px;\n}\n", ""]);
-
-	// exports
 
 
 /***/ }
