@@ -11,14 +11,15 @@ var CImage = ReactCanvas.Image;
 
 /*-----Load css-----*/
 require('../css/imageEditor.css');
+require('../icons/editor/iconfont.css');
 
 var ImageButton = React.createClass({
 
     render: function() {
         return (
-            <Group style={this.getButtonStyle()}>
-                <CImage style={this.getImageStyle()} src={this.props.imgSrc + '.png'} fadeIn={true} />
-            </Group>
+            <div style={this.getButtonStyle()} className="icon" >
+               <i className='iconfont icon-jietu'></i> 
+            </div>
         );
     },
 
@@ -28,18 +29,19 @@ var ImageButton = React.createClass({
         return {
             position: 'relative',
             width: width,
-            height: height,
-            border: 2
+            height: height
         };
     },
 
     getImageStyle: function() {
         return {
-            position: 'absolute',
+            position: 'relative',
             left: 0,
             top: 0,
             right: 0,
-            bottom: 0
+            bottom: 0,
+            height: this.props.size,
+            width: this.props.size
         };
     }
 
@@ -126,14 +128,12 @@ var EditorMenu = React.createClass({
 
     render: function() {
         return(
-            <Surface width={this.props.width} height={this.props.height} left={0} top={0} enableCSSLayout={true}>
-                <Group style={this.getPageStyle()}>
+            <div width={this.props.width} height={this.props.height} left={0} top={0} >
                     <ImageButton size={this.props.height} imgSrc={this.state.src.pen} onClick={this.handleButtonClick('pen')} />
                     <ImageButton size={this.props.height} imgSrc={this.state.src.eraser} onClick={this.handleButtonClick('eraser')} />
                     <ImageButton size={this.props.height} imgSrc={this.state.src.text} onClick={this.handleButtonClick('text')} />
                     <ImageButton size={this.props.height} imgSrc={this.state.src.select} onClick={this.handleButtonClick('select')} />
-                </Group>
-            </Surface>
+            </div>
         );
     },
 
@@ -142,17 +142,6 @@ var EditorMenu = React.createClass({
             width: this.props.width,
             height: this.props.height
         }
-    },
-
-    getPageStyle: function() {
-        var size = this.getSize();
-        return {
-            position: 'relative',
-            padding: 2,
-            width: size.width,
-            height: size.height,
-            flexDirection: 'row'
-        };
     },
 
     handleButtonClick: function(name) {

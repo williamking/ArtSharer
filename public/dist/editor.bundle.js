@@ -57,11 +57,12 @@
 
 	/*-----Load css-----*/
 	__webpack_require__(199);
+	__webpack_require__(203);
 
 	var ImageButton = React.createClass({ displayName: "ImageButton",
 
 	    render: function () {
-	        return React.createElement(Group, { style: this.getButtonStyle() }, React.createElement(CImage, { style: this.getImageStyle(), src: this.props.imgSrc + '.png', fadeIn: true }));
+	        return React.createElement("div", { style: this.getButtonStyle(), className: "icon" }, React.createElement("i", { className: "iconfont icon-jietu" }));
 	    },
 
 	    getButtonStyle: function () {
@@ -70,18 +71,19 @@
 	        return {
 	            position: 'relative',
 	            width: width,
-	            height: height,
-	            border: 2
+	            height: height
 	        };
 	    },
 
 	    getImageStyle: function () {
 	        return {
-	            position: 'absolute',
+	            position: 'relative',
 	            left: 0,
 	            top: 0,
 	            right: 0,
-	            bottom: 0
+	            bottom: 0,
+	            height: this.props.size,
+	            width: this.props.size
 	        };
 	    }
 
@@ -161,24 +163,13 @@
 	    },
 
 	    render: function () {
-	        return React.createElement(Surface, { width: this.props.width, height: this.props.height, left: 0, top: 0, enableCSSLayout: true }, React.createElement(Group, { style: this.getPageStyle() }, React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.pen, onClick: this.handleButtonClick('pen') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.eraser, onClick: this.handleButtonClick('eraser') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.text, onClick: this.handleButtonClick('text') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.select, onClick: this.handleButtonClick('select') })));
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0 }, React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.pen, onClick: this.handleButtonClick('pen') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.eraser, onClick: this.handleButtonClick('eraser') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.text, onClick: this.handleButtonClick('text') }), React.createElement(ImageButton, { size: this.props.height, imgSrc: this.state.src.select, onClick: this.handleButtonClick('select') }));
 	    },
 
 	    getSize: function () {
 	        return {
 	            width: this.props.width,
 	            height: this.props.height
-	        };
-	    },
-
-	    getPageStyle: function () {
-	        var size = this.getSize();
-	        return {
-	            position: 'relative',
-	            padding: 2,
-	            width: size.width,
-	            height: size.height,
-	            flexDirection: 'row'
 	        };
 	    },
 
@@ -27530,7 +27521,7 @@
 
 
 	// module
-	exports.push([module.id, ".image-editor {\n    border: solid 1px;\n}\n", ""]);
+	exports.push([module.id, ".image-editor {\n    border: solid 1px;\n}\n\n.icon {\n    display: inline-block;\n    padding: 2px;\n    margin: 2px;\n    border: solid 1px;\n    border-radius: 4%;\n}\n\n.iconfont {\n    font-family: 'icon-font';\n    font-size: 30px;\n    font-style: normal;\n}\n", ""]);
 
 	// exports
 
@@ -27843,6 +27834,46 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(204);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(202)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./iconfont.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./iconfont.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(201)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "\n@font-face {font-family: \"iconfont\";\n  src: url(" + __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./iconfont.eot\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())) + "); /* IE9*/\n  src: url(" + __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./iconfont.eot\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())) + "?#iefix) format('embedded-opentype'), \n  url(" + __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./iconfont.woff\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())) + ") format('woff'), \n  url(" + __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./iconfont.ttf\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())) + ") format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/\n}\n\n.iconfont {\n  font-family:\"iconfont\" !important;\n  font-size:16px;\n  font-style:normal;\n  -webkit-font-smoothing: antialiased;\n  -webkit-text-stroke-width: 0.2px;\n  -moz-osx-font-smoothing: grayscale;\n}\n.icon-jietu:before { content: \"\\E600\"; }\n.icon-pen:before { content: \"\\E601\"; }\n.icon-text:before { content: \"\\E602\"; }\n.icon-eraser:before { content: \"\\E603\"; }\n", ""]);
+
+	// exports
 
 
 /***/ }
