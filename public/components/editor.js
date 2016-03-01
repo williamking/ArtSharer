@@ -9,16 +9,22 @@ var Group = ReactCanvas.Group;
 var FontFace = ReactCanvas.FontFace;
 var CImage = ReactCanvas.Image;
 
+/*-----Load JS------*/
+require('../libs/alloyimage-1.1.js');
+require('../libs/semantic/components/dropdown.min.js');
+
 /*-----Load css-----*/
 require('../css/imageEditor.css');
 require('../icons/editor/iconfont.css');
+require('../libs/semantic/components/dropdown.min.css');
 
 var ImageButton = React.createClass({
 
     render: function() {
+        var className = 'iconfont icon-' + this.props.name;
         return (
-            <div style={this.getButtonStyle()} className="icon" >
-               <i className='iconfont icon-jietu'></i> 
+            <div style={this.getButtonStyle()} className="my-icon" onClick={this.props.handleClick} >
+               <i className={className}></i> 
             </div>
         );
     },
@@ -49,6 +55,28 @@ var ImageButton = React.createClass({
 
 var ImageEditor = React.createClass({
 
+    getInitialState: function() {
+        var image = new Image();
+        image.src = this.props.src;
+        return {
+            image: image,
+            tool: 'pen'
+        }
+    },
+
+    componentDidMount: function() {
+        this.canvas = ReactDOM.findDOMNode(this.refs.canvas);
+        this.updateCursor();
+        this.setEvents();
+        this.listenToMouse();
+    },
+
+    componentDidUpdate: function() {
+        this.updateCursor();
+        this.setEvents();
+        this.listenToMouse();
+    },
+
     render: function() {
         var surfaceWidth = this.props.width;
         var surfaceHeight = this.props.height;
@@ -62,14 +90,32 @@ var ImageEditor = React.createClass({
         var imageStyle = this.getImageStyle();
         var menuStyle = this.getMenuStyle();
         var divStyle={ width: surfaceWidth + 5 + 'px', height: surfaceHeight + 5 + 'px'};
+        var that = this;
+        var handleClick =  {
+            'pen': that.setTool('pen'),
+            'select': that.setTool('select')
+        };
 
         return (
             <div className="image-editor" style={divStyle} >
-                <EditorMenu width={surfaceWidth} height={surfaceHeight * 0.05}/>
-                <EditorCanvas width={surfaceWidth} height={surfaceHeight * 0.95} src={this.props.src} />
+                <EditorMenu width={surfaceWidth} height={surfaceHeight * 0.05} filterItems={this.props.filterItems} handleImageFilter={this.handleImageFilter} handleClick={handleClick} />
+                <EditorCanvas width={surfaceWidth} height={surfaceHeight * 0.95} image={this.state.image} ref='canvas' />
             </div>
         );
     },
+
+    setTool: function(name) {
+        var that = this;
+        return function() {
+            var state = that.state;
+            state.tool = name;
+            that.setState(state);
+        }
+    },
+
+    imageDataStack: [],
+
+    imageDataCache: null,
 
     getSize: function() {
         return {
@@ -77,7 +123,6 @@ var ImageEditor = React.createClass({
             height: this.props.height
         }
     },
-
 
     getMenuStyle: function() {
         var size = this.getSize();
@@ -107,6 +152,141 @@ var ImageEditor = React.createClass({
             right: 0,
             bottom: 0,
         };    
+    },
+
+    mousedown: {
+        x: 0,
+        y: 0
+    },
+
+    dragging: false,
+
+    handleImageFilter: function(name) {
+        var img = this.state.image;
+        var ai = AlloyImage(img);
+        ai.ps(name).replace(img);
+        this.setState({
+            image: img
+        });
+    },
+
+    updateCanvas: function() {
+        updateCursor();
+    },
+
+    listenToMouse: function() {
+        var canvas = this.canvas;
+        canvas.onmousedown = function(that) {
+            return function(e) {
+                var loc = that.windowToCanvas(e.clientX, e.clientY);
+
+                e.preventDefault();
+                that.mousedown.x = loc.x;
+                that.mousedown.y = loc.y;
+                that.dragging = true;
+                
+                that.handleMouseDown(e);
+            }
+        }(this);
+        canvas.onmousemove = function(that) {
+            return function(e) {
+                e.preventDefault();
+                if (that.dragging) that.handleDragging(e);
+            }
+        }(this);
+        canvas.onmouseup = function(that) {
+            return function(e) {
+                that.dragging = false;
+                that.handleMouseUp(e);
+            }
+        }(this);
+    },
+
+    updateCursor: function() {
+        var canvas = this.canvas;
+        if (this.state.tool == 'eraser' || this.state.tool == 'select') {
+            canvas.style.cursor = 'crosshair';
+        }
+        if (this.state.tool == 'text') {
+            canvas.style.cursor = 'text';
+        }
+    },
+
+    setEvents: function() {
+        var canvas = this.canvas;
+        console.log(this.state.tool);
+        if (this.state.tool == 'select') {
+            this.setToSelect();
+        }
+    },
+
+    setToSelect: function() {
+        var canvas = this.canvas;
+        this.handleMouseDown = function(e) {
+            this.saveToCache();
+        };
+        this.handleDragging = function(e) {
+            var loc = this.windowToCanvas(e.clientX, e.clientY);
+            this.restoreFromCache();
+            this.updateRubberBand(loc);
+        };
+        this.handleMouseUp = function(e) {
+            var loc = this.windowToCanvas(e.clientX, e.clientY);
+            this.updateRubberBand(loc, true);
+        };
+    },
+
+    updateRubberBand: function(loc, dash) {
+        var context = this.canvas.getContext('2d');
+        dash = false || dash;
+        context.save();
+        if (dash) context.setLineDash([2, 5]);
+        this.drawRubberBandRect(loc);
+        context.restore();
+    },
+
+    drawRubberBandRect: function(loc) {
+        var context = this.canvas.getContext('2d');
+        var width = Math.abs(loc.x - this.mousedown.x);
+        var height = Math.abs(loc.y - this. mousedown.y);
+        var left = this.mousedown.x < loc.x ? this.mousedown.x : loc.x;
+        var top = this.mousedown.y < loc.y ? this.mousedown.y : loc.y;
+        context.beginPath();
+        context.strokeRect(left, top, width, height);
+    },
+
+    windowToCanvas: function(x, y) {
+        var canvas = this.canvas;
+        var bbox = canvas.getBoundingClientRect();
+        return {
+            x: x - bbox.left * (canvas.width / bbox.width),
+            y: y - bbox.top * (canvas.height / bbox.height) };
+    },
+
+    saveState: function() {
+        var canvas = this.canvas;
+        var context = canvas.getContext('2d');
+        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        this.imageDataStack.push(imageData);
+    },
+
+    restoreState: function() {
+        var imageData = this.imageDataStack.pop();
+        var canvas = this.canvas;
+        var context = canvas.getContext('2d');
+        context.putImageData(imageData, 0, 0); 
+    },
+
+    saveToCache: function() {
+        var canvas = this.canvas;
+        var context = canvas.getContext('2d');
+        this.imageDataCache = context.getImageData(0, 0, canvas.width, canvas.height);
+    },
+
+    restoreFromCache: function() {
+        var canvas = this.canvas;
+        var context = canvas.getContext('2d');
+        context.putImageData(this.imageDataCache, 0, 0); 
     }
 
 }); 
@@ -129,10 +309,12 @@ var EditorMenu = React.createClass({
     render: function() {
         return(
             <div width={this.props.width} height={this.props.height} left={0} top={0} >
-                    <ImageButton size={this.props.height} imgSrc={this.state.src.pen} onClick={this.handleButtonClick('pen')} />
-                    <ImageButton size={this.props.height} imgSrc={this.state.src.eraser} onClick={this.handleButtonClick('eraser')} />
-                    <ImageButton size={this.props.height} imgSrc={this.state.src.text} onClick={this.handleButtonClick('text')} />
-                    <ImageButton size={this.props.height} imgSrc={this.state.src.select} onClick={this.handleButtonClick('select')} />
+                    <ImageButton size={this.props.height} name='pen' handleClick={this.props.handleClick['pen']} />
+                    <ImageButton size={this.props.height} name='eraser' />
+                    <ImageButton size={this.props.height} name='text' />
+                    <ImageButton size={this.props.height} name='jietu' handleClick={this.props.handleClick['select']} />
+                    <ImageButton size={this.props.height} name='jietu' />
+                    <FilterMenu filterItems={this.props.filterItems} handleImageFilter={this.props.handleImageFilter} />
             </div>
         );
     },
@@ -142,34 +324,51 @@ var EditorMenu = React.createClass({
             width: this.props.width,
             height: this.props.height
         }
-    },
-
-    handleButtonClick: function(name) {
-        var src = this.src;
-        return function(event) {
-            console.log('asdas');
-            src[name] += '-active';
-            this.setState({
-               src: src
-            });
-        };
     }
 
 }); 
 
+var FilterMenu = React.createClass({
+    
+    render: function() {
+        var that = this;
+        var items = this.props.filterItems.map(function(item, key) {
+            return (<div className="item" key={key} onClick={that.handleClick(item.func)} >{item.name}</div>);
+        });
+
+        return (
+            <div className="ui dropdown filter-menu">
+                <div className="text">Filters</div>
+                <i className="dropdown icon"></i>
+                <div className="menu transition hidden">
+                    {items}
+                </div>
+            </div>
+        );
+    },
+
+    handleClick: function(name) {
+        var that = this;
+        return function(e) {
+            that.props.handleImageFilter(name);
+        }
+    }
+
+});
 
 var EditorCanvas = React.createClass({
 
-    image : new Image(),
-
-    getInitialState: function() {
-        return {
-            imageSrc: this.props.src
-        }
-    },
-
     componentDidMount: function() {
         this.renderBackground();
+        this.renderImage();
+    },
+
+    componentDidUpdate: function() {
+        var image = this.props.image;
+        //image.loadOnce(function() {
+            //var ai = AlloyImage(image);
+            //ai.show();
+        //});
         this.renderImage();
     },
 
@@ -182,8 +381,7 @@ var EditorCanvas = React.createClass({
 
     renderImage: function() {
         var context = this.getContext();
-        var image = this.image;
-        image.src = this.state.imageSrc;
+        var image = this.props.image;
         var that = this;
         image.onload = function(e) {
             var width = that.props.height * (image.width / image.height), height = that.props.height;
@@ -199,17 +397,37 @@ var EditorCanvas = React.createClass({
     
     render: function() {
         return(
-            <canvas ref='canvas' imageSrc={this.state.imageSrc} width={this.props.width} height={this.props.height} />
+            <canvas ref='canvas' width={this.props.width} height={this.props.height} />
         );
     }
 
 });
 
+var FILTERS = [
+    {func: 'softenFace', name: '美肤'},
+    {func: 'sketch', name: '素描'},
+    {func: 'softEnhancement', name: '自然增强'},
+    {func: 'purpleStyle', name: '紫调'},
+    {func: 'soften', name: '柔焦'},
+    {func: 'vintage', name: '复古'},
+    {func: 'gray', name: '黑白'},
+    {func: 'lomo', name: '防lomo'},
+    {func: 'strongEnhancement', name: '亮白增强'},
+    {func: 'strongGray', name: '灰白'},
+    {func: 'lightGray', name: '灰色'},
+    {func: 'warmAutumn', name: '暖秋'},
+    {func: 'carveStyle', name: '木雕'},
+    {func: 'rough', name: '粗糙'}
+];
+
 window.onload = function() {
     ReactDOM.render(
         <div>
-            <ImageEditor width={1200} height={800} src="/imgs/test.jpg"/>,
+            <ImageEditor width={1200} height={800} src="/imgs/test.jpg" filterItems={FILTERS}/>,
         </div>,
         document.getElementById("main")
     );
+    $('.ui.dropdown').dropdown({
+        action: 'hide'
+    });
 }();
