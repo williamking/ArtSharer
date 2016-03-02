@@ -102,7 +102,7 @@
 	        image.src = this.props.src;
 	        return {
 	            image: image,
-	            tool: 'pen'
+	            tool: 'normal'
 	        };
 	    },
 
@@ -135,7 +135,12 @@
 	        var that = this;
 	        var handleClick = {
 	            'pen': that.setTool('pen'),
-	            'select': that.setTool('select')
+	            'select': that.setTool('select'),
+	            'turnback': function (that) {
+	                return function () {
+	                    that.restoreState();
+	                };
+	            }(that)
 	        };
 
 	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, filterItems: this.props.filterItems, handleImageFilter: this.handleImageFilter, handleClick: handleClick }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, ref: "canvas" }));
@@ -144,10 +149,22 @@
 	    setTool: function (name) {
 	        var that = this;
 	        return function () {
+	            if (that.state.tool != 'normal') that.onLeaveTool[that.state.tool](that);
 	            var state = that.state;
 	            state.tool = name;
 	            that.setState(state);
 	        };
+	    },
+
+	    onLeaveTool: {
+	        pen: function () {},
+	        select: function (editor) {
+	            editor.canvas.style.cursor = 'default';
+	            editor.restoreFromCache();
+	            editor.handleMouseDown = function () {};
+	            editor.handleDragging = function () {};
+	            editor.handleMouseUp = function () {};
+	        }
 	    },
 
 	    imageDataStack: [],
@@ -199,12 +216,20 @@
 	    dragging: false,
 
 	    handleImageFilter: function (name) {
+	        var act = ['toGray', 'toThresh', 'toReverse', 'embossment', 'corrode', 'noise', 'dotted'];
 	        var img = this.state.image;
+	        if (this.state.tool == 'select' && this.selectState.selected == true) img = this.selectState.selectDataImage;
 	        var ai = AlloyImage(img);
-	        ai.ps(name).replace(img);
-	        this.setState({
-	            image: img
-	        });
+	        if (act.indexOf(name) == -1) ai.ps(name).replace(img);else {
+	            if (name == 'toThresh') ai.act(name, 128).replace(img);else ai.act(name).replace(img);
+	        }
+	        if (this.state.tool == 'select' && this.selectState.selected == true) {
+	            this.applySelectState();
+	        } else {
+	            this.setState({
+	                image: img
+	            });
+	        }
 	    },
 
 	    updateCanvas: function () {
@@ -229,6 +254,7 @@
 	            return function (e) {
 	                e.preventDefault();
 	                if (that.dragging) that.handleDragging(e);
+	                if (that.handleMouseMove) that.handleMouseMove(e);
 	            };
 	        }(this);
 	        canvas.onmouseup = function (that) {
@@ -251,15 +277,82 @@
 
 	    setEvents: function () {
 	        var canvas = this.canvas;
-	        console.log(this.state.tool);
 	        if (this.state.tool == 'select') {
 	            this.setToSelect();
 	        }
+	        if (this.state.tool == 'pen') {
+	            this.setToPen();
+	        }
+	    },
+
+	    setToPen: function () {
+	        this.saveState();
+	        var canvas = this.canvas;
+	        this.imageDataCache = null;
+	        this.saveToCache();
+	        this.initDrawingState();
+	        this.handleMouseDown = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.saveToCache();
+	            this.drawingState.pos = loc;
+	        };
+	        this.handleMouseMove = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.restoreFromCache();
+	            this.drawPen(loc);
+	            this.drawingState.pos = loc;
+	        };
+	        this.handleDragging = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.drawPath(loc);
+	            this.saveToCache();
+	        }, this.handleMouseUp = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.saveToCache();
+	        };
+	    },
+
+	    initDrawingState: function () {
+	        this.drawingState = {
+	            color: 'black',
+	            width: 4,
+	            pos: {
+	                x: 0,
+	                y: 0
+	            }
+	        };
+	    },
+
+	    drawPen: function (loc) {
+	        var context = this.canvas.getContext('2d');
+	        var width = this.drawingState.width;
+	        context.save();
+	        context.beginPath();
+	        context.arc(loc.x, loc.y, width / 2, 0, Math.PI * 2, false);
+	        context.fill();
+	        context.restore();
+	    },
+
+	    drawPath: function (loc) {
+	        var context = this.canvas.getContext('2d');
+	        var width = this.drawingState.width;
+	        var pos = this.drawingState.pos;
+	        context.save();
+	        context.strokeStyle = this.drawingState.color;
+	        context.lineWidth = this.drawingState.width;
+	        context.beginPath();
+	        context.moveTo(pos.x, pos.y);
+	        context.lineTo(loc.x, loc.y);
+	        context.stroke();
+	        context.restore();
 	    },
 
 	    setToSelect: function () {
 	        var canvas = this.canvas;
+	        this.imageDataCache = null;
+	        this.initSelectState();
 	        this.handleMouseDown = function (e) {
+	            this.restoreFromCache();
 	            this.saveToCache();
 	        };
 	        this.handleDragging = function (e) {
@@ -269,27 +362,76 @@
 	        };
 	        this.handleMouseUp = function (e) {
 	            var loc = this.windowToCanvas(e.clientX, e.clientY);
-	            this.updateRubberBand(loc, true);
+	            this.restoreFromCache();
+	            this.updateRubberBand(loc, true, true);
 	        };
 	    },
 
-	    updateRubberBand: function (loc, dash) {
+	    initSelectState: function () {
+	        this.selectState = {
+	            selectData: null,
+	            selectDataImage: new Image(),
+	            selected: false,
+	            rubberBand: {
+	                width: 0,
+	                height: 0,
+	                left: 0,
+	                top: 0
+	            }
+	        };
+	    },
+
+	    stretchImage: function () {
 	        var context = this.canvas.getContext('2d');
-	        dash = false || dash;
+	        var rubberBand = this.selectState.rubberBand;
+	        if (rubberBand.width == 0 || rubberBand.height == 0) {
+	            this.selectState.selected = false;
+	            return;
+	        } else {
+	            this.selectState.selected = true;
+	        }
+	        this.selectState.selectData = context.getImageData(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
+	        var retCanvas = document.createElement('canvas');
+	        retCanvas.width = rubberBand.width;
+	        retCanvas.height = rubberBand.height;
+	        retCanvas.getContext('2d').putImageData(this.selectState.selectData, 0, 0);
+	        this.selectState.selectDataImage.src = retCanvas.toDataURL();
+	    },
+
+	    applySelectState: function () {
+	        var context = this.canvas.getContext('2d');
+	        var rubberBand = this.selectState.rubberBand;
+	        this.restoreFromCache();
+	        this.saveState();
+	        context.drawImage(this.selectState.selectDataImage, rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
+	        this.saveToCache();
 	        context.save();
-	        if (dash) context.setLineDash([2, 5]);
-	        this.drawRubberBandRect(loc);
+	        context.setLineDash([10, 10]);
+	        context.beginPath();
+	        context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
 	        context.restore();
 	    },
 
-	    drawRubberBandRect: function (loc) {
+	    updateRubberBand: function (loc, dash, stretch) {
 	        var context = this.canvas.getContext('2d');
-	        var width = Math.abs(loc.x - this.mousedown.x);
-	        var height = Math.abs(loc.y - this.mousedown.y);
-	        var left = this.mousedown.x < loc.x ? this.mousedown.x : loc.x;
-	        var top = this.mousedown.y < loc.y ? this.mousedown.y : loc.y;
+	        dash = false || dash;
+	        stretch = false || stretch;
+	        context.save();
+	        if (dash) context.setLineDash([10, 10]);
+	        this.drawRubberBandRect(loc, stretch);
+	        context.restore();
+	    },
+
+	    drawRubberBandRect: function (loc, stretch) {
+	        var context = this.canvas.getContext('2d');
+	        var rubberBand = this.selectState.rubberBand;
+	        if (stretch) this.stretchImage();
+	        rubberBand.width = Math.abs(loc.x - this.mousedown.x);
+	        rubberBand.height = Math.abs(loc.y - this.mousedown.y);
+	        rubberBand.left = this.mousedown.x < loc.x ? this.mousedown.x : loc.x;
+	        rubberBand.top = this.mousedown.y < loc.y ? this.mousedown.y : loc.y;
 	        context.beginPath();
-	        context.strokeRect(left, top, width, height);
+	        context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
 	    },
 
 	    windowToCanvas: function (x, y) {
@@ -308,10 +450,12 @@
 	    },
 
 	    restoreState: function () {
+	        if (this.imageDataStack.length <= 0) return;
 	        var imageData = this.imageDataStack.pop();
 	        var canvas = this.canvas;
 	        var context = canvas.getContext('2d');
 	        context.putImageData(imageData, 0, 0);
+	        this.saveToCache();
 	    },
 
 	    saveToCache: function () {
@@ -321,6 +465,7 @@
 	    },
 
 	    restoreFromCache: function () {
+	        if (this.imageDataCache == null) return;
 	        var canvas = this.canvas;
 	        var context = canvas.getContext('2d');
 	        context.putImageData(this.imageDataCache, 0, 0);
@@ -344,7 +489,7 @@
 	    },
 
 	    render: function () {
-	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0 }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser" }), React.createElement(ImageButton, { size: this.props.height, name: "text" }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu" }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter }));
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0 }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser" }), React.createElement(ImageButton, { size: this.props.height, name: "text" }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter }));
 	    },
 
 	    getSize: function () {
@@ -385,10 +530,6 @@
 
 	    componentDidUpdate: function () {
 	        var image = this.props.image;
-	        //image.loadOnce(function() {
-	        //var ai = AlloyImage(image);
-	        //ai.show();
-	        //});
 	        this.renderImage();
 	    },
 
@@ -422,7 +563,7 @@
 
 	});
 
-	var FILTERS = [{ func: 'softenFace', name: '美肤' }, { func: 'sketch', name: '素描' }, { func: 'softEnhancement', name: '自然增强' }, { func: 'purpleStyle', name: '紫调' }, { func: 'soften', name: '柔焦' }, { func: 'vintage', name: '复古' }, { func: 'gray', name: '黑白' }, { func: 'lomo', name: '防lomo' }, { func: 'strongEnhancement', name: '亮白增强' }, { func: 'strongGray', name: '灰白' }, { func: 'lightGray', name: '灰色' }, { func: 'warmAutumn', name: '暖秋' }, { func: 'carveStyle', name: '木雕' }, { func: 'rough', name: '粗糙' }];
+	var FILTERS = [{ func: 'softenFace', name: '美肤' }, { func: 'sketch', name: '素描' }, { func: 'softEnhancement', name: '自然增强' }, { func: 'purpleStyle', name: '紫调' }, { func: 'soften', name: '柔焦' }, { func: 'vintage', name: '复古' }, { func: 'gray', name: '黑白' }, { func: 'lomo', name: '防lomo' }, { func: 'strongEnhancement', name: '亮白增强' }, { func: 'strongGray', name: '灰白' }, { func: 'lightGray', name: '灰色' }, { func: 'warmAutumn', name: '暖秋' }, { func: 'carveStyle', name: '木雕' }, { func: 'rough', name: '粗糙' }, { func: 'toGray', name: '灰度处理' }, { func: 'toThresh', name: '二值化' }, { func: 'toReverse', name: '反色' }, { func: 'embossment', name: '浮雕' }, { func: 'corrode', name: '腐蚀' }, { func: 'dotted', name: '喷点' }];
 
 	window.onload = function () {
 	    ReactDOM.render(React.createElement("div", null, React.createElement(ImageEditor, { width: 1200, height: 800, src: "/imgs/test.jpg", filterItems: FILTERS }), ","), document.getElementById("main"));
@@ -29245,24 +29386,14 @@
 
 
 	// module
-	exports.push([module.id, "\n@font-face {font-family: \"iconfont\";\n  src: url(" + __webpack_require__(207) + "); /* IE9*/\n  src: url('/icons/editor/iconfont.eot?#iefix') format('embedded-opentype'), \n  url('/icons/editor/iconfont.woff') format('woff'), \n  url('/icons/editor/iconfont.ttf') format('truetype'), \n  url(" + __webpack_require__(208) + "#iconfont) format('svg'); /* iOS 4.1- */\n}\n\n.iconfont {\n  font-family:\"iconfont\" !important;\n  font-size:16px;\n  font-style:normal;\n  -webkit-font-smoothing: antialiased;\n  -webkit-text-stroke-width: 0.2px;\n  -moz-osx-font-smoothing: grayscale;\n}\n.icon-jietu:before { content: \"\\E600\"; }\n.icon-pen:before { content: \"\\E601\"; }\n.icon-text:before { content: \"\\E602\"; }\n.icon-eraser:before { content: \"\\E603\"; }\n", ""]);
+	exports.push([module.id, "\n@font-face {font-family: \"iconfont\";\n  src: url('/icons/editor/iconfont.eot'); /* IE9*/\n  src: url('/icons/editor/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\n  url('/icons/editor/iconfont.woff') format('woff'), /* chrome, firefox */\n  url('/icons/editor/iconfont.ttf') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/\n  url('/icons/editor/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */\n}\n\n.iconfont {\n  font-family:\"iconfont\" !important;\n  font-size:16px;\n  font-style:normal;\n  -webkit-font-smoothing: antialiased;\n  -webkit-text-stroke-width: 0.2px;\n  -moz-osx-font-smoothing: grayscale;\n}\n.icon-jietu:before { content: \"\\E600\"; }\n.icon-pen:before { content: \"\\E601\"; }\n.icon-text:before { content: \"\\E602\"; }\n.icon-eraser:before { content: \"\\E603\"; }\n.icon-huitui:before { content: \"\\E604\"; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 207 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "e9c2d81e04f4237e1198f8ffa8d43de0.eot";
-
-/***/ },
-/* 208 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__.p + "f105e43d3d34e433cce325e4cff83188.svg";
-
-/***/ },
+/* 207 */,
+/* 208 */,
 /* 209 */
 /***/ function(module, exports, __webpack_require__) {
 

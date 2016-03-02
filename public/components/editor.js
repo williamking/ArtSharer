@@ -60,7 +60,7 @@ var ImageEditor = React.createClass({
         image.src = this.props.src;
         return {
             image: image,
-            tool: 'pen'
+            tool: 'normal'
         }
     },
 
@@ -93,7 +93,12 @@ var ImageEditor = React.createClass({
         var that = this;
         var handleClick =  {
             'pen': that.setTool('pen'),
-            'select': that.setTool('select')
+            'select': that.setTool('select'),
+            'turnback': function(that) {
+                return function() {
+                    that.restoreState();
+                }
+            }(that)
         };
 
         return (
@@ -107,9 +112,22 @@ var ImageEditor = React.createClass({
     setTool: function(name) {
         var that = this;
         return function() {
+            if (that.state.tool != 'normal')
+                that.onLeaveTool[that.state.tool](that);
             var state = that.state;
             state.tool = name;
             that.setState(state);
+        }
+    },
+
+    onLeaveTool: {
+        pen: function() {},
+        select: function(editor) {
+            editor.canvas.style.cursor = 'default';
+            editor.restoreFromCache();
+            editor.handleMouseDown = function() {};
+            editor.handleDragging = function() {};
+            editor.handleMouseUp = function() {};
         }
     },
 
@@ -162,12 +180,23 @@ var ImageEditor = React.createClass({
     dragging: false,
 
     handleImageFilter: function(name) {
+        var act = ['toGray', 'toThresh', 'toReverse', 'embossment', 'corrode', 'noise', 'dotted'];
         var img = this.state.image;
+        if (this.state.tool == 'select' && this.selectState.selected == true) img = this.selectState.selectDataImage;
         var ai = AlloyImage(img);
-        ai.ps(name).replace(img);
-        this.setState({
-            image: img
-        });
+        if (act.indexOf(name) == -1)
+            ai.ps(name).replace(img);
+        else {
+            if (name == 'toThresh') ai.act(name, 128).replace(img);
+            else ai.act(name).replace(img);
+        }
+        if (this.state.tool == 'select' && this.selectState.selected == true) {
+            this.applySelectState();
+        } else {
+            this.setState({
+                image: img
+            });
+        }
     },
 
     updateCanvas: function() {
@@ -192,6 +221,7 @@ var ImageEditor = React.createClass({
             return function(e) {
                 e.preventDefault();
                 if (that.dragging) that.handleDragging(e);
+                if (that.handleMouseMove) that.handleMouseMove(e);
             }
         }(this);
         canvas.onmouseup = function(that) {
@@ -214,15 +244,83 @@ var ImageEditor = React.createClass({
 
     setEvents: function() {
         var canvas = this.canvas;
-        console.log(this.state.tool);
         if (this.state.tool == 'select') {
             this.setToSelect();
         }
+        if (this.state.tool == 'pen') {
+            this.setToPen();
+        }
+    },
+
+    setToPen: function() {
+        this.saveState();
+        var canvas = this.canvas;
+        this.imageDataCache = null;
+        this.saveToCache();
+        this.initDrawingState();
+        this.handleMouseDown = function(e) {
+            var loc = this.windowToCanvas(e.clientX, e.clientY);
+            this.saveToCache();
+            this.drawingState.pos = loc;
+        }
+        this.handleMouseMove = function(e) {
+            var loc = this.windowToCanvas(e.clientX, e.clientY);
+            this.restoreFromCache();
+            this.drawPen(loc);
+            this.drawingState.pos = loc;
+        }
+        this.handleDragging = function(e) {
+            var loc = this.windowToCanvas(e.clientX, e.clientY);
+            this.drawPath(loc);
+            this.saveToCache();
+        },
+        this.handleMouseUp = function(e) {
+            var loc = this.windowToCanvas(e.clientX, e.clientY);
+            this.saveToCache();
+        }
+    },
+    
+    initDrawingState: function() {
+        this.drawingState = {
+            color: 'black',
+            width: 4,
+            pos: {
+                x: 0,
+                y: 0
+            }
+        }
+    },
+
+    drawPen: function(loc) {
+        var context = this.canvas.getContext('2d');
+        var width = this.drawingState.width;
+        context.save();
+        context.beginPath();
+        context.arc(loc.x, loc.y, width/2, 0, Math.PI * 2, false);
+        context.fill();
+        context.restore();
+    },
+
+    drawPath: function(loc) {
+        var context = this.canvas.getContext('2d');
+        var width = this.drawingState.width;
+        var pos = this.drawingState.pos;
+        context.save();
+        context.strokeStyle = this.drawingState.color;
+        context.lineWidth = this.drawingState.width;
+        context.beginPath();
+        context.moveTo(pos.x, pos.y);
+        context.lineTo(loc.x, loc.y);
+        context.stroke();
+        context.restore();
     },
 
     setToSelect: function() {
         var canvas = this.canvas;
+        this.imageDataCache = null;
+        this.initSelectState();
         this.handleMouseDown = function(e) {
+            this.restoreFromCache();
             this.saveToCache();
         };
         this.handleDragging = function(e) {
@@ -232,27 +330,78 @@ var ImageEditor = React.createClass({
         };
         this.handleMouseUp = function(e) {
             var loc = this.windowToCanvas(e.clientX, e.clientY);
-            this.updateRubberBand(loc, true);
+            this.restoreFromCache();
+            this.updateRubberBand(loc, true, true);
         };
+
     },
 
-    updateRubberBand: function(loc, dash) {
+    initSelectState: function() {
+        this.selectState = {
+            selectData: null,
+            selectDataImage: new Image(),
+            selected: false,
+            rubberBand: {
+                width: 0,
+                height: 0,
+                left: 0,
+                top: 0
+            }
+        }
+    },
+
+    stretchImage: function() {
         var context = this.canvas.getContext('2d');
-        dash = false || dash;
+        var rubberBand = this.selectState.rubberBand;
+        if (rubberBand.width == 0 || rubberBand.height == 0) {
+            this.selectState.selected = false;
+            return;
+        } else {
+            this.selectState.selected = true;
+        }
+        this.selectState.selectData = context.getImageData(rubberBand.left, rubberBand.top,
+        rubberBand.width, rubberBand.height);
+        var retCanvas = document.createElement('canvas');
+        retCanvas.width = rubberBand.width;
+        retCanvas.height = rubberBand.height;
+        retCanvas.getContext('2d').putImageData(this.selectState.selectData, 0, 0);
+        this.selectState.selectDataImage.src = retCanvas.toDataURL();
+    }, 
+
+    applySelectState: function() {
+        var context = this.canvas.getContext('2d');
+        var rubberBand = this.selectState.rubberBand;
+        this.restoreFromCache();
+        this.saveState();
+        context.drawImage(this.selectState.selectDataImage, rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
+        this.saveToCache();
         context.save();
-        if (dash) context.setLineDash([2, 5]);
-        this.drawRubberBandRect(loc);
+        context.setLineDash([10, 10]);
+        context.beginPath();
+        context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
         context.restore();
     },
 
-    drawRubberBandRect: function(loc) {
+    updateRubberBand: function(loc, dash, stretch) {
         var context = this.canvas.getContext('2d');
-        var width = Math.abs(loc.x - this.mousedown.x);
-        var height = Math.abs(loc.y - this. mousedown.y);
-        var left = this.mousedown.x < loc.x ? this.mousedown.x : loc.x;
-        var top = this.mousedown.y < loc.y ? this.mousedown.y : loc.y;
+        dash = false || dash;
+        stretch = false || stretch;
+        context.save();
+        if (dash) context.setLineDash([10, 10]);
+        this.drawRubberBandRect(loc, stretch);
+        context.restore();
+    },
+
+    drawRubberBandRect: function(loc, stretch) {
+        var context = this.canvas.getContext('2d');
+        var rubberBand = this.selectState.rubberBand;
+        if (stretch) this.stretchImage();
+        rubberBand.width = Math.abs(loc.x - this.mousedown.x);
+        rubberBand.height = Math.abs(loc.y - this. mousedown.y);
+        rubberBand.left = this.mousedown.x < loc.x ? this.mousedown.x : loc.x;
+        rubberBand.top = this.mousedown.y < loc.y ? this.mousedown.y : loc.y;
         context.beginPath();
-        context.strokeRect(left, top, width, height);
+        context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
     },
 
     windowToCanvas: function(x, y) {
@@ -271,10 +420,12 @@ var ImageEditor = React.createClass({
     },
 
     restoreState: function() {
+        if (this.imageDataStack.length <= 0) return;
         var imageData = this.imageDataStack.pop();
         var canvas = this.canvas;
         var context = canvas.getContext('2d');
         context.putImageData(imageData, 0, 0); 
+        this.saveToCache();
     },
 
     saveToCache: function() {
@@ -284,6 +435,7 @@ var ImageEditor = React.createClass({
     },
 
     restoreFromCache: function() {
+        if (this.imageDataCache == null) return;
         var canvas = this.canvas;
         var context = canvas.getContext('2d');
         context.putImageData(this.imageDataCache, 0, 0); 
@@ -313,7 +465,7 @@ var EditorMenu = React.createClass({
                     <ImageButton size={this.props.height} name='eraser' />
                     <ImageButton size={this.props.height} name='text' />
                     <ImageButton size={this.props.height} name='jietu' handleClick={this.props.handleClick['select']} />
-                    <ImageButton size={this.props.height} name='jietu' />
+                    <ImageButton size={this.props.height} name='huitui' handleClick={this.props.handleClick['turnback']}/>
                     <FilterMenu filterItems={this.props.filterItems} handleImageFilter={this.props.handleImageFilter} />
             </div>
         );
@@ -365,10 +517,6 @@ var EditorCanvas = React.createClass({
 
     componentDidUpdate: function() {
         var image = this.props.image;
-        //image.loadOnce(function() {
-            //var ai = AlloyImage(image);
-            //ai.show();
-        //});
         this.renderImage();
     },
 
@@ -417,7 +565,13 @@ var FILTERS = [
     {func: 'lightGray', name: '灰色'},
     {func: 'warmAutumn', name: '暖秋'},
     {func: 'carveStyle', name: '木雕'},
-    {func: 'rough', name: '粗糙'}
+    {func: 'rough', name: '粗糙'},
+    {func: 'toGray', name: '灰度处理'},
+    {func: 'toThresh', name: '二值化'},
+    {func: 'toReverse', name: '反色'},
+    {func: 'embossment', name: '浮雕'},
+    {func: 'corrode', name: '腐蚀'},
+    {func: 'dotted', name: '喷点'},
 ];
 
 window.onload = function() {
