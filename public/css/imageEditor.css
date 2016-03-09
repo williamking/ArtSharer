@@ -28,9 +28,24 @@
     color: blue;
 }
 
+.editor-menu {
+    display: flex;
+}
+
+.editor-menu .buttons {
+    flex: 1;
+}
+
+.editor-menu #button-state {
+    flex: 1;
+}
+
 .filter-menu {
-    border: solid 1px;
     border-radius: 10%;
     margin: 2px;
     padding: 3px;
+}
+
+#button-state {
+    padding-top: 4px;
 }

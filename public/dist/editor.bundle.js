@@ -62,7 +62,7 @@
 	/*-----Load css-----*/
 	__webpack_require__(201);
 	__webpack_require__(205);
-	__webpack_require__(209);
+	__webpack_require__(207);
 
 	var ImageButton = React.createClass({ displayName: "ImageButton",
 
@@ -134,8 +134,10 @@
 	        var divStyle = { width: surfaceWidth + 5 + 'px', height: surfaceHeight + 5 + 'px' };
 	        var that = this;
 	        var handleClick = {
+	            'eraser': that.setTool('eraser'),
 	            'pen': that.setTool('pen'),
 	            'select': that.setTool('select'),
+	            'text': that.setTool('text'),
 	            'turnback': function (that) {
 	                return function () {
 	                    that.restoreState();
@@ -143,7 +145,17 @@
 	            }(that)
 	        };
 
-	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, filterItems: this.props.filterItems, handleImageFilter: this.handleImageFilter, handleClick: handleClick }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, ref: "canvas" }));
+	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, events: this.editEvents,
+	            updateTextState: this.setTextState, handleTextChange: this.handleTextChange,
+	            filterItems: this.props.filterItems, handleImageFilter: this.handleImageFilter, handleClick: handleClick }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, imageOnload: this.setInitState, ref: "canvas" }));
+	    },
+
+	    setInitState: function () {
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+	        this.initState = imageData;
+	        this.saveToCache();
 	    },
 
 	    setTool: function (name) {
@@ -216,19 +228,31 @@
 	    dragging: false,
 
 	    handleImageFilter: function (name) {
+	        this.restoreFromCache();
 	        var act = ['toGray', 'toThresh', 'toReverse', 'embossment', 'corrode', 'noise', 'dotted'];
 	        var img = this.state.image;
-	        if (this.state.tool == 'select' && this.selectState.selected == true) img = this.selectState.selectDataImage;
-	        var ai = AlloyImage(img);
-	        if (act.indexOf(name) == -1) ai.ps(name).replace(img);else {
-	            if (name == 'toThresh') ai.act(name, 128).replace(img);else ai.act(name).replace(img);
-	        }
 	        if (this.state.tool == 'select' && this.selectState.selected == true) {
+	            img = this.selectState.selectDataImage;
+	            var ai = AlloyImage(img);
+	            if (act.indexOf(name) == -1) ai.ps(name).replace(img);else {
+	                if (name == 'toThresh') ai.act(name, 128).replace(img);else ai.act(name).replace(img);
+	            }
 	            this.applySelectState();
+	            this.restoreFromCache();
 	        } else {
-	            this.setState({
-	                image: img
-	            });
+	            img.src = this.canvas.toDataURL();
+	            img.onload = function (that, act, name) {
+	                return function () {
+	                    var ai = AlloyImage(this);
+	                    if (act.indexOf(name) == -1) ai.ps(name).replace(this);else {
+	                        if (name == 'toThresh') ai.act(name, 128).replace(this);else ai.act(name).replace(this);
+	                    }
+	                    that.setState({
+	                        image: this,
+	                        tool: 'normal'
+	                    });
+	                };
+	            }(this, act, name);
 	        }
 	    },
 
@@ -253,8 +277,9 @@
 	        canvas.onmousemove = function (that) {
 	            return function (e) {
 	                e.preventDefault();
-	                if (that.dragging) that.handleDragging(e);
-	                if (that.handleMouseMove) that.handleMouseMove(e);
+	                var mousedown = this.mousedown;
+	                if (that.dragging) that.handleDragging(e, mousedown);
+	                if (that.handleMouseMove) that.handleMouseMove(e, mousedown);
 	            };
 	        }(this);
 	        canvas.onmouseup = function (that) {
@@ -277,30 +302,106 @@
 
 	    setEvents: function () {
 	        var canvas = this.canvas;
+	        this.handleMouseDown = function () {};
+	        this.handleMouseMove = function () {};
+	        this.handleDragging = function () {};
+	        this.handleMouseUp = function () {};
 	        if (this.state.tool == 'select') {
 	            this.setToSelect();
 	        }
 	        if (this.state.tool == 'pen') {
 	            this.setToPen();
 	        }
+	        if (this.state.tool == 'eraser') {
+	            this.setToEraser();
+	        }
+	        if (this.state.tool == 'text') {
+	            this.setToText();
+	        }
+	    },
+
+	    setToEraser: function () {
+	        this.canvas.style.cursor = 'default';
+	        var canvas = this.canvas;
+	        this.saveToCache();
+	        this.initEraserState();
+	        this.handleMouseDown = function (e) {
+	            this.saveState();
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.saveToCache();
+	            this.eraserState.x = loc.x;
+	            this.eraserState.y = loc.y;
+	        };
+	        this.handleMouseMove = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.restoreFromCache();
+	            this.drawEraser(loc);
+	            this.eraserState.x = loc.x;
+	            this.eraserState.y = loc.y;
+	        };
+	        this.handleDragging = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.eraseLast();
+	            this.saveToCache();
+	        }, this.handleMouseUp = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.eraseLast();
+	            this.saveToCache();
+	            this.drawEraser(loc);
+	        };
+	    },
+
+	    initEraserState: function () {
+	        this.eraserState = {
+	            width: 40,
+	            x: 0,
+	            y: 0
+	        };
+	    },
+
+	    eraseLast: function () {
+	        var context = this.canvas.getContext('2d');
+	        context.save();
+	        var x = this.eraserState.x;
+	        var y = this.eraserState.y;
+	        var width = this.eraserState.width;
+	        var lineWidth = context.lineWidth;
+	        context.beginPath();
+	        context.arc(x, y, width / 2 + lineWidth, 0, Math.PI * 2, false);
+	        context.clip();
+	        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	        context.restore();
+	    },
+
+	    drawEraser: function (loc) {
+	        var context = this.canvas.getContext('2d');
+	        context.save();
+	        var width = this.eraserState.width;
+	        var lineWidth = context.lineWidth;
+	        context.beginPath();
+	        context.arc(loc.x, loc.y, width / 2, 0, Math.PI * 2, false);
+	        context.stroke();
+	        context.restore();
 	    },
 
 	    setToPen: function () {
-	        this.saveState();
 	        var canvas = this.canvas;
 	        this.imageDataCache = null;
 	        this.saveToCache();
 	        this.initDrawingState();
 	        this.handleMouseDown = function (e) {
+	            this.saveState();
 	            var loc = this.windowToCanvas(e.clientX, e.clientY);
 	            this.saveToCache();
-	            this.drawingState.pos = loc;
+	            this.drawingState.pos.x = loc.x;
+	            this.drawingState.pos.y = loc.y;
 	        };
 	        this.handleMouseMove = function (e) {
 	            var loc = this.windowToCanvas(e.clientX, e.clientY);
 	            this.restoreFromCache();
 	            this.drawPen(loc);
-	            this.drawingState.pos = loc;
+	            this.drawingState.pos.x = loc.x;
+	            this.drawingState.pos.y = loc.y;
 	        };
 	        this.handleDragging = function (e) {
 	            var loc = this.windowToCanvas(e.clientX, e.clientY);
@@ -346,6 +447,59 @@
 	        context.stroke();
 	        context.restore();
 	    },
+
+	    setToText: function () {
+	        var canvas = this.canvas;
+	        this.saveToCache();
+	        this.setTextState('normal', 5, 'serif');
+	        this.handleMouseDown = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.updateTextPos(loc);
+	            this.restoreFromCache();
+	            this.drawTextCursor();
+	            this.blinkTextCursor();
+	        };
+	    },
+
+	    updateTextPos: function (loc) {
+	        this.textState.pos = loc;
+	    },
+
+	    blinkTextCursor: function () {
+	        var context = this.canvas.getContext('2d');
+	        this.textState.blinkingInterval = setInterval(function (that) {
+	            return function (e) {
+	                that.restoreFromCache();
+	                setTimeout(function (that) {
+	                    return function (e) {
+	                        that.drawTextCursor();
+	                    };
+	                }(that), 500);
+	            };
+	        }(this), 1000);
+	    },
+
+	    drawTextCursor: function () {
+	        var context = this.canvas.getContext('2d');
+	        context.save();
+	        context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+	        context.beginPath();
+	        var height = context.measureText('W').width;
+	        context.fillRect(this.textState.pos.x, this.textState.pos.y, 2, height);
+	        context.restore();
+	    },
+
+	    setTextState: function (textStyle, textSize, textFont) {
+	        this.textState = {
+	            textStyle: textStyle,
+	            textSize: textSize,
+	            textFont: textFont
+	        };
+	        var context = this.canvas.getContext('2d');
+	        context.font = this.textState.textSize + 'px ' + this.textState.textFont + ' ' + this.textState.textFont + ' ' + this.textState.textStyle;
+	    },
+
+	    handleTextChange: function (text) {},
 
 	    setToSelect: function () {
 	        var canvas = this.canvas;
@@ -445,12 +599,19 @@
 	    saveState: function () {
 	        var canvas = this.canvas;
 	        var context = canvas.getContext('2d');
-	        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+	        var imageData = this.imageDataCache;
 	        this.imageDataStack.push(imageData);
 	    },
 
 	    restoreState: function () {
-	        if (this.imageDataStack.length <= 0) return;
+	        if (this.imageDataStack.length <= 0) {
+	            var imageData = this.initState;
+	            var canvas = this.canvas;
+	            var context = canvas.getContext('2d');
+	            context.putImageData(imageData, 0, 0);
+	            this.saveToCache();
+	            return;
+	        }
 	        var imageData = this.imageDataStack.pop();
 	        var canvas = this.canvas;
 	        var context = canvas.getContext('2d');
@@ -489,7 +650,7 @@
 	    },
 
 	    render: function () {
-	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0 }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser" }), React.createElement(ImageButton, { size: this.props.height, name: "text" }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter }));
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { buttonName: "text", updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange }));
 	    },
 
 	    getSize: function () {
@@ -501,7 +662,93 @@
 
 	});
 
+	var ButtonState = React.createClass({ displayName: "ButtonState",
+
+	    getInitialState: function () {
+	        return {
+	            textValue: ''
+	        };
+	    },
+
+	    componentDidMount: function () {
+	        var editor = this;
+	        if (this.props.buttonName == 'text') {
+	            $(".font-size").dropdown({
+	                onChange: function (that) {
+	                    return function (value, text) {
+	                        var state = that.state;
+	                        state.fontSize = value;
+	                        that.setState(state);
+	                        that.handleTextUpdate();
+	                    };
+	                }(this)
+	            });
+	            $(".font-style").dropdown({
+	                onChange: function (that) {
+	                    return function (value, text) {
+	                        var state = that.state;
+	                        state.fontStyle = value;
+	                        that.setState(state);
+	                        that.handleTextUpdate();
+	                    };
+	                }(this)
+	            });
+	            $(".font-family").dropdown({
+	                onChange: function (that) {
+	                    return function (value, text) {
+	                        var state = that.state;
+	                        state.fontFamily = value;
+	                        that.setState(state);
+	                        that.handleTextUpdate();
+	                    };
+	                }(this)
+	            });
+	        }
+	    },
+
+	    handleTextUpdate: function () {
+	        this.props.updateTextState(this.state.fontStyle, this.state.fontSize, this.state.fontFamily);
+	    },
+
+	    fontSize: [5, 7, 10, 14, 20, 28, 32],
+
+	    fontStyle: ['normal', 'italic', 'oblique'],
+
+	    fontFamily: ['serif', 'san-serif', 'monospace', 'cursive', 'fantasy'],
+
+	    handleTextChange: function (e) {
+	        var state = this.state;
+	        state.textValue = e.target.value;
+	        this.setState(state);
+	        this.props.handleTextChange();
+	    },
+
+	    render: function () {
+	        if (this.props.buttonName == 'text') {
+	            var that = this;
+	            var sizes = this.fontSize.map(function (size, key) {
+	                return React.createElement("div", { className: "item font-size", key: key, "data-value": size }, size + 'px');
+	            });
+	            var styles = this.fontStyle.map(function (font, key) {
+	                return React.createElement("div", { className: "item font-style", key: key, "data-value": font }, font);
+	            });
+	            var families = this.fontFamily.map(function (family, key) {
+	                return React.createElement("div", { className: "item font-family", key: key, "data-value": family }, family);
+	            });
+	            var value = this.state.textValue;
+	            return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui input" }, React.createElement("input", { type: "text", placeholder: "Text content...", value: value, onChange: this.handleTextChange })), React.createElement("div", { className: "ui dropdown filter-menu", id: "text-size" }, React.createElement("div", { className: "text" }, "Text Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, styles)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, families)));
+	        }
+	    }
+
+	});
+
 	var FilterMenu = React.createClass({ displayName: "FilterMenu",
+
+	    componentDidMount: function () {
+	        $(this.refs.menu).dropdown({
+	            action: 'hide'
+	        });
+	    },
 
 	    render: function () {
 	        var that = this;
@@ -509,7 +756,7 @@
 	            return React.createElement("div", { className: "item", key: key, onClick: that.handleClick(item.func) }, item.name);
 	        });
 
-	        return React.createElement("div", { className: "ui dropdown filter-menu" }, React.createElement("div", { className: "text" }, "Filters"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu transition hidden" }, items));
+	        return React.createElement("div", { className: "ui dropdown filter-menu", ref: "menu" }, React.createElement("div", { className: "text" }, "Filters"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu transition hidden" }, items));
 	    },
 
 	    handleClick: function (name) {
@@ -525,11 +772,13 @@
 
 	    componentDidMount: function () {
 	        this.renderBackground();
+	        this.first = true;
 	        this.renderImage();
 	    },
 
 	    componentDidUpdate: function () {
 	        var image = this.props.image;
+	        this.first = false;
 	        this.renderImage();
 	    },
 
@@ -550,6 +799,9 @@
 	            var left = 0;
 	            if (width < that.props.width) left = (that.props.width - width) / 2;
 	            context.drawImage(image, left, 0, width, height);
+	            if (that.first) {
+	                that.props.imageOnload();
+	            }
 	        };
 	    },
 
@@ -567,9 +819,6 @@
 
 	window.onload = function () {
 	    ReactDOM.render(React.createElement("div", null, React.createElement(ImageEditor, { width: 1200, height: 800, src: "/imgs/test.jpg", filterItems: FILTERS }), ","), document.getElementById("main"));
-	    $('.ui.dropdown').dropdown({
-	        action: 'hide'
-	    });
 	}();
 
 /***/ },
@@ -29036,7 +29285,7 @@
 
 
 	// module
-	exports.push([module.id, ".image-editor {\n    border: solid 1px;\n}\n\n\n.my-icon {\n    text-align: center;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    border: solid 1px;\n    border-radius: 12.5%;\n    margin: 2px;\n}\n\n.my-icon i {\n    -webkit-transition: font-size 0.25s ease-out 0s;\n    -moz-transition: font-size 0.25s ease-out 0s;\n    transition: font-size 0.25s ease-out 0s;\n    font-size: 20px;\n    height: 25px;\n    width: 25px;\n    text-align: center;\n}\n\n.my-icon i:hover {\n    font-size: 22px;\n    color: blue;\n}\n\n.filter-menu {\n    border: solid 1px;\n    border-radius: 10%;\n    margin: 2px;\n    padding: 3px;\n}\n", ""]);
+	exports.push([module.id, ".image-editor {\n    border: solid 1px;\n}\n\n\n.my-icon {\n    text-align: center;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    border: solid 1px;\n    border-radius: 12.5%;\n    margin: 2px;\n}\n\n.my-icon i {\n    -webkit-transition: font-size 0.25s ease-out 0s;\n    -moz-transition: font-size 0.25s ease-out 0s;\n    transition: font-size 0.25s ease-out 0s;\n    font-size: 20px;\n    height: 25px;\n    width: 25px;\n    text-align: center;\n}\n\n.my-icon i:hover {\n    font-size: 22px;\n    color: blue;\n}\n\n.editor-menu {\n    display: flex;\n}\n\n.editor-menu .buttons {\n    flex: 1;\n}\n\n.editor-menu #button-state {\n    flex: 1;\n}\n\n.filter-menu {\n    border-radius: 10%;\n    margin: 2px;\n    padding: 3px;\n}\n\n#button-state {\n    padding-top: 4px;\n}\n", ""]);
 
 	// exports
 
@@ -29392,15 +29641,13 @@
 
 
 /***/ },
-/* 207 */,
-/* 208 */,
-/* 209 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(210);
+	var content = __webpack_require__(208);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(204)(content, {});
@@ -29420,7 +29667,7 @@
 	}
 
 /***/ },
-/* 210 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(203)();
