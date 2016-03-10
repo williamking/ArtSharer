@@ -146,7 +146,7 @@
 	        };
 
 	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, events: this.editEvents,
-	            updateTextState: this.setTextState, handleTextChange: this.handleTextChange,
+	            updateTextState: this.setTextState, handleTextChange: this.handleTextChange, editor: this,
 	            filterItems: this.props.filterItems, handleImageFilter: this.handleImageFilter, handleClick: handleClick }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, imageOnload: this.setInitState, ref: "canvas" }));
 	    },
 
@@ -450,8 +450,16 @@
 
 	    setToText: function () {
 	        var canvas = this.canvas;
+	        this.textState = {
+	            textStyle: 'normal',
+	            textSize: 5,
+	            textSize: 'serif',
+	            pos: {},
+	            blinkingInterval: null,
+	            cache: null
+	        };
 	        this.saveToCache();
-	        this.setTextState('normal', 5, 'serif');
+	        this.saveToTextCache();
 	        this.handleMouseDown = function (e) {
 	            var loc = this.windowToCanvas(e.clientX, e.clientY);
 	            this.updateTextPos(loc);
@@ -469,7 +477,7 @@
 	        var context = this.canvas.getContext('2d');
 	        this.textState.blinkingInterval = setInterval(function (that) {
 	            return function (e) {
-	                that.restoreFromCache();
+	                that.restoreFromTextCache();
 	                setTimeout(function (that) {
 	                    return function (e) {
 	                        that.drawTextCursor();
@@ -490,16 +498,31 @@
 	    },
 
 	    setTextState: function (textStyle, textSize, textFont) {
-	        this.textState = {
-	            textStyle: textStyle,
-	            textSize: textSize,
-	            textFont: textFont
-	        };
+	        this.textState.textStyle = textStyle;
+	        this.textState.textSize = textSize;
+	        this.textState.textFont = textFont;
 	        var context = this.canvas.getContext('2d');
 	        context.font = this.textState.textSize + 'px ' + this.textState.textFont + ' ' + this.textState.textFont + ' ' + this.textState.textStyle;
 	    },
 
-	    handleTextChange: function (text) {},
+	    handleTextChange: function (that, text) {
+	        that.restoreFromCache();
+	        var context = that.canvas.getContext('2d');
+	        context.fillText(text, that.textState.pos.x, that.textState.pos.y);
+	        that.saveToTextCache();
+	    },
+
+	    saveToTextCache: function () {
+	        var context = this.canvas.getContext('2d');
+	        this.textState.cache = context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+	    },
+
+	    restoreFromTextCache: function () {
+	        if (this.textState.cache == null) return;
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        context.putImageData(this.textState.cache, 0, 0);
+	    },
 
 	    setToSelect: function () {
 	        var canvas = this.canvas;
@@ -650,7 +673,7 @@
 	    },
 
 	    render: function () {
-	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { buttonName: "text", updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange }));
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { buttonName: "text", editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange }));
 	    },
 
 	    getSize: function () {
@@ -672,36 +695,41 @@
 
 	    componentDidMount: function () {
 	        var editor = this;
+	        var sizeFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontSize = value;
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this.props.editor);
+
+	        var styleFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontStyle = value;
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this.props.editor);
+
+	        var familyFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontFamily = value;
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this.props.editor);
 	        if (this.props.buttonName == 'text') {
 	            $(".font-size").dropdown({
-	                onChange: function (that) {
-	                    return function (value, text) {
-	                        var state = that.state;
-	                        state.fontSize = value;
-	                        that.setState(state);
-	                        that.handleTextUpdate();
-	                    };
-	                }(this)
+	                onChange: sizeFunc
 	            });
 	            $(".font-style").dropdown({
-	                onChange: function (that) {
-	                    return function (value, text) {
-	                        var state = that.state;
-	                        state.fontStyle = value;
-	                        that.setState(state);
-	                        that.handleTextUpdate();
-	                    };
-	                }(this)
+	                onChange: styleFunc
 	            });
 	            $(".font-family").dropdown({
-	                onChange: function (that) {
-	                    return function (value, text) {
-	                        var state = that.state;
-	                        state.fontFamily = value;
-	                        that.setState(state);
-	                        that.handleTextUpdate();
-	                    };
-	                }(this)
+	                onChange: familyFunc
 	            });
 	        }
 	    },
@@ -720,7 +748,7 @@
 	        var state = this.state;
 	        state.textValue = e.target.value;
 	        this.setState(state);
-	        this.props.handleTextChange();
+	        this.props.handleTextChange(this.props.editor, this.state.textValue);
 	    },
 
 	    render: function () {
