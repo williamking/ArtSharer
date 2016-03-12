@@ -105,7 +105,7 @@ var ImageEditor = React.createClass({
 
         return (
             <div className="image-editor" style={divStyle} >
-                <EditorMenu width={surfaceWidth} height={surfaceHeight * 0.05} events={this.editEvents} setInput={this.setInput}
+                <EditorMenu width={surfaceWidth} height={surfaceHeight * 0.05} events={this.editEvents}
                 updateTextState={this.setTextState} handleTextChange = {this.handleTextChange} editor={this}
                 filterItems={this.props.filterItems} handleImageFilter={this.handleImageFilter} handleClick={handleClick} />
                 <EditorCanvas width={surfaceWidth} height={surfaceHeight * 0.95} image={this.state.image} imageOnload={this.setInitState} ref='canvas' />
@@ -422,21 +422,17 @@ var ImageEditor = React.createClass({
 
     setToText: function()  {
         var canvas = this.canvas;
-        this.disableInput();
         this.textState = {
             textStyle: 'normal',
             textSize: 5,
-            textValue: '',
             textSize: 'serif',
             pos: {},
             blinkingInterval: null,
-            cache: null,
-            input: null
+            cache: null
         };
         this.saveToCache();
         this.saveToTextCache();
         this.handleMouseDown = function(e) {
-            this.enableInput();
             var loc = this.windowToCanvas(e.clientX, e.clientY);
             this.updateTextPos(loc);
             this.restoreFromCache();
@@ -445,21 +441,11 @@ var ImageEditor = React.createClass({
         };
     },
 
-    enableInput: function() {
-        $("#text-input").removeClass("disabled");
-        $("#text-input").find("input").focus();
-    },
-
-    disableInput: function() {
-        $("#text-input").addClass("disabled");
-    },
-
     updateTextPos: function(loc) {
         this.restoreFromTextCache();
         this.saveToCache();
         this.saveState();
         this.textState.pos = loc;
-        if (this.textState.input) this.textState.input.clearText();
     },
 
     blinkTextCursor: function() {
@@ -482,8 +468,7 @@ var ImageEditor = React.createClass({
         context.fillStyle = 'rgba(0, 0, 0, 0.5)'; 
         context.beginPath();
         var height = context.measureText('W').width;
-        var textWidth = context.measureText(this.textState.textValue).width;
-        context.fillRect(this.textState.pos.x + textWidth, this.textState.pos.y, 2, height);
+        context.fillRect(this.textState.pos.x, this.textState.pos.y, 2, height);
         context.restore();
     },
 
@@ -492,19 +477,15 @@ var ImageEditor = React.createClass({
         this.textState.textSize = textSize;
         this.textState.textFont = textFont;
         var context = this.canvas.getContext('2d');
-        context.font = textStyle + ' ' + textSize + 'px ' + textFont;
-        console.log(context.font);
-        this.handleTextChange(this, this.textState.textValue, this.textState.input);
+        context.font = this.textState.textSize + 'px ' + this.textState.textFont + ' ' + this.textState.textFont + ' ' + this.textState.textStyle;
     },
 
     handleTextChange: function(that, text, input) {
-        that.textState.textValue = text;
         that.restoreFromCache();
         var context = that.canvas.getContext('2d');
-        context.textBaseline = 'hanging';
         context.fillText(text, that.textState.pos.x, that.textState.pos.y);
         that.saveToTextCache();
-        that.textState.input = input;
+        input.clearText();
     },
 
     saveToTextCache: function() {
@@ -699,10 +680,7 @@ var ButtonState = React.createClass({
 
     getInitialState: function() {
         return {
-            textValue: '',
-            fontSize: 5,
-            fontStyle: 'normal',
-            fontFamily: 'sans-serif'
+            textValue: '' 
         };
     },
 
@@ -715,7 +693,7 @@ var ButtonState = React.createClass({
                 that.setState(state);
                 that.handleTextUpdate();
             };
-        }(this);
+        }(this.props.editor);
 
         var styleFunc = function(that) {
             return function(value, text) {
@@ -724,26 +702,24 @@ var ButtonState = React.createClass({
                 that.setState(state);
                 that.handleTextUpdate();
             };
-        }(this);
+        }(this.props.editor);
 
         var familyFunc = function(that) {
             return function(value, text) {
                 var state = that.state;
                 state.fontFamily = value;
-                console.log(value);
                 that.setState(state);
                 that.handleTextUpdate();
             };
-        }(this);
-
+        }(this.props.editor);
         if (this.props.buttonName == 'text') {
-            $("#font-size").dropdown({
+            $(".font-size").dropdown({
                 onChange: sizeFunc
             });
-            $("#font-style").dropdown({
+            $(".font-style").dropdown({
                 onChange: styleFunc
             });
-            $("#font-family").dropdown({
+            $(".font-family").dropdown({
                 onChange: familyFunc
             });
         }
@@ -757,7 +733,7 @@ var ButtonState = React.createClass({
 
     fontStyle: ['normal', 'italic', 'oblique'],
 
-    fontFamily: ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'],
+    fontFamily: ['serif', 'san-serif', 'monospace', 'cursive', 'fantasy'],
 
     handleTextChange: function(e) {
         var state = this.state;
@@ -766,10 +742,10 @@ var ButtonState = React.createClass({
         this.props.handleTextChange(this.props.editor, this.state.textValue, this);
     },
 
-    clearText: function() {
-        this.setState({
+    clearText: function(e) {
+        state.setState{
             textValue: ''
-        });
+        },
     },
 
     render: function() {
@@ -787,10 +763,10 @@ var ButtonState = React.createClass({
             var value = this.state.textValue;
             return(
                 <div id="button-state">
-                <div className="ui input" id="text-input">
+                <div className="ui input">
                     <input type='text' placeholder='Text content...' value={value} onChange={this.handleTextChange}></input>
                 </div>
-                <div className="ui dropdown filter-menu" id="font-size">
+                <div className="ui dropdown filter-menu" id="text-size">
                     <div className="text">Text Size</div>
                     <i className="dropdown icon"></i>
                     <div className="menu">
@@ -804,8 +780,8 @@ var ButtonState = React.createClass({
                         {styles}
                     </div>
                 </div>
-                <div className="ui dropdown filter-menu" id="font-family">
-                    <div className="text">Text Family</div>
+                <div className="ui dropdown filter-menu" id="font-style">
+                    <div className="text">Text Font</div>
                     <i className="dropdown icon"></i>
                     <div className="menu">
                         {families}
@@ -813,11 +789,7 @@ var ButtonState = React.createClass({
                 </div>
                 </div>
             );
-        } else {
-            return (
-                <div></div>
-            );
-        };
+        }
     }
 
 });

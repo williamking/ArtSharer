@@ -145,7 +145,7 @@
 	            }(that)
 	        };
 
-	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, events: this.editEvents,
+	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, events: this.editEvents, setInput: this.setInput,
 	            updateTextState: this.setTextState, handleTextChange: this.handleTextChange, editor: this,
 	            filterItems: this.props.filterItems, handleImageFilter: this.handleImageFilter, handleClick: handleClick }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, imageOnload: this.setInitState, ref: "canvas" }));
 	    },
@@ -450,17 +450,21 @@
 
 	    setToText: function () {
 	        var canvas = this.canvas;
+	        this.disableInput();
 	        this.textState = {
 	            textStyle: 'normal',
 	            textSize: 5,
+	            textValue: '',
 	            textSize: 'serif',
 	            pos: {},
 	            blinkingInterval: null,
-	            cache: null
+	            cache: null,
+	            input: null
 	        };
 	        this.saveToCache();
 	        this.saveToTextCache();
 	        this.handleMouseDown = function (e) {
+	            this.enableInput();
 	            var loc = this.windowToCanvas(e.clientX, e.clientY);
 	            this.updateTextPos(loc);
 	            this.restoreFromCache();
@@ -469,8 +473,21 @@
 	        };
 	    },
 
+	    enableInput: function () {
+	        $("#text-input").removeClass("disabled");
+	        $("#text-input").find("input").focus();
+	    },
+
+	    disableInput: function () {
+	        $("#text-input").addClass("disabled");
+	    },
+
 	    updateTextPos: function (loc) {
+	        this.restoreFromTextCache();
+	        this.saveToCache();
+	        this.saveState();
 	        this.textState.pos = loc;
+	        if (this.textState.input) this.textState.input.clearText();
 	    },
 
 	    blinkTextCursor: function () {
@@ -493,7 +510,8 @@
 	        context.fillStyle = 'rgba(0, 0, 0, 0.5)';
 	        context.beginPath();
 	        var height = context.measureText('W').width;
-	        context.fillRect(this.textState.pos.x, this.textState.pos.y, 2, height);
+	        var textWidth = context.measureText(this.textState.textValue).width;
+	        context.fillRect(this.textState.pos.x + textWidth, this.textState.pos.y, 2, height);
 	        context.restore();
 	    },
 
@@ -502,14 +520,19 @@
 	        this.textState.textSize = textSize;
 	        this.textState.textFont = textFont;
 	        var context = this.canvas.getContext('2d');
-	        context.font = this.textState.textSize + 'px ' + this.textState.textFont + ' ' + this.textState.textFont + ' ' + this.textState.textStyle;
+	        context.font = textStyle + ' ' + textSize + 'px ' + textFont;
+	        console.log(context.font);
+	        this.handleTextChange(this, this.textState.textValue, this.textState.input);
 	    },
 
-	    handleTextChange: function (that, text) {
+	    handleTextChange: function (that, text, input) {
+	        that.textState.textValue = text;
 	        that.restoreFromCache();
 	        var context = that.canvas.getContext('2d');
+	        context.textBaseline = 'hanging';
 	        context.fillText(text, that.textState.pos.x, that.textState.pos.y);
 	        that.saveToTextCache();
+	        that.textState.input = input;
 	    },
 
 	    saveToTextCache: function () {
@@ -567,6 +590,7 @@
 	        } else {
 	            this.selectState.selected = true;
 	        }
+	        input.clearText();
 	        this.selectState.selectData = context.getImageData(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
 	        var retCanvas = document.createElement('canvas');
 	        retCanvas.width = rubberBand.width;
@@ -689,7 +713,10 @@
 
 	    getInitialState: function () {
 	        return {
-	            textValue: ''
+	            textValue: '',
+	            fontSize: 5,
+	            fontStyle: 'normal',
+	            fontFamily: 'sans-serif'
 	        };
 	    },
 
@@ -702,7 +729,7 @@
 	                that.setState(state);
 	                that.handleTextUpdate();
 	            };
-	        }(this.props.editor);
+	        }(this);
 
 	        var styleFunc = function (that) {
 	            return function (value, text) {
@@ -711,24 +738,26 @@
 	                that.setState(state);
 	                that.handleTextUpdate();
 	            };
-	        }(this.props.editor);
+	        }(this);
 
 	        var familyFunc = function (that) {
 	            return function (value, text) {
 	                var state = that.state;
 	                state.fontFamily = value;
+	                console.log(value);
 	                that.setState(state);
 	                that.handleTextUpdate();
 	            };
-	        }(this.props.editor);
+	        }(this);
+
 	        if (this.props.buttonName == 'text') {
-	            $(".font-size").dropdown({
+	            $("#font-size").dropdown({
 	                onChange: sizeFunc
 	            });
-	            $(".font-style").dropdown({
+	            $("#font-style").dropdown({
 	                onChange: styleFunc
 	            });
-	            $(".font-family").dropdown({
+	            $("#font-family").dropdown({
 	                onChange: familyFunc
 	            });
 	        }
@@ -742,13 +771,19 @@
 
 	    fontStyle: ['normal', 'italic', 'oblique'],
 
-	    fontFamily: ['serif', 'san-serif', 'monospace', 'cursive', 'fantasy'],
+	    fontFamily: ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'],
 
 	    handleTextChange: function (e) {
 	        var state = this.state;
 	        state.textValue = e.target.value;
 	        this.setState(state);
-	        this.props.handleTextChange(this.props.editor, this.state.textValue);
+	        this.props.handleTextChange(this.props.editor, this.state.textValue, this);
+	    },
+
+	    clearText: function () {
+	        this.setState({
+	            textValue: ''
+	        });
 	    },
 
 	    render: function () {
@@ -764,8 +799,10 @@
 	                return React.createElement("div", { className: "item font-family", key: key, "data-value": family }, family);
 	            });
 	            var value = this.state.textValue;
-	            return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui input" }, React.createElement("input", { type: "text", placeholder: "Text content...", value: value, onChange: this.handleTextChange })), React.createElement("div", { className: "ui dropdown filter-menu", id: "text-size" }, React.createElement("div", { className: "text" }, "Text Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, styles)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, families)));
-	        }
+	            return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui input", id: "text-input" }, React.createElement("input", { type: "text", placeholder: "Text content...", value: value, onChange: this.handleTextChange })), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-size" }, React.createElement("div", { className: "text" }, "Text Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, styles)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-family" }, React.createElement("div", { className: "text" }, "Text Family"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, families)));
+	        } else {
+	            return React.createElement("div", null);
+	        };
 	    }
 
 	});
