@@ -2,7 +2,7 @@
 
 var React = require("react");
 var ReactDOM = require("react-dom");
-require("../css/signin.css");
+require("../css/sign_in.css");
 
 var AccountField = React.createClass({
 	getInitialState: function() {
@@ -23,7 +23,7 @@ var AccountField = React.createClass({
 					<i className="user icon" />
 					<input id="account_field" type="text" name="email" placeholder="E-mail Address" onChange={this.handleChange} value={value}/>
 				</div>
-				<div className="ui message">Account: {value}</div>
+
 			</div>
 		);
 	}
@@ -123,8 +123,6 @@ var SignInView = React.createClass({
 	}
 });
 
-
-
-window.onload = function() {
+$(function() {
 	ReactDOM.render(<SignInView />, $("#wrapper")[0]);
-}();
+});

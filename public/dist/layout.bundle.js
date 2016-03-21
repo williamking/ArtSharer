@@ -48,82 +48,23 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	__webpack_require__(165);
+	__webpack_require__(159);
 
-	var AccountField = React.createClass({ displayName: "AccountField",
-		getInitialState: function () {
-			return {
-				value: ""
-			};
-		},
-		handleChange: function (event) {
-			this.setState({
-				value: event.target.value
-			});
-		},
+	var Header = React.createClass({ displayName: "Header",
 		render: function () {
-			var value = this.state.value;
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "user icon" }), React.createElement("input", { id: "account_field", type: "text", name: "email", placeholder: "E-mail Address", onChange: this.handleChange, value: value })));
+			return React.createElement("div", { className: "ui top fixed menu" }, React.createElement("a", { className: "item", href: "/" }, React.createElement("img", { src: "imgs/favicon.png" })), React.createElement("a", { className: "item", href: "/" }, React.createElement("i", { className: "home icon" }), "Home"), React.createElement("a", { className: "item", href: "/personal_center" }, React.createElement("i", { className: "user icon" }), "Personal Center"), React.createElement("div", { className: "right menu" }, React.createElement("a", { className: "ui item", href: "/sign_in" }, React.createElement("i", { className: "sign in icon" }), "Sign In")));
 		}
 	});
 
-	var PasswordField = React.createClass({ displayName: "PasswordField",
+	var Footer = React.createClass({ displayName: "Footer",
 		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "lock icon" }), React.createElement("input", { id: "password_field", type: "password", name: "password", placeholder: "Password" })));
-		}
-	});
-
-	var LogoHeader = React.createClass({ displayName: "LogoHeader",
-		render: function () {
-			return React.createElement("h2", { className: "ui blue image header" }, React.createElement("img", { className: "image", src: this.props.src, alt: this.props.alt }), React.createElement("div", { className: "content" }, this.props.content));
-		}
-	});
-
-	var SignInView = React.createClass({ displayName: "SignInView",
-		getInitialState: function () {
-			return {
-				btnState: ""
-			};
-		},
-		componentDidMount: function () {
-			$('#form').form({
-				fields: {
-					email: {
-						identifier: 'email',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your e-mail'
-						}, {
-							type: 'email',
-							prompt: 'Please enter a valid e-mail'
-						}]
-					},
-					password: {
-						identifier: 'password',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your password'
-						}, {
-							type: 'length[6]',
-							prompt: 'Your password must be at least 6 characters'
-						}]
-					}
-				}
-			});
-		},
-		handleSubmit: function (event) {
-
-			if (!$("#form").hasClass("error")) {
-				this.setState({ btnState: " disabled loading" });
-			}
-		},
-		render: function () {
-			return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Sign In To Your Account" }), React.createElement("form", { id: "form", method: "POST", action: "/handle_sign_in", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(AccountField, null), React.createElement(PasswordField, null), React.createElement("div", { className: "ui fluid large blue submit button" + this.state.btnState, onClick: this.handleSubmit }, "Sign In")), React.createElement("div", { className: "ui error message" }, React.createElement("ul", { className: "list" }))), React.createElement("div", { className: "ui message" }, "New to us? ", React.createElement("a", { href: "#" }, "Sign Up")));
+			return React.createElement("div", { className: "ui basic center aligned segment" }, React.createElement("a", { href: "#" }, React.createElement("i", { className: "info icon" }), React.createElement("span", null, "About us")), React.createElement("a", { href: "#" }, React.createElement("i", { className: "comment icon" }), React.createElement("span", null, "Give us some advice")));
 		}
 	});
 
 	$(function () {
-		ReactDOM.render(React.createElement(SignInView, null), $("#wrapper")[0]);
+		ReactDOM.render(React.createElement(Header, null), $("#header")[0], null);
+		ReactDOM.render(React.createElement(Footer, null), $("#footer")[0], null);
 	});
 
 /***/ },
@@ -19728,8 +19669,46 @@
 
 
 /***/ },
-/* 159 */,
-/* 160 */,
+/* 159 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(160);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(162)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./layout.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./layout.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(161)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "body {\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n#header .menu {\n    height: 50px;\n}\n\n#footer {\n    /*width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;*/\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
+
+	// exports
+
+
+/***/ },
 /* 161 */
 /***/ function(module, exports) {
 
@@ -20037,48 +20016,6 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
-
-
-/***/ },
-/* 163 */,
-/* 164 */,
-/* 165 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(166);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(162)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./sign_in.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./sign_in.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 166 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(161)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
-
-	// exports
 
 
 /***/ }

@@ -44,86 +44,24 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Created by zhoujihao on 16-3-21.
+	 */
 	"use strict";
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	__webpack_require__(165);
+	__webpack_require__(163);
 
-	var AccountField = React.createClass({ displayName: "AccountField",
-		getInitialState: function () {
-			return {
-				value: ""
-			};
-		},
-		handleChange: function (event) {
-			this.setState({
-				value: event.target.value
-			});
-		},
-		render: function () {
-			var value = this.state.value;
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "user icon" }), React.createElement("input", { id: "account_field", type: "text", name: "email", placeholder: "E-mail Address", onChange: this.handleChange, value: value })));
-		}
-	});
-
-	var PasswordField = React.createClass({ displayName: "PasswordField",
-		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "lock icon" }), React.createElement("input", { id: "password_field", type: "password", name: "password", placeholder: "Password" })));
-		}
-	});
-
-	var LogoHeader = React.createClass({ displayName: "LogoHeader",
-		render: function () {
-			return React.createElement("h2", { className: "ui blue image header" }, React.createElement("img", { className: "image", src: this.props.src, alt: this.props.alt }), React.createElement("div", { className: "content" }, this.props.content));
-		}
-	});
-
-	var SignInView = React.createClass({ displayName: "SignInView",
-		getInitialState: function () {
-			return {
-				btnState: ""
-			};
-		},
-		componentDidMount: function () {
-			$('#form').form({
-				fields: {
-					email: {
-						identifier: 'email',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your e-mail'
-						}, {
-							type: 'email',
-							prompt: 'Please enter a valid e-mail'
-						}]
-					},
-					password: {
-						identifier: 'password',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your password'
-						}, {
-							type: 'length[6]',
-							prompt: 'Your password must be at least 6 characters'
-						}]
-					}
-				}
-			});
-		},
-		handleSubmit: function (event) {
-
-			if (!$("#form").hasClass("error")) {
-				this.setState({ btnState: " disabled loading" });
-			}
-		},
-		render: function () {
-			return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Sign In To Your Account" }), React.createElement("form", { id: "form", method: "POST", action: "/handle_sign_in", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(AccountField, null), React.createElement(PasswordField, null), React.createElement("div", { className: "ui fluid large blue submit button" + this.state.btnState, onClick: this.handleSubmit }, "Sign In")), React.createElement("div", { className: "ui error message" }, React.createElement("ul", { className: "list" }))), React.createElement("div", { className: "ui message" }, "New to us? ", React.createElement("a", { href: "#" }, "Sign Up")));
-		}
+	var UserInfo = React.createClass({ displayName: "UserInfo",
+	    render: function () {
+	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("h2", { className: "ui header" }, "My Profile"), React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("div", { className: "ui ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "user icon" }), React.createElement("div", { className: "content" }, "User Name")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, "user_name@qq.com")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, "https://github.com"))));
+	    }
 	});
 
 	$(function () {
-		ReactDOM.render(React.createElement(SignInView, null), $("#wrapper")[0]);
+	    ReactDOM.render(React.createElement(UserInfo, null), $("#left-side")[0], null);
+	    ReactDOM.render(React.createElement(UserInfo, null), $("#right-side")[0], null);
 	});
 
 /***/ },
@@ -20040,15 +19978,13 @@
 
 
 /***/ },
-/* 163 */,
-/* 164 */,
-/* 165 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(166);
+	var content = __webpack_require__(164);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(162)(content, {});
@@ -20057,8 +19993,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./sign_in.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./sign_in.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./personal_center.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./personal_center.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20068,7 +20004,7 @@
 	}
 
 /***/ },
-/* 166 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(161)();
@@ -20076,7 +20012,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
+	exports.push([module.id, "#wrapper {\n    margin-top: 70px;\n    margin-bottom: 40px;\n    padding: 10px;\n}", ""]);
 
 	// exports
 

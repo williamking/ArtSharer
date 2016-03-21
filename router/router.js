@@ -9,5 +9,6 @@ module.exports = function(app) {
 	// User
 	app.get("/sign_in", User.showSignIn);
 	/*app.get("/signup", User.showSignUp);*/
+	app.get("/personal_center", User.showPersonalCenter);
 	app.post("/handle_sign_in", User.handleSignIn);
 }

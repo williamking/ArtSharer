@@ -3,7 +3,10 @@ var webpack = require('webpack');
 module.exports = {
     watch: true,
     entry: {
-        "signin": __dirname + "/public/react_view/signin_v.js"
+        "signin": __dirname + "/public/react_view/signin_v.js",
+        /*"index": __dirname + "/public/react_view/index_v.js",*/
+        "layout": __dirname + "/public/react_view/layout_v.js",
+        "personal_center": __dirname + "/public/react_view/personal_center_v.js"
     },
     output: {
         path: __dirname + '/public/dist',
