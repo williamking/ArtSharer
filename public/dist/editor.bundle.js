@@ -64,36 +64,9 @@
 	__webpack_require__(205);
 	__webpack_require__(207);
 
-	var ImageButton = React.createClass({ displayName: "ImageButton",
-
-	    render: function () {
-	        var className = 'iconfont icon-' + this.props.name;
-	        return React.createElement("div", { style: this.getButtonStyle(), className: "my-icon", onClick: this.props.handleClick }, React.createElement("i", { className: className }));
-	    },
-
-	    getButtonStyle: function () {
-	        var height = this.props.size;
-	        var width = this.props.size;
-	        return {
-	            position: 'relative',
-	            width: width,
-	            height: height
-	        };
-	    },
-
-	    getImageStyle: function () {
-	        return {
-	            position: 'relative',
-	            left: 0,
-	            top: 0,
-	            right: 0,
-	            bottom: 0,
-	            height: this.props.size,
-	            width: this.props.size
-	        };
-	    }
-
-	});
+	var ImageButton = __webpack_require__(209);
+	var EditorMenu = __webpack_require__(211);
+	var EditorCanvas = __webpack_require__(212);
 
 	var ImageEditor = React.createClass({ displayName: "ImageEditor",
 
@@ -677,205 +650,6 @@
 	        var canvas = this.canvas;
 	        var context = canvas.getContext('2d');
 	        context.putImageData(this.imageDataCache, 0, 0);
-	    }
-
-	});
-
-	var EditorMenu = React.createClass({ displayName: "EditorMenu",
-
-	    src: {
-	        pen: '/imgs/editor-icons/iconfont-pen',
-	        eraser: '/imgs/editor-icons/iconfont-eraser',
-	        text: '/imgs/editor-icons/iconfont-text',
-	        select: '/imgs/editor-icons/iconfont-select'
-	    },
-
-	    getInitialState: function () {
-	        return {
-	            src: this.src
-	        };
-	    },
-
-	    render: function () {
-	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { buttonName: "text", editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange }));
-	    },
-
-	    getSize: function () {
-	        return {
-	            width: this.props.width,
-	            height: this.props.height
-	        };
-	    }
-
-	});
-
-	var ButtonState = React.createClass({ displayName: "ButtonState",
-
-	    getInitialState: function () {
-	        return {
-	            textValue: '',
-	            fontSize: 5,
-	            fontStyle: 'normal',
-	            fontFamily: 'sans-serif'
-	        };
-	    },
-
-	    componentDidMount: function () {
-	        var editor = this;
-	        var sizeFunc = function (that) {
-	            return function (value, text) {
-	                var state = that.state;
-	                state.fontSize = value;
-	                that.setState(state);
-	                that.handleTextUpdate();
-	            };
-	        }(this);
-
-	        var styleFunc = function (that) {
-	            return function (value, text) {
-	                var state = that.state;
-	                state.fontStyle = value;
-	                that.setState(state);
-	                that.handleTextUpdate();
-	            };
-	        }(this);
-
-	        var familyFunc = function (that) {
-	            return function (value, text) {
-	                var state = that.state;
-	                state.fontFamily = value;
-	                console.log(value);
-	                that.setState(state);
-	                that.handleTextUpdate();
-	            };
-	        }(this);
-
-	        if (this.props.buttonName == 'text') {
-	            $("#font-size").dropdown({
-	                onChange: sizeFunc
-	            });
-	            $("#font-style").dropdown({
-	                onChange: styleFunc
-	            });
-	            $("#font-family").dropdown({
-	                onChange: familyFunc
-	            });
-	        }
-	    },
-
-	    handleTextUpdate: function () {
-	        this.props.updateTextState(this.state.fontStyle, this.state.fontSize, this.state.fontFamily);
-	    },
-
-	    fontSize: [5, 7, 10, 14, 20, 28, 32],
-
-	    fontStyle: ['normal', 'italic', 'oblique'],
-
-	    fontFamily: ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'],
-
-	    handleTextChange: function (e) {
-	        var state = this.state;
-	        state.textValue = e.target.value;
-	        this.setState(state);
-	        this.props.handleTextChange(this.props.editor, this.state.textValue, this);
-	    },
-
-	    clearText: function () {
-	        this.setState({
-	            textValue: ''
-	        });
-	    },
-
-	    render: function () {
-	        if (this.props.buttonName == 'text') {
-	            var that = this;
-	            var sizes = this.fontSize.map(function (size, key) {
-	                return React.createElement("div", { className: "item font-size", key: key, "data-value": size }, size + 'px');
-	            });
-	            var styles = this.fontStyle.map(function (font, key) {
-	                return React.createElement("div", { className: "item font-style", key: key, "data-value": font }, font);
-	            });
-	            var families = this.fontFamily.map(function (family, key) {
-	                return React.createElement("div", { className: "item font-family", key: key, "data-value": family }, family);
-	            });
-	            var value = this.state.textValue;
-	            return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui input", id: "text-input" }, React.createElement("input", { type: "text", placeholder: "Text content...", value: value, onChange: this.handleTextChange })), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-size" }, React.createElement("div", { className: "text" }, "Text Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, styles)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-family" }, React.createElement("div", { className: "text" }, "Text Family"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, families)));
-	        } else {
-	            return React.createElement("div", null);
-	        };
-	    }
-
-	});
-
-	var FilterMenu = React.createClass({ displayName: "FilterMenu",
-
-	    componentDidMount: function () {
-	        $(this.refs.menu).dropdown({
-	            action: 'hide'
-	        });
-	    },
-
-	    render: function () {
-	        var that = this;
-	        var items = this.props.filterItems.map(function (item, key) {
-	            return React.createElement("div", { className: "item", key: key, onClick: that.handleClick(item.func) }, item.name);
-	        });
-
-	        return React.createElement("div", { className: "ui dropdown filter-menu", ref: "menu" }, React.createElement("div", { className: "text" }, "Filters"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu transition hidden" }, items));
-	    },
-
-	    handleClick: function (name) {
-	        var that = this;
-	        return function (e) {
-	            that.props.handleImageFilter(name);
-	        };
-	    }
-
-	});
-
-	var EditorCanvas = React.createClass({ displayName: "EditorCanvas",
-
-	    componentDidMount: function () {
-	        this.renderBackground();
-	        this.first = true;
-	        this.renderImage();
-	    },
-
-	    componentDidUpdate: function () {
-	        var image = this.props.image;
-	        this.first = false;
-	        this.renderImage();
-	    },
-
-	    renderBackground: function () {
-	        var context = this.getContext();
-	        context.save();
-	        context.fillStyle = 'black';
-	        context.fillRect(0, 0, this.props.width, this.props.height);
-	    },
-
-	    renderImage: function () {
-	        var context = this.getContext();
-	        var image = this.props.image;
-	        var that = this;
-	        image.onload = function (e) {
-	            var width = that.props.height * (image.width / image.height),
-	                height = that.props.height;
-	            var left = 0;
-	            if (width < that.props.width) left = (that.props.width - width) / 2;
-	            context.drawImage(image, left, 0, width, height);
-	            if (that.first) {
-	                that.props.imageOnload();
-	            }
-	        };
-	    },
-
-	    getContext: function () {
-	        return this.refs.canvas.getContext('2d');
-	    },
-
-	    render: function () {
-	        return React.createElement("canvas", { ref: "canvas", width: this.props.width, height: this.props.height });
 	    }
 
 	});
@@ -29741,6 +29515,472 @@
 
 	// module
 	exports.push([module.id, "/*!\n * # Semantic UI 2.1.6 - Dropdown\n * http://github.com/semantic-org/semantic-ui/\n *\n *\n * Copyright 2015 Contributors\n * Released under the MIT license\n * http://opensource.org/licenses/MIT\n *\n */.ui.dropdown{cursor:pointer;position:relative;display:inline-block;outline:0;text-align:left;-webkit-transition:box-shadow .1s ease,width .1s ease;transition:box-shadow .1s ease,width .1s ease;-webkit-tap-highlight-color:transparent}.ui.dropdown .menu{cursor:auto;position:absolute;display:none;outline:0;top:100%;min-width:-webkit-max-content;min-width:-moz-max-content;min-width:max-content;margin:0;padding:0;background:#fff;font-size:1em;text-shadow:none;text-align:left;box-shadow:0 2px 3px 0 rgba(34,36,38,.15);border:1px solid rgba(34,36,38,.15);border-radius:.28571429rem;-webkit-transition:opacity .1s ease;transition:opacity .1s ease;z-index:11;will-change:transform,opacity}.ui.dropdown .menu>*{white-space:nowrap}.ui.dropdown>input:not(.search):first-child,.ui.dropdown>select{display:none!important}.ui.dropdown>.dropdown.icon{position:relative;font-size:.85714286em;margin:0 0 0 1em}.ui.dropdown .menu>.item .dropdown.icon{width:auto;float:right;margin:0 0 0 1em}.ui.dropdown .menu>.item .dropdown.icon+.text{margin-right:1em}.ui.dropdown>.text{display:inline-block;-webkit-transition:none;transition:none}.ui.dropdown .menu>.item{position:relative;cursor:pointer;display:block;border:none;height:auto;text-align:left;border-top:none;line-height:1em;color:rgba(0,0,0,.87);padding:.71428571rem 1.14285714rem!important;font-size:1rem;text-transform:none;font-weight:400;box-shadow:none;-webkit-touch-callout:none}.ui.dropdown .menu>.item:first-child{border-top-width:0}.ui.dropdown .menu .item>[class*=\"right floated\"],.ui.dropdown>.text>[class*=\"right floated\"]{float:right!important;margin-right:0!important;margin-left:1em!important}.ui.dropdown .menu .item>[class*=\"left floated\"],.ui.dropdown>.text>[class*=\"left floated\"]{float:left!important;margin-left:0!important;margin-right:1em!important}.ui.dropdown .menu .item>.flag.floated,.ui.dropdown .menu .item>.icon.floated,.ui.dropdown .menu .item>.image.floated,.ui.dropdown .menu .item>img.floated{margin-top:0}.ui.dropdown .menu>.header{margin:1rem 0 .75rem;padding:0 1.14285714rem;color:rgba(0,0,0,.85);font-size:.78571429em;font-weight:700;text-transform:uppercase}.ui.dropdown .menu>.divider{border-top:1px solid rgba(34,36,38,.1);height:0;margin:.5em 0}.ui.dropdown .menu>.input{width:auto;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;margin:1.14285714rem .71428571rem;min-width:10rem}.ui.dropdown .menu>.header+.input{margin-top:0}.ui.dropdown .menu>.input:not(.transparent) input{padding:.5em 1em}.ui.dropdown .menu>.input:not(.transparent) .button,.ui.dropdown .menu>.input:not(.transparent) .icon,.ui.dropdown .menu>.input:not(.transparent) .label{padding-top:.5em;padding-bottom:.5em}.ui.dropdown .menu>.item>.description,.ui.dropdown>.text>.description{float:right;margin:0 0 0 1em;color:rgba(0,0,0,.4)}.ui.dropdown .menu>.message{padding:.71428571rem 1.14285714rem;font-weight:400}.ui.dropdown .menu>.message:not(.ui){color:rgba(0,0,0,.4)}.ui.dropdown .menu .menu{top:0!important;left:100%!important;right:auto!important;margin:0 0 0 -.5em!important;border-radius:.28571429rem!important;z-index:21!important}.ui.dropdown .menu .menu:after{display:none}.ui.dropdown .menu>.item>.flag,.ui.dropdown .menu>.item>.icon,.ui.dropdown .menu>.item>.image,.ui.dropdown .menu>.item>.label,.ui.dropdown .menu>.item>img,.ui.dropdown>.text>.flag,.ui.dropdown>.text>.icon,.ui.dropdown>.text>.image,.ui.dropdown>.text>.label,.ui.dropdown>.text>img{margin-top:0;margin-left:0;float:none;margin-right:.71428571rem}.ui.dropdown .menu>.item>.image,.ui.dropdown .menu>.item>img,.ui.dropdown>.text>.image,.ui.dropdown>.text>img{display:inline-block;vertical-align:middle;width:auto;max-height:2em}.ui.dropdown .ui.menu>.item:before,.ui.menu .ui.dropdown .menu>.item:before{display:none}.ui.menu .ui.dropdown .menu .active.item{border-left:none}.ui.buttons>.ui.dropdown:last-child .menu,.ui.menu .right.dropdown.item .menu,.ui.menu .right.menu .dropdown:last-child .menu{left:auto;right:0}.ui.label.dropdown .menu{min-width:100%}.ui.dropdown.icon.button>.dropdown.icon{margin:0}.ui.button.dropdown .menu{min-width:100%}.ui.selection.dropdown{cursor:pointer;word-wrap:break-word;line-height:1em;white-space:normal;outline:0;-webkit-transform:rotateZ(0);transform:rotateZ(0);min-width:14em;min-height:2.7142em;background:#fff;display:inline-block;padding:.78571429em 2.6em .78571429em 1em;color:rgba(0,0,0,.87);box-shadow:none;border:1px solid rgba(34,36,38,.15);border-radius:.28571429rem;-webkit-transition:box-shadow .1s ease,width .1s ease;transition:box-shadow .1s ease,width .1s ease}.ui.selection.dropdown.active,.ui.selection.dropdown.visible{z-index:10}select.ui.dropdown{height:38px;padding:.5em;border:1px solid rgba(34,36,38,.15);visibility:visible}.ui.selection.dropdown>.delete.icon,.ui.selection.dropdown>.dropdown.icon,.ui.selection.dropdown>.search.icon{cursor:pointer;position:absolute;top:auto;width:auto;z-index:3;margin:-.78571429em;padding:.78571429em;right:1em;opacity:.8;-webkit-transition:opacity .1s ease;transition:opacity .1s ease}.ui.compact.selection.dropdown{min-width:0}.ui.selection.dropdown .menu{overflow-x:hidden;overflow-y:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-overflow-scrolling:touch;border-top-width:0!important;outline:0;margin:0 -1px;min-width:calc(100% + 2px);width:calc(100% + 2px);border-radius:0 0 .28571429rem .28571429rem;box-shadow:0 2px 3px 0 rgba(34,36,38,.15);-webkit-transition:opacity .1s ease;transition:opacity .1s ease}.ui.selection.dropdown .menu:after,.ui.selection.dropdown .menu:before{display:none}.ui.selection.dropdown .menu>.message{padding:.71428571rem 1.14285714rem}@media only screen and (max-width:767px){.ui.selection.dropdown .menu{max-height:7.58571429rem}}@media only screen and (min-width:768px){.ui.selection.dropdown .menu{max-height:10.11428571rem}}@media only screen and (min-width:992px){.ui.selection.dropdown .menu{max-height:15.17142857rem}}@media only screen and (min-width:1920px){.ui.selection.dropdown .menu{max-height:20.22857143rem}}.ui.selection.dropdown .menu>.item{border-top:1px solid #fafafa;padding:.71428571rem 1.14285714rem!important;white-space:normal;word-wrap:normal}.ui.selection.dropdown:hover{border-color:rgba(34,36,38,.35);box-shadow:none}.ui.selection.active.dropdown,.ui.selection.active.dropdown .menu{border-color:#96c8da;box-shadow:0 2px 3px 0 rgba(34,36,38,.15)}.ui.selection.dropdown:focus{border-color:#96c8da;box-shadow:none}.ui.selection.dropdown:focus .menu{border-color:#96c8da;box-shadow:0 2px 3px 0 rgba(34,36,38,.15)}.ui.selection.visible.dropdown>.text:not(.default){font-weight:400;color:rgba(0,0,0,.8)}.ui.selection.active.dropdown:hover,.ui.selection.active.dropdown:hover .menu{border-color:#96c8da;box-shadow:0 2px 3px 0 rgba(34,36,38,.15)}.ui.active.selection.dropdown>.dropdown.icon,.ui.visible.selection.dropdown>.dropdown.icon{opacity:1;z-index:3}.ui.active.selection.dropdown{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important}.ui.search.dropdown{min-width:''}.ui.search.dropdown>input.search{background:none!important;border:none!important;box-shadow:none!important;cursor:pointer;top:0;left:0;width:100%;outline:0;-webkit-tap-highlight-color:rgba(255,255,255,0);padding:inherit;position:absolute;z-index:2}.ui.search.dropdown>.text{cursor:text;position:relative;z-index:3}.ui.search.selection.dropdown>input.search{line-height:1.2142em;padding:.67861429em 2.6em .67861429em 1em}.ui.search.dropdown.active>input.search,.ui.search.dropdown.visible>input.search{cursor:auto}.ui.search.dropdown.active>.text,.ui.search.dropdown.visible>.text{pointer-events:none}.ui.active.search.dropdown input.search:focus+.text .flag,.ui.active.search.dropdown input.search:focus+.text .icon{opacity:.45}.ui.active.search.dropdown input.search:focus+.text{color:rgba(0,0,0,.4)!important}.ui.search.dropdown .menu{overflow-x:hidden;overflow-y:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-overflow-scrolling:touch}@media only screen and (max-width:767px){.ui.search.dropdown .menu{max-height:7.58571429rem}}@media only screen and (min-width:768px){.ui.search.dropdown .menu{max-height:10.11428571rem}}@media only screen and (min-width:992px){.ui.search.dropdown .menu{max-height:15.17142857rem}}@media only screen and (min-width:1920px){.ui.search.dropdown .menu{max-height:20.22857143rem}}.ui.multiple.dropdown{padding:.22620476em 2.6em .22620476em .28571429em}.ui.multiple.dropdown .menu{cursor:auto}.ui.multiple.search.dropdown,.ui.multiple.search.dropdown>input.search{cursor:text}.ui.multiple.dropdown>.label{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;display:inline-block;vertical-align:top;white-space:normal;font-size:1em;padding:.35714286em .71428571em;margin:.21428571em .28571429rem .21428571em 0;box-shadow:0 0 0 1px rgba(34,36,38,.15) inset}.ui.multiple.dropdown .dropdown.icon{margin:0 -.71428571em 0 0;padding:.5em}.ui.multiple.dropdown>.text{position:static;padding:0;max-width:100%;margin:.45240952em 0 .45240952em .71428571em;line-height:1.2142em}.ui.multiple.dropdown>.label~.text{display:none}.ui.multiple.search.dropdown>.text{display:inline-block;position:absolute;top:0;left:0;padding:inherit;margin:.45240952em 0 .45240952em .71428571em;line-height:1.2142em}.ui.multiple.search.dropdown>.label~.text{display:none}.ui.multiple.search.dropdown>input.search{position:static;padding:0;max-width:100%;margin:.45240952em 0 .45240952em .71428571em;width:2.2em;line-height:1.2142em}.ui.inline.dropdown{cursor:pointer;display:inline-block;color:inherit}.ui.inline.dropdown .dropdown.icon{margin:0 .5em 0 .25em;vertical-align:baseline}.ui.inline.dropdown>.text{font-weight:700}.ui.inline.dropdown .menu{cursor:auto;margin-top:.25em;border-radius:.28571429rem}.ui.dropdown .menu .active.item{background:0 0;font-weight:700;color:rgba(0,0,0,.95);box-shadow:none;z-index:12}.ui.dropdown .menu>.item:hover{background:rgba(0,0,0,.05);color:rgba(0,0,0,.95);z-index:13}.ui.loading.dropdown>i.icon:after,.ui.loading.dropdown>i.icon:before{left:30%!important}.ui.loading.dropdown>i.icon{top:50%!important}.ui.multiple.loading.dropdown>i.icon:after,.ui.multiple.loading.dropdown>i.icon:before{top:0!important;left:0!important}.ui.loading.dropdown>i.icon:before{position:absolute;content:'';top:50%;left:50%;margin:-.64285714em 0 0 -.64285714em;width:1.28571429em;height:1.28571429em;border-radius:500rem;border:.2em solid rgba(0,0,0,.1)}.ui.loading.dropdown>i.icon:after{position:absolute;content:'';top:50%;left:50%;box-shadow:0 0 0 1px transparent;margin:-.64285714em 0 0 -.64285714em;width:1.28571429em;height:1.28571429em;-webkit-animation:dropdown-spin .6s linear;animation:dropdown-spin .6s linear;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite;border-radius:500rem;border-color:#767676 transparent transparent;border-style:solid;border-width:.2em}.ui.loading.dropdown.button>i.icon:after,.ui.loading.dropdown.button>i.icon:before{display:none}@-webkit-keyframes dropdown-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes dropdown-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.ui.default.dropdown:hover>.text,.ui.default.dropdown>.text,.ui.dropdown:hover>.default.text,.ui.dropdown>.default.text{color:rgba(179,179,179,.7)}.ui.loading.dropdown>.text{-webkit-transition:none;transition:none}.ui.dropdown .loading.menu{display:block;visibility:hidden;z-index:-1}.ui.dropdown .menu .selected.item,.ui.dropdown.selected{background:rgba(0,0,0,.03);color:rgba(0,0,0,.95)}.ui.dropdown>.filtered.text{visibility:hidden}.ui.dropdown .filtered.item{display:none!important}.ui.dropdown.error,.ui.dropdown.error>.default.text,.ui.dropdown.error>.text{color:#9f3a38}.ui.selection.dropdown.error{background:#fff6f6;border-color:#e0b4b4}.ui.dropdown.error>.menu,.ui.dropdown.error>.menu .menu,.ui.selection.dropdown.error:hover{border-color:#e0b4b4}.ui.dropdown.error>.menu>.item{color:#9f3a38}.ui.multiple.selection.error.dropdown>.label{border-color:#e0b4b4}.ui.dropdown.error>.menu>.item:hover{background-color:#fff2f2}.ui.dropdown.error>.menu .active.item{background-color:#fdcfcf}.ui.disabled.dropdown,.ui.dropdown .menu>.disabled.item{cursor:default;pointer-events:none;opacity:.45}.ui.dropdown .menu{left:0}.ui.dropdown .menu .right.menu,.ui.dropdown .right.menu>.menu{left:100%!important;right:auto!important;border-radius:.28571429rem!important}.ui.dropdown .menu .left.menu,.ui.dropdown>.left.menu .menu{left:auto!important;right:100%!important;border-radius:.28571429rem!important}.ui.dropdown .item .left.dropdown.icon,.ui.dropdown .left.menu .item .dropdown.icon{width:auto;float:left;margin:0 .71428571rem 0 0}.ui.dropdown .item .left.dropdown.icon+.text,.ui.dropdown .left.menu .item .dropdown.icon+.text{margin-left:1em}.ui.upward.dropdown>.menu{top:auto;bottom:100%;box-shadow:0 0 3px 0 rgba(0,0,0,.08);border-radius:.28571429rem .28571429rem 0 0}.ui.dropdown .upward.menu{top:auto!important;bottom:0!important}.ui.simple.upward.active.dropdown,.ui.simple.upward.dropdown:hover{border-radius:.28571429rem .28571429rem 0 0!important}.ui.upward.dropdown.button:not(.pointing):not(.floating).active{border-radius:.28571429rem .28571429rem 0 0}.ui.upward.selection.dropdown .menu{border-top-width:1px!important;border-bottom-width:0!important;box-shadow:0 -2px 3px 0 rgba(0,0,0,.08)}.ui.upward.selection.dropdown:hover{box-shadow:0 0 2px 0 rgba(0,0,0,.05)}.ui.active.upward.selection.dropdown{border-radius:0 0 .28571429rem .28571429rem!important}.ui.upward.selection.dropdown.visible{box-shadow:0 0 3px 0 rgba(0,0,0,.08);border-radius:0 0 .28571429rem .28571429rem!important}.ui.upward.active.selection.dropdown:hover{box-shadow:0 0 3px 0 rgba(0,0,0,.05)}.ui.upward.active.selection.dropdown:hover .menu{box-shadow:0 -2px 3px 0 rgba(0,0,0,.08)}.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{overflow-x:hidden;overflow-y:auto}.ui.scrolling.dropdown .menu{overflow-x:hidden;overflow-y:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-overflow-scrolling:touch;min-width:100%!important;width:auto!important}.ui.dropdown .scrolling.menu{position:static;overflow-y:auto;border:none;box-shadow:none!important;border-radius:0!important;margin:0!important;min-width:100%!important;width:auto!important;border-top:1px solid rgba(34,36,38,.15)}.ui.dropdown .scrolling.menu>.item.item.item,.ui.scrolling.dropdown .menu .item.item.item{border-top:none;padding-right:calc(1.14285714rem + 17px)!important}.ui.dropdown .scrolling.menu .item:first-child,.ui.scrolling.dropdown .menu .item:first-child{border-top:none}.ui.dropdown>.animating.menu .scrolling.menu,.ui.dropdown>.visible.menu .scrolling.menu{display:block}@media all and (-ms-high-contrast:none){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{min-width:calc(100% - 17px)}}@media only screen and (max-width:767px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:9.71428571rem}}@media only screen and (min-width:768px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:14.57142857rem}}@media only screen and (min-width:992px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:19.42857143rem}}@media only screen and (min-width:1920px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:19.42857143rem}}.ui.simple.dropdown .menu:after,.ui.simple.dropdown .menu:before{display:none}.ui.simple.dropdown .menu{position:absolute;display:block;overflow:hidden;top:-9999px!important;opacity:0;width:0;height:0;-webkit-transition:opacity .1s ease;transition:opacity .1s ease}.ui.simple.active.dropdown,.ui.simple.dropdown:hover{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important}.ui.simple.active.dropdown>.menu,.ui.simple.dropdown:hover>.menu{overflow:visible;width:auto;height:auto;top:100%!important;opacity:1}.ui.simple.dropdown:hover>.menu>.item:hover>.menu,.ui.simple.dropdown>.menu>.item:active>.menu{overflow:visible;width:auto;height:auto;top:0!important;left:100%!important;opacity:1}.ui.simple.disabled.dropdown:hover .menu{display:none;height:0;width:0;overflow:hidden}.ui.simple.visible.dropdown>.menu{display:block}.ui.fluid.dropdown{display:block;width:100%;min-width:0}.ui.fluid.dropdown>.dropdown.icon{float:right}.ui.floating.dropdown .menu{left:0;right:auto;box-shadow:0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08)!important;border-radius:.28571429rem!important}.ui.floating.dropdown>.menu{margin-top:.5em!important;border-radius:.28571429rem!important}.ui.pointing.dropdown>.menu{top:100%;margin-top:.71428571rem;border-radius:.28571429rem}.ui.pointing.dropdown>.menu:after{display:block;position:absolute;pointer-events:none;content:'';visibility:visible;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);width:.5em;height:.5em;box-shadow:-1px -1px 0 1px rgba(34,36,38,.15);background:#fff;z-index:2;top:-.25em;left:50%;margin:0 0 0 -.25em}.ui.top.left.pointing.dropdown>.menu{top:100%;bottom:auto;left:0;right:auto;margin:1em 0 0}.ui.top.left.pointing.dropdown>.menu:after{top:-.25em;left:1em;right:auto;margin:0;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.ui.top.right.pointing.dropdown>.menu{top:100%;bottom:auto;right:0;left:auto;margin:1em 0 0}.ui.top.right.pointing.dropdown>.menu:after{top:-.25em;left:auto;right:1em;margin:0;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.ui.left.pointing.dropdown>.menu{top:0;left:100%;right:auto;margin:0 0 0 1em}.ui.left.pointing.dropdown>.menu:after{top:1em;left:-.25em;margin:0;-webkit-transform:rotate(-45deg);-ms-transform:rotate(-45deg);transform:rotate(-45deg)}.ui.right.pointing.dropdown>.menu{top:0;left:auto;right:100%;margin:0 1em 0 0}.ui.right.pointing.dropdown>.menu:after{top:1em;left:auto;right:-.25em;margin:0;-webkit-transform:rotate(135deg);-ms-transform:rotate(135deg);transform:rotate(135deg)}.ui.bottom.pointing.dropdown>.menu{top:auto;bottom:100%;left:0;right:auto;margin:0 0 1em}.ui.bottom.pointing.dropdown>.menu:after{top:auto;bottom:-.25em;right:auto;margin:0;-webkit-transform:rotate(-135deg);-ms-transform:rotate(-135deg);transform:rotate(-135deg)}.ui.bottom.pointing.dropdown>.menu .menu{top:auto!important;bottom:0!important}.ui.bottom.left.pointing.dropdown>.menu{left:0;right:auto}.ui.bottom.left.pointing.dropdown>.menu:after{left:1em;right:auto}.ui.bottom.right.pointing.dropdown>.menu{right:0;left:auto}.ui.bottom.right.pointing.dropdown>.menu:after{left:auto;right:1em}.ui.upward.pointing.dropdown>.menu,.ui.upward.top.pointing.dropdown>.menu{top:auto;bottom:100%;margin:0 0 .71428571rem;border-radius:.28571429rem}.ui.upward.pointing.dropdown>.menu:after,.ui.upward.top.pointing.dropdown>.menu:after{top:100%;bottom:auto;box-shadow:1px 1px 0 1px rgba(34,36,38,.15);margin:-.25em 0 0}@font-face{font-family:Dropdown;src:url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMggjB5AAAAC8AAAAYGNtYXAPfuIIAAABHAAAAExnYXNwAAAAEAAAAWgAAAAIZ2x5Zjo82LgAAAFwAAABVGhlYWQAQ88bAAACxAAAADZoaGVhAwcB6QAAAvwAAAAkaG10eAS4ABIAAAMgAAAAIGxvY2EBNgDeAAADQAAAABJtYXhwAAoAFgAAA1QAAAAgbmFtZVcZpu4AAAN0AAABRXBvc3QAAwAAAAAEvAAAACAAAwIAAZAABQAAAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADw2gHg/+D/4AHgACAAAAABAAAAAAAAAAAAAAAgAAAAAAACAAAAAwAAABQAAwABAAAAFAAEADgAAAAKAAgAAgACAAEAIPDa//3//wAAAAAAIPDX//3//wAB/+MPLQADAAEAAAAAAAAAAAAAAAEAAf//AA8AAQAAAAAAAAAAAAIAADc5AQAAAAABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAAAQAAAIABJQElABMAABM0NzY3BTYXFhUUDwEGJwYvASY1AAUGBwEACAUGBoAFCAcGgAUBEgcGBQEBAQcECQYHfwYBAQZ/BwYAAQAAAG4BJQESABMAADc0PwE2MzIfARYVFAcGIyEiJyY1AAWABgcIBYAGBgUI/wAHBgWABwaABQWABgcHBgUFBgcAAAABABIASQC3AW4AEwAANzQ/ATYXNhcWHQEUBwYnBi8BJjUSBoAFCAcFBgYFBwgFgAbbBwZ/BwEBBwQJ/wgEBwEBB38GBgAAAAABAAAASQClAW4AEwAANxE0NzYzMh8BFhUUDwEGIyInJjUABQYHCAWABgaABQgHBgVbAQAIBQYGgAUIBwWABgYFBwAAAAEAAAABAADZuaKOXw889QALAgAAAAAA0ABHWAAAAADQAEdYAAAAAAElAW4AAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAASUAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAABAAAAASUAAAElAAAAtwASALcAAAAAAAAACgAUAB4AQgBkAIgAqgAAAAEAAAAIABQAAQAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAOAK4AAQAAAAAAAQAOAAAAAQAAAAAAAgAOAEcAAQAAAAAAAwAOACQAAQAAAAAABAAOAFUAAQAAAAAABQAWAA4AAQAAAAAABgAHADIAAQAAAAAACgA0AGMAAwABBAkAAQAOAAAAAwABBAkAAgAOAEcAAwABBAkAAwAOACQAAwABBAkABAAOAFUAAwABBAkABQAWAA4AAwABBAkABgAOADkAAwABBAkACgA0AGMAaQBjAG8AbQBvAG8AbgBWAGUAcgBzAGkAbwBuACAAMQAuADAAaQBjAG8AbQBvAG8Abmljb21vb24AaQBjAG8AbQBvAG8AbgBSAGUAZwB1AGwAYQByAGkAYwBvAG0AbwBvAG4ARgBvAG4AdAAgAGcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAuAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=) format('truetype'),url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAAVwAAoAAAAABSgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAAA9AAAAdkAAAHZLDXE/09TLzIAAALQAAAAYAAAAGAIIweQY21hcAAAAzAAAABMAAAATA9+4ghnYXNwAAADfAAAAAgAAAAIAAAAEGhlYWQAAAOEAAAANgAAADYAQ88baGhlYQAAA7wAAAAkAAAAJAMHAelobXR4AAAD4AAAACAAAAAgBLgAEm1heHAAAAQAAAAABgAAAAYACFAAbmFtZQAABAgAAAFFAAABRVcZpu5wb3N0AAAFUAAAACAAAAAgAAMAAAEABAQAAQEBCGljb21vb24AAQIAAQA6+BwC+BsD+BgEHgoAGVP/i4seCgAZU/+LiwwHi2v4lPh0BR0AAACIDx0AAACNER0AAAAJHQAAAdASAAkBAQgPERMWGyAlKmljb21vb25pY29tb29udTB1MXUyMHVGMEQ3dUYwRDh1RjBEOXVGMERBAAACAYkABgAIAgABAAQABwAKAA0AVgCfAOgBL/yUDvyUDvyUDvuUDvtvi/emFYuQjZCOjo+Pj42Qiwj3lIsFkIuQiY6Hj4iNhouGi4aJh4eHCPsU+xQFiIiGiYaLhouHjYeOCPsU9xQFiI+Jj4uQCA77b4v3FBWLkI2Pjo8I9xT3FAWPjo+NkIuQi5CJjogI9xT7FAWPh42Hi4aLhomHh4eIiIaJhosI+5SLBYaLh42HjoiPiY+LkAgO+92d928Vi5CNkI+OCPcU9xQFjo+QjZCLkIuPiY6Hj4iNhouGCIv7lAWLhomHh4iIh4eJhouGi4aNiI8I+xT3FAWHjomPi5AIDvvdi+YVi/eUBYuQjZCOjo+Pj42Qi5CLkImOhwj3FPsUBY+IjYaLhouGiYeHiAj7FPsUBYiHhomGi4aLh42Hj4iOiY+LkAgO+JQU+JQViwwKAAAAAAMCAAGQAAUAAAFMAWYAAABHAUwBZgAAAPUAGQCEAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAA8NoB4P/g/+AB4AAgAAAAAQAAAAAAAAAAAAAAIAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAA4AAAACgAIAAIAAgABACDw2v/9//8AAAAAACDw1//9//8AAf/jDy0AAwABAAAAAAAAAAAAAAABAAH//wAPAAEAAAABAAA5emozXw889QALAgAAAAAA0ABHWAAAAADQAEdYAAAAAAElAW4AAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAASUAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAABAAAAASUAAAElAAAAtwASALcAAAAAUAAACAAAAAAADgCuAAEAAAAAAAEADgAAAAEAAAAAAAIADgBHAAEAAAAAAAMADgAkAAEAAAAAAAQADgBVAAEAAAAAAAUAFgAOAAEAAAAAAAYABwAyAAEAAAAAAAoANABjAAMAAQQJAAEADgAAAAMAAQQJAAIADgBHAAMAAQQJAAMADgAkAAMAAQQJAAQADgBVAAMAAQQJAAUAFgAOAAMAAQQJAAYADgA5AAMAAQQJAAoANABjAGkAYwBvAG0AbwBvAG4AVgBlAHIAcwBpAG8AbgAgADEALgAwAGkAYwBvAG0AbwBvAG5pY29tb29uAGkAYwBvAG0AbwBvAG4AUgBlAGcAdQBsAGEAcgBpAGMAbwBtAG8AbwBuAEYAbwBuAHQAIABnAGUAbgBlAHIAYQB0AGUAZAAgAGIAeQAgAEkAYwBvAE0AbwBvAG4ALgAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format('woff');font-weight:400;font-style:normal}.ui.dropdown>.dropdown.icon{font-family:Dropdown;line-height:1;height:1em;-webkit-backface-visibility:hidden;backface-visibility:hidden;font-weight:400;font-style:normal;text-align:center;width:auto}.ui.dropdown>.dropdown.icon:before{content:'\\F0D7'}.ui.dropdown .menu .item .dropdown.icon:before{content:'\\F0DA'}.ui.dropdown .item .left.dropdown.icon:before,.ui.dropdown .left.menu .item .dropdown.icon:before{content:\"\\F0D9\"}.ui.vertical.menu .dropdown.item>.dropdown.icon:before{content:\"\\F0DA\"}", ""]);
+
+	// exports
+
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var ImageButton = React.createClass({ displayName: "ImageButton",
+
+	    render: function () {
+	        var className = 'iconfont icon-' + this.props.name;
+	        return React.createElement("div", { style: this.getButtonStyle(), className: "my-icon", onClick: this.props.handleClick }, React.createElement("i", { className: className }));
+	    },
+
+	    getButtonStyle: function () {
+	        var height = this.props.size;
+	        var width = this.props.size;
+	        return {
+	            position: 'relative',
+	            width: width,
+	            height: height
+	        };
+	    },
+
+	    getImageStyle: function () {
+	        return {
+	            position: 'relative',
+	            left: 0,
+	            top: 0,
+	            right: 0,
+	            bottom: 0,
+	            height: this.props.size,
+	            width: this.props.size
+	        };
+	    }
+
+	});
+
+	module.exports = ImageButton;
+
+/***/ },
+/* 210 */,
+/* 211 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ButtonState = __webpack_require__(213);
+	var FilterMenu = __webpack_require__(214);
+	var ImageButton = __webpack_require__(209);
+
+	var EditorMenu = React.createClass({ displayName: "EditorMenu",
+
+	    src: {
+	        pen: '/imgs/editor-icons/iconfont-pen',
+	        eraser: '/imgs/editor-icons/iconfont-eraser',
+	        text: '/imgs/editor-icons/iconfont-text',
+	        select: '/imgs/editor-icons/iconfont-select'
+	    },
+
+	    getInitialState: function () {
+	        return {
+	            src: this.src
+	        };
+	    },
+
+	    render: function () {
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { buttonName: "text", editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange }));
+	    },
+
+	    getSize: function () {
+	        return {
+	            width: this.props.width,
+	            height: this.props.height
+	        };
+	    }
+
+	});
+
+	module.exports = EditorMenu;
+
+/***/ },
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var EditorCanvas = React.createClass({ displayName: "EditorCanvas",
+
+	    componentDidMount: function () {
+	        this.renderBackground();
+	        this.first = true;
+	        this.renderImage();
+	    },
+
+	    componentDidUpdate: function () {
+	        var image = this.props.image;
+	        this.first = false;
+	        this.renderImage();
+	    },
+
+	    renderBackground: function () {
+	        var context = this.getContext();
+	        context.save();
+	        context.fillStyle = 'black';
+	        context.fillRect(0, 0, this.props.width, this.props.height);
+	    },
+
+	    renderImage: function () {
+	        var context = this.getContext();
+	        var image = this.props.image;
+	        var that = this;
+	        image.onload = function (e) {
+	            var width = that.props.height * (image.width / image.height),
+	                height = that.props.height;
+	            var left = 0;
+	            if (width < that.props.width) left = (that.props.width - width) / 2;
+	            context.drawImage(image, left, 0, width, height);
+	            if (that.first) {
+	                that.props.imageOnload();
+	            }
+	        };
+	    },
+
+	    getContext: function () {
+	        return this.refs.canvas.getContext('2d');
+	    },
+
+	    render: function () {
+	        return React.createElement("canvas", { ref: "canvas", width: this.props.width, height: this.props.height });
+	    }
+
+	});
+
+	module.exports = EditorCanvas;
+
+/***/ },
+/* 213 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ColorPicker = __webpack_require__(215);
+	__webpack_require__(216);
+
+	var ButtonState = React.createClass({ displayName: "ButtonState",
+
+	    getInitialState: function () {
+	        return {
+	            textValue: '',
+	            fontSize: 5,
+	            fontStyle: 'normal',
+	            fontFamily: 'sans-serif'
+	        };
+	    },
+
+	    componentDidMount: function () {
+	        var editor = this;
+	        var sizeFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontSize = value;
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this);
+
+	        var styleFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontStyle = value;
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this);
+
+	        var familyFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontFamily = value;
+	                console.log(value);
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this);
+
+	        if (this.props.buttonName == 'text') {
+	            $("#font-size").dropdown({
+	                onChange: sizeFunc
+	            });
+	            $("#font-style").dropdown({
+	                onChange: styleFunc
+	            });
+	            $("#font-family").dropdown({
+	                onChange: familyFunc
+	            });
+	            this.colorPicker.addTo(document.getElementById('color-picker'));
+	        }
+	    },
+
+	    colorPicker: new ColorPicker.RGB_picker(30, 60),
+
+	    handleTextUpdate: function () {
+	        this.props.updateTextState(this.state.fontStyle, this.state.fontSize, this.state.fontFamily);
+	    },
+
+	    fontSize: [5, 7, 10, 14, 20, 28, 32],
+
+	    fontStyle: ['normal', 'italic', 'oblique'],
+
+	    fontFamily: ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'],
+
+	    handleTextChange: function (e) {
+	        var state = this.state;
+	        state.textValue = e.target.value;
+	        this.setState(state);
+	        this.props.handleTextChange(this.props.editor, this.state.textValue, this);
+	    },
+
+	    clearText: function () {
+	        this.setState({
+	            textValue: ''
+	        });
+	    },
+
+	    render: function () {
+	        if (this.props.buttonName == 'text') {
+	            var that = this;
+	            var sizes = this.fontSize.map(function (size, key) {
+	                return React.createElement("div", { className: "item font-size", key: key, "data-value": size }, size + 'px');
+	            });
+	            var styles = this.fontStyle.map(function (font, key) {
+	                return React.createElement("div", { className: "item font-style", key: key, "data-value": font }, font);
+	            });
+	            var families = this.fontFamily.map(function (family, key) {
+	                return React.createElement("div", { className: "item font-family", key: key, "data-value": family }, family);
+	            });
+	            var value = this.state.textValue;
+	            return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui input", id: "text-input" }, React.createElement("input", { type: "text", placeholder: "Text content...", value: value, onChange: this.handleTextChange })), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-size" }, React.createElement("div", { className: "text" }, "Text Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, styles)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-family" }, React.createElement("div", { className: "text" }, "Text Family"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, families)), React.createElement("div", { id: "color-picker", style: { display: inline - block } }));
+	        } else {
+	            return React.createElement("div", null);
+	        };
+	    }
+
+	});
+
+	module.exports = ButtonState;
+
+/***/ },
+/* 214 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var FilterMenu = React.createClass({ displayName: "FilterMenu",
+
+	    componentDidMount: function () {
+	        $(this.refs.menu).dropdown({
+	            action: 'hide'
+	        });
+	    },
+
+	    render: function () {
+	        var that = this;
+	        var items = this.props.filterItems.map(function (item, key) {
+	            return React.createElement("div", { className: "item", key: key, onClick: that.handleClick(item.func) }, item.name);
+	        });
+
+	        return React.createElement("div", { className: "ui dropdown filter-menu", ref: "menu" }, React.createElement("div", { className: "text" }, "Filters"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu transition hidden" }, items));
+	    },
+
+	    handleClick: function (name) {
+	        var that = this;
+	        return function (e) {
+	            that.props.handleImageFilter(name);
+	        };
+	    }
+
+	});
+
+	module.exports = FilterMenu;
+
+/***/ },
+/* 215 */
+/***/ function(module, exports) {
+
+	/*
+	    Author: William
+	    Description: A plug-in component for picking color
+	*/
+
+	function windowTocanvas(canvas, x, y) {
+	    var bbox = canvas.getBoundingClientRect();
+	    return {
+	        x: x - bbox.left * (canvas.width / bbox.width),
+	        y: y - bbox.top * (canvas.height / bbox.height)
+	    };
+	}
+
+	var ColorPicker = {
+	    RGB_picker: function () {
+	        this.pickerRG = document.createElement("canvas");
+	        this.pickerB = document.createElement("canvas");
+	        this.dom = document.createElement("div");
+	        this.sample = document.createElement("div");
+	        this.watcher = document.createElement("div");
+	        this.watcher.className = "color-watcher";
+	        this.sample.className = "color-sample";
+	        this.dom.className = "color-picker";
+	        this.pickerRG.className = "rg-picker";
+	        this.pickerB.className = 'b-picker';
+	        this.dom.appendChild(this.pickerRG);
+	        this.dom.appendChild(this.pickerB);
+	        this.dom.appendChild(this.sample);
+	        this.dom.appendChild(this.watcher);
+
+	        this.currentColor = '#000000';
+
+	        this.onWatch = 0;
+
+	        this.RGCanvas = this.pickerRG.getContext('2d');
+	        this.BCanvas = this.pickerB.getContext('2d');
+
+	        this.colorHex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+	        this.pickRGEvent = function (that) {
+	            return function (e) {
+	                var loc = windowTocanvas(that.pickerRG, e.clientX, e.clientY);
+	                var colorData = that.RGCanvas.getImageData(loc.x, loc.y, 1, 1);
+	                var hexColor = that.getColorHex(colorData.data[0], colorData.data[1], colorData.data[2]);
+
+	                that.updateBCanvas(hexColor);
+	            };
+	        }(this);
+
+	        this.moveBEvent = function (that) {
+	            return function (e) {
+	                if (that.onWatch == 0) return;
+	                var loc = windowTocanvas(that.pickerB, e.clientX, e.clientY);
+	                var colorData = that.BCanvas.getImageData(loc.x, loc.y, 1, 1);
+	                var color = that.getColorHex(colorData.data[0], colorData.data[1], colorData.data[2]);
+	                that.updateWatcher(color, e.clientX, e.clientY);
+	            };
+	        }(this);
+
+	        this.overBEvent = function (that) {
+	            return function (e) {
+	                that.onWatch = 1;
+	                that.pickerB.addEventListener('mousemove', that.moveBEvent, false);
+	                that.watcher.style.display = 'block';
+	            };
+	        }(this);
+
+	        this.outBEvent = function (that) {
+	            return function (e) {
+	                that.onWatch = 0;
+	                that.pickerB.removeEventListener('mousemove', that.moveBEvent, false);
+	                that.watcher.style.display = 'none';
+	            };
+	        }(this);
+
+	        this.pickBEvent = function (that) {
+	            return function (e) {
+	                var loc = windowTocanvas(that.pickerB, e.clientX, e.clientY);
+	                var colorData = that.BCanvas.getImageData(loc.x, loc.y, 1, 1);
+	                that.currentColor = that.getColorHex(colorData.data[0], colorData.data[1], colorData.data[2]);
+
+	                that.updateSample();
+	            };
+	        }(this);
+
+	        this.init();
+	    }
+	};
+
+	ColorPicker.RGB_picker.prototype = {
+	    addTo: function (element) {
+	        element.appendChild(this.dom);
+	    },
+	    init: function (height, width) {
+	        this.pickerRG.style.height = this.pickerB.style.height = (height || 40) + 'px';
+	        this.pickerRG.style.width = this.pickerB.style.width = (width || 100) + 'px';
+	        this.pickerRG.height = this.pickerB.height = height || 40;
+	        this.pickerRG.width = this.pickerB.width = width || 100;
+
+	        this.initCanvas();
+	        this.updateSample();
+	        this.addEvent();
+	    },
+	    addEvent: function () {
+	        this.pickerRG.addEventListener('click', this.pickRGEvent, false);
+	        this.pickerB.addEventListener('click', this.pickBEvent, false);
+	        this.pickerB.addEventListener('mouseover', this.overBEvent, false);
+	        this.pickerB.addEventListener('mouseout', this.outBEvent, false);
+	    },
+	    initCanvas: function () {
+	        var gradient = this.RGCanvas.createLinearGradient(0, 0, this.pickerRG.width, 0);
+	        gradient.addColorStop(0, '#F00');
+	        gradient.addColorStop(0.2, '#FF0');
+	        gradient.addColorStop(0.4, '#0F0');
+	        gradient.addColorStop(0.6, '#0FF');
+	        gradient.addColorStop(0.8, '#00F');
+	        gradient.addColorStop(1, '#F0F');
+	        this.RGCanvas.fillStyle = gradient;
+	        this.RGCanvas.fillRect(0, 0, this.pickerRG.width, this.pickerRG.height);
+
+	        this.updateBCanvas('#F00');
+	    },
+	    getColorHex: function (r, g, b) {
+	        return '#' + this.colorHex[parseInt(r / 16)] + this.colorHex[r % 16] + this.colorHex[parseInt(g / 16)] + this.colorHex[g % 16] + this.colorHex[parseInt(b / 16)] + this.colorHex[b % 16];
+	    },
+	    updateSample: function () {
+	        this.sample.style.backgroundColor = this.currentColor;
+	    },
+	    updateBCanvas: function (color) {
+	        var gradient = this.BCanvas.createLinearGradient(0, 0, this.pickerB.width, 0);
+	        gradient.addColorStop(0, '#FFFFFF');
+	        gradient.addColorStop(1, color);
+	        this.BCanvas.fillStyle = gradient;
+	        this.BCanvas.fillRect(0, 0, this.pickerB.width, this.pickerB.height);
+	    },
+	    updateWatcher: function (color, x, y) {
+	        this.watcher.style.backgroundColor = color;
+	        this.watcher.style.left = x + 'px';
+	        this.watcher.style.top = y - parseInt(this.watcher.height) + 'px';
+	    }
+	};
+
+	module.exports = ColorPicker;
+
+/***/ },
+/* 216 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(217);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(204)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(203)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".color-picker {\n    position: relative;\n}\n\n.color-picker canvas {\n\tmargin: 5px;\n}\n\n.color-picker canvas:hover {\n    cursor: pointer;\n}\n\n.color-picker .color-sample {\n    display: inline-block;\n    position: absolute;\n    height: 40px;\n    width: 40px;\n    margin: 5px;\n}\n\n.color-picker .color-watcher {\n\tposition: fixed;\n\tborder-radius: 50%;\n\tdisplay: none;\n\tleft: 0px;\n\ttop: 0px;\n\twidth: 40px;\n\theight: 40px;\n\tz-index: 3;\n}", ""]);
 
 	// exports
 

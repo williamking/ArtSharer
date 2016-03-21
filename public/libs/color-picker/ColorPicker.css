@@ -1,0 +1,30 @@
+.color-picker {
+    position: relative;
+}
+
+.color-picker canvas {
+	margin: 5px;
+}
+
+.color-picker canvas:hover {
+    cursor: pointer;
+}
+
+.color-picker .color-sample {
+    display: inline-block;
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    margin: 5px;
+}
+
+.color-picker .color-watcher {
+	position: fixed;
+	border-radius: 50%;
+	display: none;
+	left: 0px;
+	top: 0px;
+	width: 40px;
+	height: 40px;
+	z-index: 3;
+}
