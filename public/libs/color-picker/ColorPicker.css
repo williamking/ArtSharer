@@ -3,7 +3,9 @@
 }
 
 .color-picker canvas {
-	margin: 5px;
+	margin-left: 5px;
+    position: relative;
+    top: 5px;
 }
 
 .color-picker canvas:hover {
@@ -13,9 +15,10 @@
 .color-picker .color-sample {
     display: inline-block;
     position: absolute;
-    height: 40px;
-    width: 40px;
-    margin: 5px;
+    height: 20px;
+    width: 20px;
+    margin-left: 5px;
+    top: 5px;
 }
 
 .color-picker .color-watcher {
@@ -24,7 +27,7 @@
 	display: none;
 	left: 0px;
 	top: 0px;
-	width: 40px;
-	height: 40px;
+	width: 20px;
+	height: 20px;
 	z-index: 3;
 }

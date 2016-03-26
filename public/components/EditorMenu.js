@@ -29,7 +29,9 @@ var EditorMenu = React.createClass({
                     <ImageButton size={this.props.height} name='huitui' handleClick={this.props.handleClick['turnback']}/>
                     <FilterMenu filterItems={this.props.filterItems} handleImageFilter={this.props.handleImageFilter} />
                 </div>
-                <ButtonState buttonName="text" editor={this.props.editor} updateTextState={this.props.updateTextState} handleTextChange={this.props.handleTextChange} />
+                <ButtonState tool={this.props.tool} editor={this.props.editor} updateTextState={this.props.updateTextState} handleTextChange={this.props.handleTextChange}
+                textColorListener={this.props.textColorListener} updatePenState={this.props.updatePenState} 
+                updateEraserState={this.props.updateEraserState} />
             </div>
         );
     },

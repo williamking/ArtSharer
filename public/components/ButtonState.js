@@ -1,134 +1,39 @@
 var React = require("react");
 var ColorPicker = require("../libs/color-picker/ColorPicker.js");
+var TextState = require("./TextState.js");
+var PenState = require("./PenState.js");
+var EraserState = require("./EraserState.js");
 require("../libs/color-picker/ColorPicker.css");
 
 var ButtonState = React.createClass({
 
-    getInitialState: function() {
-        return {
-            textValue: '',
-            fontSize: 5,
-            fontStyle: 'normal',
-            fontFamily: 'sans-serif'
-        };
-    },
-
-    componentDidMount: function() {
-        var editor = this;
-        var sizeFunc = function(that) {
-            return function(value, text) {
-                var state = that.state;
-                state.fontSize = value;
-                that.setState(state);
-                that.handleTextUpdate();
-            };
-        }(this);
-
-        var styleFunc = function(that) {
-            return function(value, text) {
-                var state = that.state;
-                state.fontStyle = value;
-                that.setState(state);
-                that.handleTextUpdate();
-            };
-        }(this);
-
-        var familyFunc = function(that) {
-            return function(value, text) {
-                var state = that.state;
-                state.fontFamily = value;
-                console.log(value);
-                that.setState(state);
-                that.handleTextUpdate();
-            };
-        }(this);
-
-        if (this.props.buttonName == 'text') {
-            $("#font-size").dropdown({
-                onChange: sizeFunc
-            });
-            $("#font-style").dropdown({
-                onChange: styleFunc
-            });
-            $("#font-family").dropdown({
-                onChange: familyFunc
-            });
-            this.colorPicker.addTo(document.getElementById('color-picker'));
-        }
-    },
-
-    colorPicker: new ColorPicker.RGB_picker(30, 60),
-
-    handleTextUpdate: function() {
-        this.props.updateTextState(this.state.fontStyle, this.state.fontSize, this.state.fontFamily);
-    },
-
-    fontSize: [5, 7, 10, 14, 20, 28, 32],
-
-    fontStyle: ['normal', 'italic', 'oblique'],
-
-    fontFamily: ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'],
-
-    handleTextChange: function(e) {
-        var state = this.state;
-        state.textValue = e.target.value;
-        this.setState(state);
-        this.props.handleTextChange(this.props.editor, this.state.textValue, this);
-    },
-
-    clearText: function() {
-        this.setState({
-            textValue: ''
-        });
-    },
-
     render: function() {
-        if (this.props.buttonName == 'text') {
-            var that = this;
-            var sizes = this.fontSize.map(function(size, key) {
-                return (<div className="item font-size" key={key} data-value={size} >{size + 'px'}</div>);
-            });
-            var styles = this.fontStyle.map(function(font, key) {
-                return (<div className="item font-style" key={key} data-value={font} >{font}</div>);
-            });
-            var families = this.fontFamily.map(function(family, key) {
-                return (<div className="item font-family" key={key} data-value={family} >{family}</div>);
-            });
-            var value = this.state.textValue;
+        if (this.props.tool == 'text') {
             return(
-                <div id="button-state">
-                <div className="ui input" id="text-input">
-                    <input type='text' placeholder='Text content...' value={value} onChange={this.handleTextChange}></input>
-                </div>
-                <div className="ui dropdown filter-menu" id="font-size">
-                    <div className="text">Text Size</div>
-                    <i className="dropdown icon"></i>
-                    <div className="menu">
-                        {sizes}
-                    </div>
-                </div>
-                <div className="ui dropdown filter-menu" id="font-style">
-                    <div className="text">Text Font</div>
-                    <i className="dropdown icon"></i>
-                    <div className="menu">
-                        {styles}
-                    </div>
-                </div>
-                <div className="ui dropdown filter-menu" id="font-family">
-                    <div className="text">Text Family</div>
-                    <i className="dropdown icon"></i>
-                    <div className="menu">
-                        {families}
-                    </div>
-                </div>
-                <div id="color-picker" style={{display: inline-block}}></div>
+                <div className="text-state button-state">
+                    <TextState editor={this.props.editor} updateTextState={this.props.updateTextState} handleTextChange={this.props.handleTextChange}
+                    textColorListener={this.props.textColorListener} />
                 </div>
             );
-        } else {
-            return (
-                <div></div>
+        }
+        if (this.props.tool == 'pen') {
+            return(
+                <div className="pen-state button-state">
+                    <PenState updatePenState={this.props.updatePenState} />
+                </div>
             );
         };
+        if (this.props.tool == 'eraser') {
+            return(
+                <div className="eraser-state button-state">
+                    <EraserState updateEraserState={this.props.updateEraserState} />
+                </div>
+            );
+        }
+        return (
+            <div className="other">
+            </div>
+        );
     }
 
 });

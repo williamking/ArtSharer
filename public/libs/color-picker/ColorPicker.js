@@ -12,7 +12,7 @@ function windowTocanvas(canvas, x, y) {
 }
 
 var ColorPicker =   {
-    RGB_picker: function() {
+    RGB_picker: function(width, height) {
 	    this.pickerRG = document.createElement("canvas");
 	    this.pickerB = document.createElement("canvas");
 	    this.dom = document.createElement("div");
@@ -78,12 +78,17 @@ var ColorPicker =   {
                 var loc = windowTocanvas(that.pickerB, e.clientX, e.clientY);
                 var colorData = that.BCanvas.getImageData(loc.x, loc.y, 1, 1);
                 that.currentColor = that.getColorHex(colorData.data[0], colorData.data[1], colorData.data[2]);
-
+                var index;
+                for (index = 0; index < that.events.length; ++index) {
+                    that.events[index](that.currentColor);
+                }
                 that.updateSample();
             };
         })(this);
 
-        this.init();
+        this.events = [];
+
+        this.init(height, width);
     }   
 }
 
@@ -124,6 +129,9 @@ ColorPicker.RGB_picker.prototype = {
         return '#' + this.colorHex[parseInt(r / 16)] + this.colorHex[r % 16] +  this.colorHex[parseInt(g / 16)] + this.colorHex[g % 16]
         + this.colorHex[parseInt(b / 16)] + this.colorHex[b % 16];
     },
+    getCurrentColor: function() {
+        return this.currentColor;
+    },
     updateSample: function() {
         this.sample.style.backgroundColor = this.currentColor;
     },
@@ -138,6 +146,9 @@ ColorPicker.RGB_picker.prototype = {
         this.watcher.style.backgroundColor = color;
         this.watcher.style.left = x + 'px';
         this.watcher.style.top = (y - parseInt(this.watcher.height)) + 'px';
+    },
+    listen: function(listener) {
+        this.events.push(listener);
     }
 }
 

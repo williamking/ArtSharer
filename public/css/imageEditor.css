@@ -36,8 +36,8 @@
     flex: 1;
 }
 
-.editor-menu #button-state {
-    flex: 1;
+.editor-menu .button-state {
+    flex: 1.2;
 }
 
 .filter-menu {
@@ -49,3 +49,4 @@
 #button-state {
     padding-top: 4px;
 }
+

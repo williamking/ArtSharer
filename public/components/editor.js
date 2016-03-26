@@ -77,7 +77,9 @@ var ImageEditor = React.createClass({
             <div className="image-editor" style={divStyle} >
                 <EditorMenu width={surfaceWidth} height={surfaceHeight * 0.05} events={this.editEvents} setInput={this.setInput}
                 updateTextState={this.setTextState} handleTextChange = {this.handleTextChange} editor={this}
-                filterItems={this.props.filterItems} handleImageFilter={this.handleImageFilter} handleClick={handleClick} />
+                filterItems={this.props.filterItems} handleImageFilter={this.handleImageFilter} handleClick={handleClick}
+                textColorListener={this.getTextColor} tool={this.state.tool}
+                updatePenState={this.setPenState} updateEraserState={this.setEraserState} />
                 <EditorCanvas width={surfaceWidth} height={surfaceHeight * 0.95} image={this.state.image} imageOnload={this.setInitState} ref='canvas' />
             </div>
         );
@@ -103,13 +105,33 @@ var ImageEditor = React.createClass({
     },
 
     onLeaveTool: {
-        pen: function() {},
+        pen: function(editor) {
+            editor.handleMouseDown = function() {};
+            editor.handleDragging = function() {};
+            editor.handleMouseUp = function() {};
+        },
         select: function(editor) {
             editor.canvas.style.cursor = 'default';
             editor.restoreFromCache();
             editor.handleMouseDown = function() {};
             editor.handleDragging = function() {};
             editor.handleMouseUp = function() {};
+        },
+        eraser: function(editor) {
+            editor.canvas.style.cursor = 'default';
+            editor.handleMouseDown = function() {};
+            editor.handleDragging = function() {};
+            editor.handleMouseUp = function() {};
+        },
+        text: function(editor) {
+            editor.canvas.style.cursor = 'default';
+            editor.handleMouseDown = function() {};
+            editor.handleDragging = function() {};
+            editor.handleMouseUp = function() {};
+            if (editor.textState.blinkingInterval != null) {
+                editor.restoreFromTextCache();
+                clearInterval(editor.textState.blinkingInterval);
+            }
         }
     },
 
@@ -266,6 +288,7 @@ var ImageEditor = React.createClass({
         this.saveToCache();
         this.initEraserState();
         this.handleMouseDown = function(e) {
+            this.restoreFromCache();
             this.saveState();
             var loc = this.windowToCanvas(e.clientX, e.clientY);
             this.saveToCache();
@@ -300,6 +323,10 @@ var ImageEditor = React.createClass({
         }
     },
 
+    setEraserState: function(name ,value) {
+        this.eraserState[name] = value;
+    },
+
     eraseLast: function() {
         var context = this.canvas.getContext('2d');
         context.save();
@@ -331,11 +358,15 @@ var ImageEditor = React.createClass({
         this.saveToCache();
         this.initDrawingState();
         this.handleMouseDown = function(e) {
+            this.restoreFromCache();
             this.saveState();
             var loc = this.windowToCanvas(e.clientX, e.clientY);
+            this.drawPen(loc);
             this.saveToCache();
             this.drawingState.pos.x = loc.x;
             this.drawingState.pos.y = loc.y;
+            this.drawingState.startPoint.x = loc.x;
+            this.drawingState.startPoint.y = loc.y;
         }
         this.handleMouseMove = function(e) {
             var loc = this.windowToCanvas(e.clientX, e.clientY);
@@ -346,30 +377,47 @@ var ImageEditor = React.createClass({
         }
         this.handleDragging = function(e) {
             var loc = this.windowToCanvas(e.clientX, e.clientY);
+            if (!this.drawingState.on) {
+                this.drawingState.on = true;
+                this.drawingState.pos.x = this.drawingState.startPoint.x;
+                this.drawingState.pos.y = this.drawingState.startPoint.y;
+           }
             this.drawPath(loc);
             this.saveToCache();
         },
         this.handleMouseUp = function(e) {
             var loc = this.windowToCanvas(e.clientX, e.clientY);
             this.saveToCache();
+            this.drawingState.on = false;
         }
     },
     
     initDrawingState: function() {
         this.drawingState = {
             color: 'black',
-            width: 4,
+            size: 4,
+            on: false,
             pos: {
+                x: 0,
+                y: 0
+            },
+            startPoint: {
                 x: 0,
                 y: 0
             }
         }
     },
 
+    setPenState: function(name, value) {
+        this.drawingState[name] = value;
+        console.log(name + ' update');
+    },
+
     drawPen: function(loc) {
         var context = this.canvas.getContext('2d');
-        var width = this.drawingState.width;
+        var width = this.drawingState.size;
         context.save();
+        context.fillStyle = this.drawingState.color;
         context.beginPath();
         context.arc(loc.x, loc.y, width/2, 0, Math.PI * 2, false);
         context.fill();
@@ -378,11 +426,11 @@ var ImageEditor = React.createClass({
 
     drawPath: function(loc) {
         var context = this.canvas.getContext('2d');
-        var width = this.drawingState.width;
+        var width = this.drawingState.size;
         var pos = this.drawingState.pos;
         context.save();
         context.strokeStyle = this.drawingState.color;
-        context.lineWidth = this.drawingState.width;
+        context.lineWidth = width;
         context.beginPath();
         context.moveTo(pos.x, pos.y);
         context.lineTo(loc.x, loc.y);
@@ -401,7 +449,8 @@ var ImageEditor = React.createClass({
             pos: {},
             blinkingInterval: null,
             cache: null,
-            input: null
+            input: null,
+            textColor: '#000'
         };
         this.saveToCache();
         this.saveToTextCache();
@@ -447,6 +496,7 @@ var ImageEditor = React.createClass({
     },
 
     drawTextCursor: function() {
+        if (this.state.tool != 'text') return;
         var context = this.canvas.getContext('2d');
         context.save();
         context.fillStyle = 'rgba(0, 0, 0, 0.5)'; 
@@ -463,16 +513,26 @@ var ImageEditor = React.createClass({
         this.textState.textFont = textFont;
         var context = this.canvas.getContext('2d');
         context.font = textStyle + ' ' + textSize + 'px ' + textFont;
-        console.log(context.font);
         this.handleTextChange(this, this.textState.textValue, this.textState.input);
+        $("#text-input").find("input").focus();
+    },
+
+    getTextColor: function(textColor) {
+        this.textState.textColor = textColor;
+        this.handleTextChange(this, this.textState.textValue, this.textState.input);
+        $("#text-input").find("input").focus();
     },
 
     handleTextChange: function(that, text, input) {
         that.textState.textValue = text;
         that.restoreFromCache();
         var context = that.canvas.getContext('2d');
+        context.save();
+        context.fillStyle = that.textState.textColor;
+        console.log(that.textState.textColor);
         context.textBaseline = 'hanging';
         context.fillText(text, that.textState.pos.x, that.textState.pos.y);
+        context.restore();
         that.saveToTextCache();
         that.textState.input = input;
     },
@@ -533,7 +593,6 @@ var ImageEditor = React.createClass({
         } else {
             this.selectState.selected = true;
         }
-        input.clearText();
         this.selectState.selectData = context.getImageData(rubberBand.left, rubberBand.top,
         rubberBand.width, rubberBand.height);
         var retCanvas = document.createElement('canvas');
