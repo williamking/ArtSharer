@@ -8,5 +8,7 @@ exports.handleSignIn = function(req, res) {
 };
 
 exports.showPersonalCenter = function(req, res) {
-	res.render("personalCenter");
+	res.render("personalCenter", {
+		username: "XiaoMing"
+	});
 };

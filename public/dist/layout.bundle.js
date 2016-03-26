@@ -19703,7 +19703,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n#header .menu {\n    height: 50px;\n}\n\n#footer {\n    /*width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;*/\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
+	exports.push([module.id, "body {\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n#header .menu {\n    height: 50px;\n    background: #eeeeee;\n}\n\n#footer {\n    /*width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;*/\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
 
 	// exports
 

@@ -51,17 +51,30 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
+
 	__webpack_require__(163);
 
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
-	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("h2", { className: "ui header" }, "My Profile"), React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("div", { className: "ui ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "user icon" }), React.createElement("div", { className: "content" }, "User Name")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, "user_name@qq.com")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, "https://github.com"))));
+	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("h2", { className: "ui header" }, React.createElement("div", { className: "content" }, username)), React.createElement("hr", null), React.createElement("div", { className: "ui relaxed ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "user_name@qq.com"))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { className: "ui two column grid" }, React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "20 Followers")), React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "34 Following"))));
+	    }
+	});
+
+	var ArtworkItem = React.createClass({ displayName: "ArtworkItem",
+	    render: function () {
+	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "image" }, React.createElement("img", { className: "ui bordered rounded centered image", src: "/imgs/avatar.gif" })), React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, "My Artwork"), React.createElement("div", { className: "description" }, "Artwork Description Here")), React.createElement("div", { className: "extra content" }, React.createElement("span", { className: "left floated" }, React.createElement("span", { className: "ui label" }, "20"), React.createElement("i", { className: "star icon" }), React.createElement("a", null, "Star")), React.createElement("span", { className: "right floated" }, React.createElement("span", { className: "ui label" }, "15"), React.createElement("i", { className: "fork icon" }), React.createElement("a", null, "Fork"))));
+	    }
+	});
+
+	var ArtworkPanel = React.createClass({ displayName: "ArtworkPanel",
+	    render: function () {
+	        return React.createElement("div", { className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Artwork List"), React.createElement("div", { className: "ui three stackable cards" }, React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null)));
 	    }
 	});
 
 	$(function () {
 	    ReactDOM.render(React.createElement(UserInfo, null), $("#left-side")[0], null);
-	    ReactDOM.render(React.createElement(UserInfo, null), $("#right-side")[0], null);
+	    ReactDOM.render(React.createElement(ArtworkPanel, null), $("#right-side")[0], null);
 	});
 
 /***/ },
