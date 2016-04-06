@@ -712,6 +712,6 @@ window.onload = function() {
         <div>
             <ImageEditor width={1200} height={800} src="/imgs/test.jpg" filterItems={FILTERS}/>,
         </div>,
-        document.getElementById("main")
+        document.getElementById("image-editor")
     );
 }();
