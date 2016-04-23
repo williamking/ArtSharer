@@ -20,21 +20,34 @@
   },
   "homepage": "https://github.com/WarpPrism/ArtSharer#readme",
   "dependencies": {
+    "body-parser": "^1.15.0",
+    "cookie-parser": "^1.4.1",
+    "css-layout": "^1.1.1",
     "express": "^4.13.4",
+    "express-fileupload": "0.0.4",
+    "express-session": "^1.13.0",
+    "formidable": "^1.0.17",
+    "fs": "0.0.2",
     "jade": "^1.11.0",
+    "mongoose": "^4.4.10",
+    "multer": "^1.1.0",
     "path": "^0.12.7",
     "react": "^0.14.7",
+    "react-canvas": "^1.1.0",
     "react-dom": "^0.14.7"
   },
   "devDependencies": {
     "babel-loader": "^6.2.2",
     "babel-preset-react": "^6.3.13",
     "css-loader": "^0.23.1",
+    "brfs": "^1.4.3",
+    "file-loader": "^0.8.5",
     "gulp": "^3.9.1",
     "gulp-livereload": "^3.8.1",
     "gulp-webpack": "^1.5.0",
     "jsx-loader": "^0.13.2",
     "style-loader": "^0.13.0",
+    "transform-loader": "^0.2.3",
     "webpack": "^1.12.13"
   }
 }

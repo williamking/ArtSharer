@@ -50,63 +50,196 @@
 	var ReactDOM = __webpack_require__(161);
 	__webpack_require__(166);
 
-	var UserNameField = React.createClass({ displayName: "UserNameField",
-		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "user icon" }), React.createElement("input", { id: "account_field", type: "text", name: "username", placeholder: "User Name" })));
-		}
+	var LogoHeader = React.createClass({ displayName: "LogoHeader",
+	    render: function () {
+	        return React.createElement("h2", { className: "ui blue image header" }, React.createElement("img", { className: "image", src: this.props.src, alt: this.props.alt }), React.createElement("div", { className: "content" }, this.props.content));
+	    }
+	});
+
+	var EmailField = React.createClass({ displayName: "EmailField",
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#email").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "email field" + this.state.ifError }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "mail icon" }), React.createElement("input", { id: "email", type: "text", name: "email", placeholder: "E-mail Address", onChange: this.handleChange })));
+	    }
+	});
+
+	var UsernameField = React.createClass({ displayName: "UsernameField",
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#username").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "username field" + this.state.ifError }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "user icon" }), React.createElement("input", { id: "username", type: "text", name: "username", placeholder: "User Name", onChange: this.handleChange })));
+	    }
 	});
 
 	var PasswordField = React.createClass({ displayName: "PasswordField",
-		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "lock icon" }), React.createElement("input", { id: "password_field", type: "password", name: "password", placeholder: "Password" })));
-		}
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#password").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "password field" + this.state.ifError }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "lock icon" }), React.createElement("input", { id: "password", type: "password", name: "password", placeholder: "Password", onChange: this.handleChange })));
+	    }
 	});
 
-	var LogoHeader = React.createClass({ displayName: "LogoHeader",
-		render: function () {
-			return React.createElement("h2", { className: "ui blue image header" }, React.createElement("img", { className: "image", src: this.props.src, alt: this.props.alt }), React.createElement("div", { className: "content" }, this.props.content));
-		}
+	var DescriptionField = React.createClass({ displayName: "DescriptionField",
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#description").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "description field" + this.state.ifError }, React.createElement("textarea", { id: "description", name: "description", rows: "2", placeholder: "Description of Yourself", onChange: this.handleChange }));
+	    }
 	});
 
-	var SignInView = React.createClass({ displayName: "SignInView",
-		getInitialState: function () {
-			return {
-				btnState: ""
-			};
-		},
-		componentDidMount: function () {
-			$('#form').form({
-				fields: {
-					username: {
-						identifier: 'username',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your username'
-						}]
-					},
-					password: {
-						identifier: 'password',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your password'
-						}]
-					}
-				}
-			});
-		},
-		handleSubmit: function (event) {
+	var SignUpView = React.createClass({ displayName: "SignUpView",
+	    getInitialState: function () {
+	        return {
+	            btnState: ""
+	        };
+	    },
+	    componentDidMount: function () {
+	        $('#form').form({
+	            fields: {
+	                email: {
+	                    identifier: 'email',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your email'
+	                    }, {
+	                        type: 'email',
+	                        prompt: 'Your email is not valid'
+	                    }]
+	                },
+	                username: {
+	                    identifier: 'username',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your username'
+	                    }]
+	                },
+	                password: {
+	                    identifier: 'password',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your password'
+	                    }, {
+	                        type: "length[6]",
+	                        prompt: "Your password's length is less than 6"
+	                    }]
+	                },
+	                description: {
+	                    identifier: 'description',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your description'
+	                    }]
+	                }
+	            }
+	        });
+	    },
+	    handleSubmit: function (event) {
+	        console.log(event);
+	        event.preventDefault();
+	        if (!event.isDefaultPrevented()) {
+	            event.preventDefault();
+	        }
+	        var form = $("#form");
+	        var username = $("#username").val();
+	        var password = $("#password").val();
+	        var email = $("#email").val();
+	        var description = $("#description").val();
 
-			if (!$("#form").hasClass("error")) {
-				this.setState({ btnState: " disabled loading" });
-			}
-		},
-		render: function () {
-			return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Sign In To Your Account" }), React.createElement("form", { id: "form", method: "POST", action: "/handle_login", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(UserNameField, null), React.createElement(PasswordField, null), React.createElement("div", { className: "ui fluid large blue submit button" + this.state.btnState, onClick: this.handleSubmit }, "Sign In")), React.createElement("div", { className: "ui error message" }, React.createElement("ul", { className: "list" }))), React.createElement("div", { className: "ui message" }, "New to us? ", React.createElement("a", { href: "/signup" }, "Sign Up")));
-		}
+	        form.addClass("error");
+	        if (username == "") {
+	            $(".username.field").addClass("error");
+	        }
+	        if (password == "") {
+	            $(".password.field").addClass("error");
+	        }
+	        if (email == "") {
+	            $(".email.field").addClass("error");
+	        }
+	        if (description == "") {
+	            $(".description.field").addClass("error");
+	        }
+	        if (!(username == "" || password == "" || email == "" || description == "")) {
+	            form.removeClass("error");
+	        }
+
+	        if (!form.hasClass("error")) {
+	            this.setState({ btnState: " disabled loading" });
+
+	            $.ajax({
+	                type: "POST",
+	                async: true,
+	                url: "/handle_sign_up",
+	                data: {
+	                    username: username,
+	                    password: password,
+	                    email: email,
+	                    description: description
+	                },
+	                success: function (data) {
+	                    if (data == "OK") {
+	                        console.log("Sign Up Success!");
+	                        $(".ui.blue.button").removeClass("disabled loading");
+	                    } else {
+	                        console.log("Error");
+	                    }
+	                },
+	                error: function (xhr) {
+	                    console.log(xhr);
+	                    alert(xhr.status + ": " + xhr.responseText);
+	                    $(".ui.blue.button").removeClass("disabled loading");
+	                }
+	            });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Create Your Account" }), React.createElement("form", { id: "form", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(EmailField, null), React.createElement(UsernameField, null), React.createElement(PasswordField, null), React.createElement(DescriptionField, null), React.createElement("div", { className: "ui fluid large blue button" + this.state.btnState, onClick: this.handleSubmit }, "Sign Up")), React.createElement("div", { className: "" }, React.createElement("ul", { className: "list" }))));
+	    }
 	});
 
 	$(function () {
-		ReactDOM.render(React.createElement(SignInView, null), $("#wrapper")[0], null);
+
+	    ReactDOM.render(React.createElement(SignUpView, null), $("#wrapper")[0], null);
 	});
 
 /***/ },

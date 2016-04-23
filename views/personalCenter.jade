@@ -1,0 +1,14 @@
+//
+   Created by zhoujihao on 16-3-21.
+extends ./layout
+
+block page-head
+   script(type="text/javascript").
+      var username = "#{username}";
+
+block content
+   .ui.two.column.grid#wrapper
+      .four.wide.column#left-side
+      .twelve.wide.column#right-side
+block page-script
+   script(src="/dist/personal_center.bundle.js")

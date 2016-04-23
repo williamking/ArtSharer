@@ -2,28 +2,17 @@
 
 var React = require("react");
 var ReactDOM = require("react-dom");
-require("../css/signin.css");
+require("../css/sign_in.css");
 
-var AccountField = React.createClass({
-	getInitialState: function() {
-		return {
-			value: ""
-		}
-	},
-	handleChange: function(event) {
-		this.setState({
-			value: event.target.value
-		})
-	},
+var UserNameField = React.createClass({
 	render: function() {
-		var value = this.state.value;
 		return (
 			<div className="field">
 				<div className="ui left icon input">
 					<i className="user icon" />
-					<input id="account_field" type="text" name="email" placeholder="E-mail Address" onChange={this.handleChange} value={value}/>
+					<input id="account_field" type="text" name="username" placeholder="User Name" />
 				</div>
-				<div className="ui message">Account: {value}</div>
+
 			</div>
 		);
 	}
@@ -62,16 +51,12 @@ var SignInView = React.createClass({
 	componentDidMount: function() {
 		$('#form').form({
 			fields: {
-				email: {
-					identifier	: 'email',
+				username: {
+					identifier	: 'username',
 					rules: [
 						{
 							type   : 'empty',
-							prompt : 'Please enter your e-mail'
-						},
-						{
-							type   : 'email',
-							prompt : 'Please enter a valid e-mail'
+							prompt : 'Please enter your username'
 						}
 					]
 				},
@@ -81,10 +66,6 @@ var SignInView = React.createClass({
 						{
 							type   : 'empty',
 							prompt : 'Please enter your password'
-						},
-						{
-							type   : 'length[6]',
-							prompt : 'Your password must be at least 6 characters'
 						}
 					]
 				}
@@ -101,9 +82,9 @@ var SignInView = React.createClass({
 		return (
 			<div className="column" >
 				<LogoHeader src="/imgs/favicon.png" alt="logo" content="Sign In To Your Account" />
-				<form id="form" method="POST" action="/handle_sign_in" className="ui large form">
+				<form id="form" method="POST" action="/handle_login" className="ui large form">
 					<div className="ui stacked segment">
-						<AccountField />
+						<UserNameField />
 						<PasswordField />
 						<div className={"ui fluid large blue submit button" + this.state.btnState} onClick={this.handleSubmit}>
 						Sign In
@@ -116,15 +97,13 @@ var SignInView = React.createClass({
 				</form>
 				<div className="ui message">
 					New to us?&nbsp;
-					<a href="#">Sign Up</a>
+					<a href="/signup">Sign Up</a>
 				</div>
 			</div>
 		);
 	}
 });
 
-
-
-window.onload = function() {
-	ReactDOM.render(<SignInView />, $("#wrapper")[0]);
-}();
+$(function() {
+	ReactDOM.render(<SignInView />, $("#wrapper")[0], null);
+});

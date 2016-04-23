@@ -44,69 +44,37 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Created by zhoujihao on 16-3-21.
+	 */
 	"use strict";
 
 	var React = __webpack_require__(4);
 	var ReactDOM = __webpack_require__(161);
-	__webpack_require__(166);
 
-	var UserNameField = React.createClass({ displayName: "UserNameField",
-		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "user icon" }), React.createElement("input", { id: "account_field", type: "text", name: "username", placeholder: "User Name" })));
-		}
+	__webpack_require__(164);
+
+	var UserInfo = React.createClass({ displayName: "UserInfo",
+	    render: function () {
+	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("h2", { className: "ui header" }, React.createElement("div", { className: "content" }, username)), React.createElement("hr", null), React.createElement("div", { className: "ui relaxed ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "user_name@qq.com"))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { className: "ui two column grid" }, React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "20 Followers")), React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "34 Following"))));
+	    }
 	});
 
-	var PasswordField = React.createClass({ displayName: "PasswordField",
-		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "lock icon" }), React.createElement("input", { id: "password_field", type: "password", name: "password", placeholder: "Password" })));
-		}
+	var ArtworkItem = React.createClass({ displayName: "ArtworkItem",
+	    render: function () {
+	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "image" }, React.createElement("img", { className: "ui bordered rounded centered image", src: "/imgs/avatar.gif" })), React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, "My Artwork"), React.createElement("div", { className: "description" }, "Artwork Description Here")), React.createElement("div", { className: "extra content" }, React.createElement("span", { className: "left floated" }, React.createElement("span", { className: "ui label" }, "20"), React.createElement("i", { className: "star icon" }), React.createElement("a", null, "Star")), React.createElement("span", { className: "right floated" }, React.createElement("span", { className: "ui label" }, "15"), React.createElement("i", { className: "fork icon" }), React.createElement("a", null, "Fork"))));
+	    }
 	});
 
-	var LogoHeader = React.createClass({ displayName: "LogoHeader",
-		render: function () {
-			return React.createElement("h2", { className: "ui blue image header" }, React.createElement("img", { className: "image", src: this.props.src, alt: this.props.alt }), React.createElement("div", { className: "content" }, this.props.content));
-		}
-	});
-
-	var SignInView = React.createClass({ displayName: "SignInView",
-		getInitialState: function () {
-			return {
-				btnState: ""
-			};
-		},
-		componentDidMount: function () {
-			$('#form').form({
-				fields: {
-					username: {
-						identifier: 'username',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your username'
-						}]
-					},
-					password: {
-						identifier: 'password',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your password'
-						}]
-					}
-				}
-			});
-		},
-		handleSubmit: function (event) {
-
-			if (!$("#form").hasClass("error")) {
-				this.setState({ btnState: " disabled loading" });
-			}
-		},
-		render: function () {
-			return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Sign In To Your Account" }), React.createElement("form", { id: "form", method: "POST", action: "/handle_login", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(UserNameField, null), React.createElement(PasswordField, null), React.createElement("div", { className: "ui fluid large blue submit button" + this.state.btnState, onClick: this.handleSubmit }, "Sign In")), React.createElement("div", { className: "ui error message" }, React.createElement("ul", { className: "list" }))), React.createElement("div", { className: "ui message" }, "New to us? ", React.createElement("a", { href: "/signup" }, "Sign Up")));
-		}
+	var ArtworkPanel = React.createClass({ displayName: "ArtworkPanel",
+	    render: function () {
+	        return React.createElement("div", { className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Artwork List"), React.createElement("div", { className: "ui three stackable cards" }, React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null)));
+	    }
 	});
 
 	$(function () {
-		ReactDOM.render(React.createElement(SignInView, null), $("#wrapper")[0], null);
+	    ReactDOM.render(React.createElement(UserInfo, null), $("#left-side")[0], null);
+	    ReactDOM.render(React.createElement(ArtworkPanel, null), $("#right-side")[0], null);
 	});
 
 /***/ },
@@ -20022,15 +19990,13 @@
 /***/ },
 /* 162 */,
 /* 163 */,
-/* 164 */,
-/* 165 */,
-/* 166 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(167);
+	var content = __webpack_require__(165);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -20039,8 +20005,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./sign_in.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./sign_in.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./personal_center.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./personal_center.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20050,7 +20016,7 @@
 	}
 
 /***/ },
-/* 167 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(2)();
@@ -20058,7 +20024,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
+	exports.push([module.id, "#wrapper {\n    margin-top: 70px;\n    margin-bottom: 40px;\n    padding: 10px;\n}", ""]);
 
 	// exports
 
