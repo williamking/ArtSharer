@@ -44,37 +44,202 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * Created by zhoujihao on 16-3-21.
-	 */
 	"use strict";
 
 	var React = __webpack_require__(4);
 	var ReactDOM = __webpack_require__(161);
+	__webpack_require__(166);
 
-	__webpack_require__(164);
-
-	var UserInfo = React.createClass({ displayName: "UserInfo",
+	var LogoHeader = React.createClass({ displayName: "LogoHeader",
 	    render: function () {
-	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("h2", { className: "ui header" }, React.createElement("div", { className: "content" }, username)), React.createElement("hr", null), React.createElement("div", { className: "ui relaxed ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "user_name@qq.com"))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { className: "ui two column grid" }, React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "20 Followers")), React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "34 Following"))));
+	        return React.createElement("h2", { className: "ui blue image header" }, React.createElement("img", { className: "image", src: this.props.src, alt: this.props.alt }), React.createElement("div", { className: "content" }, this.props.content));
 	    }
 	});
 
-	var ArtworkItem = React.createClass({ displayName: "ArtworkItem",
+	var EmailField = React.createClass({ displayName: "EmailField",
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#email").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
 	    render: function () {
-	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "image" }, React.createElement("img", { className: "ui bordered rounded centered image", src: "/imgs/avatar.gif" })), React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, "My Artwork"), React.createElement("div", { className: "description" }, "Artwork Description Here")), React.createElement("div", { className: "extra content" }, React.createElement("span", { className: "left floated" }, React.createElement("span", { className: "ui label" }, "20"), React.createElement("i", { className: "star icon" }), React.createElement("a", null, "Star")), React.createElement("span", { className: "right floated" }, React.createElement("span", { className: "ui label" }, "15"), React.createElement("i", { className: "fork icon" }), React.createElement("a", null, "Fork"))));
+	        return React.createElement("div", { className: "email field" + this.state.ifError }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "mail icon" }), React.createElement("input", { id: "email", type: "text", name: "email", placeholder: "E-mail Address", onChange: this.handleChange })));
 	    }
 	});
 
-	var ArtworkPanel = React.createClass({ displayName: "ArtworkPanel",
+	var UsernameField = React.createClass({ displayName: "UsernameField",
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#username").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
 	    render: function () {
-	        return React.createElement("div", { className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Artwork List"), React.createElement("div", { className: "ui three stackable cards" }, React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null)));
+	        return React.createElement("div", { className: "username field" + this.state.ifError }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "user icon" }), React.createElement("input", { id: "username", type: "text", name: "username", placeholder: "User Name", onChange: this.handleChange })));
+	    }
+	});
+
+	var PasswordField = React.createClass({ displayName: "PasswordField",
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#password").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "password field" + this.state.ifError }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "lock icon" }), React.createElement("input", { id: "password", type: "password", name: "password", placeholder: "Password", onChange: this.handleChange })));
+	    }
+	});
+
+	var DescriptionField = React.createClass({ displayName: "DescriptionField",
+	    getInitialState: function () {
+	        return {
+	            ifError: ""
+	        };
+	    },
+	    handleChange: function (event) {
+	        if ($("#description").val() == "") {
+	            this.setState({ ifError: " error" });
+	        } else {
+	            this.setState({ ifError: "" });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "description field" + this.state.ifError }, React.createElement("textarea", { id: "description", name: "description", rows: "2", placeholder: "Description of Yourself", onChange: this.handleChange }));
+	    }
+	});
+
+	var SignUpView = React.createClass({ displayName: "SignUpView",
+	    getInitialState: function () {
+	        return {
+	            btnState: ""
+	        };
+	    },
+	    componentDidMount: function () {
+	        $('#form').form({
+	            fields: {
+	                email: {
+	                    identifier: 'email',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your email'
+	                    }, {
+	                        type: 'email',
+	                        prompt: 'Your email is not valid'
+	                    }]
+	                },
+	                username: {
+	                    identifier: 'username',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your username'
+	                    }]
+	                },
+	                password: {
+	                    identifier: 'password',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your password'
+	                    }, {
+	                        type: "length[6]",
+	                        prompt: "Your password's length is less than 6"
+	                    }]
+	                },
+	                description: {
+	                    identifier: 'description',
+	                    rules: [{
+	                        type: 'empty',
+	                        prompt: 'Please enter your description'
+	                    }]
+	                }
+	            }
+	        });
+	    },
+	    handleSubmit: function (event) {
+	        console.log(event);
+	        event.preventDefault();
+	        if (!event.isDefaultPrevented()) {
+	            event.preventDefault();
+	        }
+	        var form = $("#form");
+	        var username = $("#username").val();
+	        var password = $("#password").val();
+	        var email = $("#email").val();
+	        var description = $("#description").val();
+
+	        form.addClass("error");
+	        if (username == "") {
+	            $(".username.field").addClass("error");
+	        }
+	        if (password == "") {
+	            $(".password.field").addClass("error");
+	        }
+	        if (email == "") {
+	            $(".email.field").addClass("error");
+	        }
+	        if (description == "") {
+	            $(".description.field").addClass("error");
+	        }
+	        if (!(username == "" || password == "" || email == "" || description == "")) {
+	            form.removeClass("error");
+	        }
+
+	        if (!form.hasClass("error")) {
+	            this.setState({ btnState: " disabled loading" });
+
+	            $.ajax({
+	                type: "POST",
+	                async: true,
+	                url: "/handle_sign_up",
+	                data: {
+	                    username: username,
+	                    password: password,
+	                    email: email,
+	                    description: description
+	                },
+	                success: function (data) {
+	                    if (data == "OK") {
+	                        console.log("Sign Up Success!");
+	                        $(".ui.blue.button").removeClass("disabled loading");
+	                    } else {
+	                        console.log("Error");
+	                    }
+	                },
+	                error: function (xhr) {
+	                    console.log(xhr);
+	                    alert(xhr.status + ": " + xhr.responseText);
+	                    $(".ui.blue.button").removeClass("disabled loading");
+	                }
+	            });
+	        }
+	    },
+	    render: function () {
+	        return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Create Your Account" }), React.createElement("form", { id: "form", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(EmailField, null), React.createElement(UsernameField, null), React.createElement(PasswordField, null), React.createElement(DescriptionField, null), React.createElement("div", { className: "ui fluid large blue button" + this.state.btnState, onClick: this.handleSubmit }, "Sign Up")), React.createElement("div", { className: "" }, React.createElement("ul", { className: "list" }))));
 	    }
 	});
 
 	$(function () {
-	    ReactDOM.render(React.createElement(UserInfo, null), $("#left-side")[0], null);
-	    ReactDOM.render(React.createElement(ArtworkPanel, null), $("#right-side")[0], null);
+
+	    ReactDOM.render(React.createElement(SignUpView, null), $("#wrapper")[0], null);
 	});
 
 /***/ },
@@ -19990,13 +20155,15 @@
 /***/ },
 /* 162 */,
 /* 163 */,
-/* 164 */
+/* 164 */,
+/* 165 */,
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(165);
+	var content = __webpack_require__(167);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(3)(content, {});
@@ -20005,8 +20172,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./personal_center.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./personal_center.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./sign_in.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./sign_in.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20016,7 +20183,7 @@
 	}
 
 /***/ },
-/* 165 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(2)();
@@ -20024,7 +20191,7 @@
 
 
 	// module
-	exports.push([module.id, "#wrapper {\n    margin-top: 70px;\n    margin-bottom: 40px;\n    padding: 10px;\n}", ""]);
+	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
 
 	// exports
 

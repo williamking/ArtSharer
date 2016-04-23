@@ -20,7 +20,7 @@ var Header = React.createClass({
 				Personal Center
 			</a>
 			<div className="right menu">
-				<a className="ui item" href="/sign_in">
+				<a className="ui item" href="/login">
 					<i className="sign in icon"/>
 					Sign In
 				</a>

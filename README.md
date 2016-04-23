@@ -3,8 +3,6 @@
 ArtSharer is an application for sharing image/picture work among different users.
 
 
-[TOC]
-
 
 ### App Function
 - user sign in/sign up
