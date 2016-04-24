@@ -101,7 +101,7 @@ var SignInView = React.createClass({
 		return (
 			<div className="column" >
 				<LogoHeader src="/imgs/favicon.png" alt="logo" content="Sign In To Your Account" />
-				<form id="form" method="POST" action="/handle_sign_in" className="ui large form">
+				<form id="form" method="POST" action="/handle_login" className="ui large form">
 					<div className="ui stacked segment">
 						<AccountField />
 						<PasswordField />
