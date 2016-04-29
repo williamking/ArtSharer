@@ -1,0 +1,14 @@
+#art-form {
+    margin-top: 70px;
+    margin-bottom: 70px;
+}
+
+.art-form-header {
+    color: #2185d0 !important;
+}
+
+.art-form-submit {
+    display: table-cell;
+    text-align: center;
+}
+

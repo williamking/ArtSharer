@@ -226,5 +226,5 @@ exports.handleQuery = function(req, res) {    //需要确认一下具体的返�
 };
 
 exports.showEditPage = function(req, res) {
-	res.render("editor");
+	res.render("createArtwork");
 };

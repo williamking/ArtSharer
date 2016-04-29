@@ -15,6 +15,9 @@ module.exports = function(app) {
 	// page render
 	app.get("/login", User.showLogin);
 	app.get("/signup", User.showSignUp);
+    app.get("/createArt", function(req, res) {
+        res.render('createArtwork');
+    });
 	app.get("/user/:username", User.showUserPage);
 	app.get("/user/:username/:worktitle", ArtWork.showWorkPage);
 	app.get("/logout", User.handleLogout);
