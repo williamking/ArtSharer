@@ -60,17 +60,17 @@
 
 	    getInitialState: function () {
 	        return {
-	            title: artWork.title,
-	            url: artWork.url,
-	            createTime: artWork.createTime,
-	            lastModefied: artWork.lastModified,
+	            title: title,
+	            url: url,
+	            createTime: createTime,
+	            lastModefied: lastModified,
 	            mode: 'normal',
-	            author: artWork.author
+	            author: author
 	        };
 	    },
 
 	    componentDidMount: function () {
-	        var url = 'user/' + username + '/' + title;
+	        //var url = 'user/' + username + '/' + title;
 	        //this.serverRequest = $.getJSON(url, function(data) {
 	        //this.setState({
 	        //    title: data.workTitle,
