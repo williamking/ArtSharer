@@ -11,13 +11,14 @@ module.exports = function(app) {
 	// Index
 	app.get("/", Index.showIndex);
 
-	app.get("/test_editor", ArtWork.showEditPage);
+	// app.get("/test_editor", ArtWork.showEditPage);
 	// page render
 	app.get("/login", User.showLogin);
 	app.get("/signup", User.showSignUp);
-	app.get("/user/:username", User.showUserPage);
-	app.get("/user/:username/:worktitle", ArtWork.showWorkPage);
 	app.get("/logout", User.handleLogout);
+	app.get("/user/:username", User.showUserPage);
+	app.get("/user/:username/artwork_create", ArtWork.showWorkCreatePage);
+	app.get("/user/:username/:worktitle", ArtWork.showWorkPage);
 	// User operation
 	app.post("/handle_login", User.handleLogin);
 	app.post("/handle_sign_up", User.handleSignUp);
