@@ -70,7 +70,8 @@
 	    },
 
 	    componentDidMount: function () {
-	        this.serverRequest = $.getJSON("/user", function (data) {
+	        var url = 'user/' + username + '/' + title;
+	        this.serverRequest = $.getJSON(url, function (data) {
 	            this.setState({
 	                title: data.workTitle,
 	                url: data.workUrl,

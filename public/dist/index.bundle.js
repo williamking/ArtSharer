@@ -45,65 +45,61 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Created by William on 16-4-26.
+	 * Create by William on 16-4-28.
 	 */
 
 	var React = __webpack_require__(1);
-	var ReactDom = __webpack_require__(158);
+	var ReactDOM = __webpack_require__(158);
 
-	__webpack_require__(182);
+	__webpack_require__(191);
 
-	var ArtInfo = React.createClass({ displayName: "ArtInfo",
+	var CurrentArtoworkList = React.createClass({ displayName: "CurrentArtoworkList",
 
 	    getInitialState: function () {
-	        console.log(username);
 	        return {
-	            workTitle: "",
-	            tag: ""
+	            currentList: [{ title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }]
 	        };
 	    },
 
-	    handleChange: function (e) {
-	        var name = e.target.name;
-	        var st = {};
-	        st[name] = e.target.value;
-	        this.setState(st);
-	        console.log(this.state);
-	        console.log('change');
-	    },
-
-	    handleSubmit: function (e) {
-	        e.preventDefault();
-	        var form = this.refs.form;
-	        var formData = new FormData(form);
-	        console.log(username);
-	        var title = this.state.workTitle;
-	        $.ajax({
-	            url: '/' + username + '/handle_artwork_create',
-	            type: 'POST',
-	            data: formData,
-	            processData: false,
-	            contentType: false,
-	            success: function (data, textStatus) {
-	                alert('Create success!');
-	                window.location.href = '/user/' + username + '/' + title;
-	            },
-	            error: function (err) {
-	                console.log(err);
-	            }
-	        });
-	    },
-
 	    render: function () {
-	        return React.createElement("div", { id: "art-info-wrapper" }, React.createElement("h2", { className: "ui dividing header art-form-header" }, "Create Your Artwork"), React.createElement("form", { id: "art-info-form", ref: "form", className: "ui form" }, React.createElement("div", { className: "field" }, React.createElement("label", null, "Title"), React.createElement("input", { type: "text", name: "workTitle", placeholder: "Title",
-	            onChange: this.handleChange, value: this.state.workTitle })), React.createElement("div", { className: "field" }, React.createElement("label", null, "Tag"), React.createElement("input", { type: "text", name: "tag", placeholder: "Title",
-	            onChange: this.handleChange, value: this.state.tag })), React.createElement("div", { className: "field" }, React.createElement("label", null, "Image"), React.createElement("input", { type: "file", name: "img" })), React.createElement("button", { className: "ui button art-form-submit", type: "submit", onClick: this.handleSubmit }, "Create")));
+	        var items = this.state.currentList.map(function (item, key) {
+	            return React.createElement("div", { className: "item", key: key }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, item.title), React.createElement("div", { className: "description" }, "Created at ", item.created)));
+	        });
+	        return React.createElement("div", { id: "current-artworks" }, React.createElement("header", null, React.createElement("h3", { className: "ui h3" }, "Current Artworks"), React.createElement("button", { className: "ui green button" }, React.createElement("a", { href: "#" }, "More..."))), React.createElement("div", { id: "current-artworks-list", className: "ui relaxed divided list" }, items));
 	    }
 	});
 
-	$(function () {
-	    ReactDom.render(React.createElement(ArtInfo, null), $('#art-form')[0], null);
+	var UserInfo = React.createClass({ displayName: "UserInfo",
+	    render: function () {
+	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("img", { src: "", alt: "user-avatar" }), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button purple" }, "Personal Center"), React.createElement("button", { className: "ui button orange" }, "My Artworks")));
+	    }
 	});
+
+	var Artists = React.createClass({ displayName: "Artists",
+
+	    getInitialState: function () {
+	        return {
+	            userList: [{ name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }]
+	        };
+	    },
+
+	    render: function () {
+	        users = this.state.userList.map(function (item, key) {
+	            var url = '/user/' + item.name;
+	            return React.createElement("div", { className: "item", key: key }, React.createElement("i", { className: "large user middle aligned icon" }), React.createElement("div", { className: "content" }, React.createElement("a", { className: "header", href: url }, "item.name"), React.createElement("div", { className: "description" }, "Has ", React.createElement("span", null, item.artworks), " artworks")));
+	        });
+
+	        return React.createElement("div", { id: "hot-artists" }, React.createElement("header", null, React.createElement("h3", { className: "ui h3" }, "Current Hot Artists"), React.createElement("div", { className: "ui search", id: "user-search" }, React.createElement("input", { className: "prompt", type: "text", placeholder: "Search Artists..." }), React.createElement("i", { className: "search icon", onClick: this.searchUser })), React.createElement("div", { className: "ui relaxed divided list" }, users)));
+	    }
+	});
+
+	var Index = React.createClass({ displayName: "Index",
+	    render: function () {
+	        return React.createElement("div", { id: "index-main", className: "ui internally celled grid" }, React.createElement("div", { className: "row" }, React.createElement("div", { className: "eight wide column" }, React.createElement(CurrentArtoworkList, null)), React.createElement("div", { className: "eight wide column" }, React.createElement(UserInfo, null))), React.createElement("div", { className: "row", id: "artists-row" }, React.createElement("div", { className: "sixteen wide column" }, React.createElement(Artists, null))));
+	    }
+	});
+
+	ReactDOM.render(React.createElement(Index, null), $('#index-wrapper')[0], null);
 
 /***/ },
 /* 1 */
@@ -20040,13 +20036,22 @@
 /* 179 */,
 /* 180 */,
 /* 181 */,
-/* 182 */
+/* 182 */,
+/* 183 */,
+/* 184 */,
+/* 185 */,
+/* 186 */,
+/* 187 */,
+/* 188 */,
+/* 189 */,
+/* 190 */,
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(183);
+	var content = __webpack_require__(192);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20055,8 +20060,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./createArtwork.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./createArtwork.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./index.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./index.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20066,7 +20071,7 @@
 	}
 
 /***/ },
-/* 183 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();
@@ -20074,7 +20079,7 @@
 
 
 	// module
-	exports.push([module.id, "#art-form {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n.art-form-header {\n    color: #2185d0 !important;\n}\n\n.art-form-submit {\n    display: table-cell;\n    text-align: center;\n}\n\n", ""]);
+	exports.push([module.id, "#index-wrapper {\n    height: 100%;\n    margin-top: 50px;\n    margin-bottom: 30px;\n}\n\n#current-artworks header {\n    overflow: hidden;\n}\n\n#current-artworks h3 {\n    display: inline-block;\n}\n\n#current-artworks button {\n    float: right;\n}\n\n#current-artworks button a {\n    color: white;\n}\n\n#user-info-detail img {\n    min-height: 80px;\n    min-width: 50px;\n}\n\n.info-item p {\n    display: inline-block;\n    margin-left: 30px;\n    margin-bottom: 10px;\n}\n\n#hot-artists header {\n    over-flow: hidden;\n}\n\n#hot-artists h3 {\n    display: inline-block;\n}\n\n#user-search {\n    display: inline-block;\n    float: right;\n}\n\n#artists-row {\n}\n\n#index-wrapper {\n    width: 80%;\n    margin-left: auto;\n    margin-right: auto;\n    border-left: solid 1px #00B5AD;\n    border-right: solid 1px #00B5AD;\n    background-color: #fff;\n}\n\nbody {\n    background-color: #eeeeee;\n}\n", ""]);
 
 	// exports
 

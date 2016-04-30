@@ -1,3 +1,61 @@
-body #wrapper {
+#index-wrapper {
     height: 100%;
+    margin-top: 50px;
+    margin-bottom: 30px;
+}
+
+#current-artworks header {
+    overflow: hidden;
+}
+
+#current-artworks h3 {
+    display: inline-block;
+}
+
+#current-artworks button {
+    float: right;
+}
+
+#current-artworks button a {
+    color: white;
+}
+
+#user-info-detail img {
+    min-height: 80px;
+    min-width: 50px;
+}
+
+.info-item p {
+    display: inline-block;
+    margin-left: 30px;
+    margin-bottom: 10px;
+}
+
+#hot-artists header {
+    over-flow: hidden;
+}
+
+#hot-artists h3 {
+    display: inline-block;
+}
+
+#user-search {
+    display: inline-block;
+    float: right;
+}
+
+#artists-row {
+}
+
+#index-wrapper {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    border-left: solid 1px #00B5AD;
+    border-right: solid 1px #00B5AD;
+    background-color: #fff;
+}
+
+body {
+    background-color: #eeeeee;
 }
