@@ -11,19 +11,9 @@ module.exports = function(app) {
 	// Index
 	app.get("/", Index.showIndex);
 
-	app.get("/test_editor", function(req, res) {
-        res.render('artworkDetail');
-    });
-
-	// page render
-	app.get("/login", User.showLogin);
-	app.get("/signup", User.showSignUp);
-    app.get("/createArt", function(req, res) {
-        res.render('createArtwork');
-    });
 	app.get("/user/:username", User.showUserPage);
+	app.get("/user/:username/artwork_create", ArtWork.showWorkCreatePage);
 	app.get("/user/:username/:worktitle", ArtWork.showWorkPage);
-	app.get("/logout", User.handleLogout);
 	// User operation
 	app.post("/handle_login", User.handleLogin);
 	app.post("/handle_sign_up", User.handleSignUp);
