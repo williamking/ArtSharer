@@ -5,11 +5,12 @@ module.exports = {
     entry: {
         "signin": __dirname + "/public/react_view/signin_v.js",
         "signup": __dirname + "/public/react_view/signup_v.js",
-        /*"index": __dirname + "/public/react_view/index_v.js",*/
+        "index": __dirname + "/public/react_view/index_v.js",
         "layout": __dirname + "/public/react_view/layout_v.js",
         "personal_center": __dirname + "/public/react_view/personal_center_v.js",
         "icon": __dirname + "/public/icons/editor/iconfont.css",
-        "create_artwork": __dirname + '/public/react_view/create_artwork_v.js'
+        "create_artwork": __dirname + '/public/react_view/create_artwork_v.js',
+        "artwork": __dirname + '/public/react_view/artwork_v.js'
     },
     output: {
         path: __dirname + '/public/dist',

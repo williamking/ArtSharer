@@ -1,13 +1,13 @@
 var React = require('react');
-var ReactCanvas = require('react-canvas');
+//var ReactCanvas = require('react-canvas');
 var ReactDOM = require('react-dom');
 var cssLayout = require('css-layout');
 
-var Surface = ReactCanvas.Surface;
-var Text = ReactCanvas.Text;
-var Group = ReactCanvas.Group;
-var FontFace = ReactCanvas.FontFace;
-var CImage = ReactCanvas.Image;
+//var Surface = ReactCanvas.Surface;
+//var Text = ReactCanvas.Text;
+//var Group = ReactCanvas.Group;
+//var FontFace = ReactCanvas.FontFace;
+//var CImage = ReactCanvas.Image;
 
 /*-----Load JS------*/
 require('../libs/alloyimage-1.1.js');
@@ -15,7 +15,6 @@ require('../libs/semantic/components/dropdown.min.js');
 
 /*-----Load css-----*/
 require('../css/imageEditor.css');
-require('../icons/editor/iconfont.css');
 require('../libs/semantic/components/dropdown.min.css');
 
 var ImageButton = require("./ImageButton.js");
@@ -707,10 +706,16 @@ var FILTERS = [
     {func: 'dotted', name: '喷点'}
 ];
 
-$(function() {
+/*$(function() {
     ReactDOM.render(
         <div>
             <ImageEditor width={1200} height={800} src="/imgs/test.jpg" filterItems={FILTERS}/>,
         </div>,
         $("#editor-wrapper")[0], null);
 })();
+*/
+
+module.exports = {
+    editor: ImageEditor,
+    filters: FILTERS
+};

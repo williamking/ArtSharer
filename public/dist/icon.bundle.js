@@ -48,10 +48,10 @@
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(159);
+	var content = __webpack_require__(163);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(161)(content, {});
+	var update = __webpack_require__(162)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -69,22 +69,7 @@
 
 /***/ },
 
-/***/ 159:
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(160)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "\n@font-face {font-family: \"iconfont\";\n  src: url('/icons/editor/iconfont.eot'); /* IE9*/\n  src: url('/icons/editor/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\n  url('/icons/editor/iconfont.woff') format('woff'), /* chrome, firefox */\n  url('/icons/editor/iconfont.ttf') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/\n  url('/icons/editor/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */\n}\n\n.iconfont {\n  font-family:\"iconfont\" !important;\n  font-size:16px;\n  font-style:normal;\n  -webkit-font-smoothing: antialiased;\n  -webkit-text-stroke-width: 0.2px;\n  -moz-osx-font-smoothing: grayscale;\n}\n.icon-jietu:before { content: \"\\E600\"; }\n.icon-pen:before { content: \"\\E601\"; }\n.icon-text:before { content: \"\\E602\"; }\n.icon-eraser:before { content: \"\\E603\"; }\n.icon-huitui:before { content: \"\\E604\"; }\n", ""]);
-
-	// exports
-
-
-/***/ },
-
-/***/ 160:
+/***/ 161:
 /***/ function(module, exports) {
 
 	/*
@@ -141,7 +126,7 @@
 
 /***/ },
 
-/***/ 161:
+/***/ 162:
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -390,6 +375,21 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+
+/***/ 163:
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(161)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "\n@font-face {font-family: \"iconfont\";\n  src: url('/icons/editor/iconfont.eot'); /* IE9*/\n  src: url('/icons/editor/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\n  url('/icons/editor/iconfont.woff') format('woff'), /* chrome, firefox */\n  url('/icons/editor/iconfont.ttf') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/\n  url('/icons/editor/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */\n}\n\n.iconfont {\n  font-family:\"iconfont\" !important;\n  font-size:16px;\n  font-style:normal;\n  -webkit-font-smoothing: antialiased;\n  -webkit-text-stroke-width: 0.2px;\n  -moz-osx-font-smoothing: grayscale;\n}\n.icon-jietu:before { content: \"\\E600\"; }\n.icon-pen:before { content: \"\\E601\"; }\n.icon-text:before { content: \"\\E602\"; }\n.icon-eraser:before { content: \"\\E603\"; }\n.icon-huitui:before { content: \"\\E604\"; }\n", ""]);
+
+	// exports
 
 
 /***/ }

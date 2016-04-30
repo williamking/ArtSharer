@@ -51,11 +51,12 @@
 	var React = __webpack_require__(1);
 	var ReactDom = __webpack_require__(158);
 
-	__webpack_require__(168);
+	__webpack_require__(159);
 
 	var ArtInfo = React.createClass({ displayName: "ArtInfo",
 
 	    getInitialState: function () {
+	        console.log(username);
 	        return {
 	            workTitle: "",
 	            tag: ""
@@ -75,6 +76,7 @@
 	        e.preventDefault();
 	        var form = this.refs.form;
 	        var formData = new FormData(form);
+	        console.log(username);
 	        $.ajax({
 	            url: '/' + username + '/handle_artwork_create',
 	            type: 'POST',
@@ -93,7 +95,7 @@
 	    render: function () {
 	        return React.createElement("div", { id: "art-info-wrapper" }, React.createElement("h2", { className: "ui dividing header art-form-header" }, "Create Your Artwork"), React.createElement("form", { id: "art-info-form", ref: "form", className: "ui form" }, React.createElement("div", { className: "field" }, React.createElement("label", null, "Title"), React.createElement("input", { type: "text", name: "workTitle", placeholder: "Title",
 	            onChange: this.handleChange, value: this.state.workTitle })), React.createElement("div", { className: "field" }, React.createElement("label", null, "Tag"), React.createElement("input", { type: "text", name: "tag", placeholder: "Title",
-	            onChange: this.handleChange, value: this.state.tag })), React.createElement("div", { className: "field" }, React.createElement("label", null, "Image"), React.createElement("input", { type: "file", name: "image", placeholder: "Title" })), React.createElement("button", { className: "ui button art-form-submit", type: "submit", onClick: this.handleSubmit }, "Create")));
+	            onChange: this.handleChange, value: this.state.tag })), React.createElement("div", { className: "field" }, React.createElement("label", null, "Image"), React.createElement("input", { type: "file", name: "img" })), React.createElement("button", { className: "ui button art-form-submit", type: "submit", onClick: this.handleSubmit }, "Create")));
 	    }
 	});
 
@@ -19707,8 +19709,47 @@
 
 
 /***/ },
-/* 159 */,
+/* 159 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(160);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(162)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./createArtwork.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./createArtwork.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
 /* 160 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(161)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#art-form {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n.art-form-header {\n    color: #2185d0 !important;\n}\n\n.art-form-submit {\n    display: table-cell;\n    text-align: center;\n}\n\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 161 */
 /***/ function(module, exports) {
 
 	/*
@@ -19764,7 +19805,7 @@
 
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -20013,52 +20054,6 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
-
-
-/***/ },
-/* 162 */,
-/* 163 */,
-/* 164 */,
-/* 165 */,
-/* 166 */,
-/* 167 */,
-/* 168 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(169);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(161)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./createArtwork.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./createArtwork.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 169 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(160)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "#art-form {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n.art-form-header {\n    color: #2185d0 !important;\n}\n\n.art-form-submit {\n    display: table-cell;\n    text-align: center;\n}\n\n", ""]);
-
-	// exports
 
 
 /***/ }

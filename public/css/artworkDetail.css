@@ -1,0 +1,29 @@
+#artwork-wrapper {
+    margin-top: 70px;
+    margin-bottom: 70px;
+}
+
+#artwork-status {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+#artwork-detail header{
+    color: #2185d0;
+}
+
+#artwork-info {
+    display: inline-block;
+}
+
+#artwork-process {
+    display: inline-block;
+    float: right;
+}
+
+#artwork-main {
+    min-height: 600px;
+    min-width: 900px;
+    border: solid 1px rgba(34, 36, 38, .15);
+}

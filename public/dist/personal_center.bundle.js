@@ -52,7 +52,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 
-	__webpack_require__(164);
+	__webpack_require__(166);
 
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
@@ -19684,7 +19684,8 @@
 
 /***/ },
 /* 159 */,
-/* 160 */
+/* 160 */,
+/* 161 */
 /***/ function(module, exports) {
 
 	/*
@@ -19740,7 +19741,7 @@
 
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -19992,18 +19993,19 @@
 
 
 /***/ },
-/* 162 */,
 /* 163 */,
-/* 164 */
+/* 164 */,
+/* 165 */,
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(165);
+	var content = __webpack_require__(167);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(161)(content, {});
+	var update = __webpack_require__(162)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -20020,10 +20022,10 @@
 	}
 
 /***/ },
-/* 165 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(160)();
+	exports = module.exports = __webpack_require__(161)();
 	// imports
 
 

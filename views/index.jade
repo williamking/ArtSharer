@@ -1,6 +1,12 @@
 extends ./layout
 
+block page-header
+    script(type="text/javascript")
+        var username = '#{username}';
+
 block content
-    #wrapper
+    #index-wrapper
 block page-script
+    script(src="/dist/icon.bundle.js")
+    script(src="/dist/index.bundle.js")
 

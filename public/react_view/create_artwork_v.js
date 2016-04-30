@@ -10,6 +10,7 @@ require('../css/createArtwork.css');
 var ArtInfo = React.createClass({
 
     getInitialState: function() {
+        console.log(username);
         return {
             workTitle: "",
             tag: ""
@@ -29,6 +30,7 @@ var ArtInfo = React.createClass({
         e.preventDefault();
         var form = this.refs.form;
         var formData = new FormData(form);
+        console.log(username);
         $.ajax({
             url: '/' + username + '/handle_artwork_create',
             type: 'POST',
@@ -63,7 +65,7 @@ var ArtInfo = React.createClass({
                     </div>
                     <div className="field">
                         <label>Image</label>
-                        <input type="file" name="image" placeholder="Title"/>
+                        <input type="file" name="img" />
                     </div>
                     <button className="ui button art-form-submit" type="submit" onClick={this.handleSubmit} >Create</button>
                 </form>

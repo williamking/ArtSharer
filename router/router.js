@@ -11,7 +11,10 @@ module.exports = function(app) {
 	// Index
 	app.get("/", Index.showIndex);
 
-	app.get("/test_editor", ArtWork.showEditPage);
+	app.get("/test_editor", function(req, res) {
+        res.render('artworkDetail');
+    });
+
 	// page render
 	app.get("/login", User.showLogin);
 	app.get("/signup", User.showSignUp);

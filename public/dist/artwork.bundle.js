@@ -44,69 +44,62 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/**
+	 * Create by William on 16-4-28.
+	 */
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	__webpack_require__(168);
+	var ed = __webpack_require__(170);
+	var ImageEditor = ed.editor,
+	    filters = ed.filters;
 
-	var UserNameField = React.createClass({ displayName: "UserNameField",
-		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "user icon" }), React.createElement("input", { id: "account_field", type: "text", name: "username", placeholder: "User Name" })));
-		}
-	});
+	__webpack_require__(189);
 
-	var PasswordField = React.createClass({ displayName: "PasswordField",
-		render: function () {
-			return React.createElement("div", { className: "field" }, React.createElement("div", { className: "ui left icon input" }, React.createElement("i", { className: "lock icon" }), React.createElement("input", { id: "password_field", type: "password", name: "password", placeholder: "Password" })));
-		}
-	});
+	var Artwork = React.createClass({ displayName: "Artwork",
 
-	var LogoHeader = React.createClass({ displayName: "LogoHeader",
-		render: function () {
-			return React.createElement("h2", { className: "ui blue image header" }, React.createElement("img", { className: "image", src: this.props.src, alt: this.props.alt }), React.createElement("div", { className: "content" }, this.props.content));
-		}
-	});
+	    getInitialState: function () {
+	        return {
+	            title: '',
+	            url: '#',
+	            createTime: '',
+	            lastModefied: '',
+	            mode: 'normal',
+	            author: 'unknown'
+	        };
+	    },
 
-	var SignInView = React.createClass({ displayName: "SignInView",
-		getInitialState: function () {
-			return {
-				btnState: ""
-			};
-		},
-		componentDidMount: function () {
-			$('#form').form({
-				fields: {
-					username: {
-						identifier: 'username',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your username'
-						}]
-					},
-					password: {
-						identifier: 'password',
-						rules: [{
-							type: 'empty',
-							prompt: 'Please enter your password'
-						}]
-					}
-				}
-			});
-		},
-		handleSubmit: function (event) {
+	    componentDidMount: function () {
+	        this.serverRequest = $.getJSON("/user", function (data) {
+	            this.setState({
+	                title: data.workTitle,
+	                url: data.workUrl,
+	                createTime: data.workCreateTime,
+	                lastModefied: data.lastModefied,
+	                author: data.author || 'unknown'
+	            });
+	        });
+	    },
 
-			if (!$("#form").hasClass("error")) {
-				this.setState({ btnState: " disabled loading" });
-			}
-		},
-		render: function () {
-			return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Sign In To Your Account" }), React.createElement("form", { id: "form", method: "POST", action: "/handle_login", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(UserNameField, null), React.createElement(PasswordField, null), React.createElement("div", { className: "ui fluid large blue submit button" + this.state.btnState, onClick: this.handleSubmit }, "Sign In")), React.createElement("div", { className: "ui error message" }, React.createElement("ul", { className: "list" }))), React.createElement("div", { className: "ui message" }, "New to us? ", React.createElement("a", { href: "/signup" }, "Sign Up")));
-		}
+	    changeToEditMode: function () {
+	        this.setState({
+	            mode: 'editor'
+	        });
+	    },
+
+	    resetToNormal: function () {
+	        this.setState({
+	            mode: 'normal'
+	        });
+	    },
+
+	    render: function () {
+	        return React.createElement("div", { id: "artwork-detail" }, React.createElement("header", { className: "ui dividing header" }, React.createElement("h1", null, this.state.author, "/Artworks/", this.state.title)), React.createElement("div", { id: "artwork-status" }, React.createElement("div", { id: "artwork-info" }, React.createElement("p", null, "Last edited at ", React.createElement("span", null, this.state.createTime))), React.createElement("div", { id: "artwork-process" }, React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic blue button" }, React.createElement("i", { className: "fork icon" }), "Forks"), React.createElement("a", { className: "ui basic left pointing blue label" }, "0")), React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic red button" }, React.createElement("i", { className: "fork icon" }), "Star"), React.createElement("a", { className: "ui basic left pointing red label" }, "0")), this.state.mode == 'normal' ? React.createElement("button", { onClick: this.changeToEditMode, className: "ui button green" }, "Edit") : React.createElement("button", { onClick: this.resetToNormal, className: "ui blue button" }, "View"))), React.createElement("div", { id: "artwork-main" }, this.state.mode == 'editor' ? React.createElement(ImageEditor, { width: 1200, height: 800, src: this.state.url, filterItems: filters }) : React.createElement("div", { id: "image-artwork-image-wrapper" }, React.createElement("img", { src: this.state.url, alt: "This is an image" }))));
+	    }
 	});
 
 	$(function () {
-		ReactDOM.render(React.createElement(SignInView, null), $("#wrapper")[0], null);
+	    ReactDOM.render(React.createElement(Artwork, null), $('#artwork-wrapper')[0], null);
 	});
 
 /***/ },
@@ -20030,13 +20023,3102 @@
 /* 165 */,
 /* 166 */,
 /* 167 */,
-/* 168 */
+/* 168 */,
+/* 169 */,
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	//var ReactCanvas = require('react-canvas');
+	var ReactDOM = __webpack_require__(158);
+	var cssLayout = __webpack_require__(171);
+
+	//var Surface = ReactCanvas.Surface;
+	//var Text = ReactCanvas.Text;
+	//var Group = ReactCanvas.Group;
+	//var FontFace = ReactCanvas.FontFace;
+	//var CImage = ReactCanvas.Image;
+
+	/*-----Load JS------*/
+	__webpack_require__(172);
+	__webpack_require__(173);
+
+	/*-----Load css-----*/
+	__webpack_require__(174);
+	__webpack_require__(176);
+
+	var ImageButton = __webpack_require__(178);
+	var EditorMenu = __webpack_require__(179);
+	var EditorCanvas = __webpack_require__(188);
+
+	var ImageEditor = React.createClass({ displayName: "ImageEditor",
+
+	    getInitialState: function () {
+	        var image = new Image();
+	        image.src = this.props.src;
+	        return {
+	            image: image,
+	            tool: 'normal'
+	        };
+	    },
+
+	    componentDidMount: function () {
+	        this.canvas = ReactDOM.findDOMNode(this.refs.canvas);
+	        this.updateCursor();
+	        this.setEvents();
+	        this.listenToMouse();
+	    },
+
+	    componentDidUpdate: function () {
+	        this.updateCursor();
+	        this.setEvents();
+	        this.listenToMouse();
+	    },
+
+	    render: function () {
+	        var surfaceWidth = this.props.width;
+	        var surfaceHeight = this.props.height;
+	        var textStyle = {
+	            left: 0,
+	            width: window.innerWidth,
+	            height: 20,
+	            lineHeight: 20,
+	            fontSize: 12
+	        };
+	        var imageStyle = this.getImageStyle();
+	        var menuStyle = this.getMenuStyle();
+	        var divStyle = { width: surfaceWidth + 5 + 'px', height: surfaceHeight + 5 + 'px' };
+	        var that = this;
+	        var handleClick = {
+	            'eraser': that.setTool('eraser'),
+	            'pen': that.setTool('pen'),
+	            'select': that.setTool('select'),
+	            'text': that.setTool('text'),
+	            'turnback': function (that) {
+	                return function () {
+	                    that.restoreState();
+	                };
+	            }(that)
+	        };
+
+	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, events: this.editEvents, setInput: this.setInput,
+	            updateTextState: this.setTextState, handleTextChange: this.handleTextChange, editor: this,
+	            filterItems: this.props.filterItems, handleImageFilter: this.handleImageFilter, handleClick: handleClick,
+	            textColorListener: this.getTextColor, tool: this.state.tool,
+	            updatePenState: this.setPenState, updateEraserState: this.setEraserState }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, imageOnload: this.setInitState, ref: "canvas" }));
+	    },
+
+	    setInitState: function () {
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+	        this.initState = imageData;
+	        this.saveToCache();
+	    },
+
+	    setTool: function (name) {
+	        var that = this;
+	        return function () {
+	            if (that.state.tool != 'normal') that.onLeaveTool[that.state.tool](that);
+	            var state = that.state;
+	            state.tool = name;
+	            that.setState(state);
+	        };
+	    },
+
+	    onLeaveTool: {
+	        pen: function (editor) {
+	            editor.handleMouseDown = function () {};
+	            editor.handleDragging = function () {};
+	            editor.handleMouseUp = function () {};
+	        },
+	        select: function (editor) {
+	            editor.canvas.style.cursor = 'default';
+	            editor.restoreFromCache();
+	            editor.handleMouseDown = function () {};
+	            editor.handleDragging = function () {};
+	            editor.handleMouseUp = function () {};
+	        },
+	        eraser: function (editor) {
+	            editor.canvas.style.cursor = 'default';
+	            editor.handleMouseDown = function () {};
+	            editor.handleDragging = function () {};
+	            editor.handleMouseUp = function () {};
+	        },
+	        text: function (editor) {
+	            editor.canvas.style.cursor = 'default';
+	            editor.handleMouseDown = function () {};
+	            editor.handleDragging = function () {};
+	            editor.handleMouseUp = function () {};
+	            if (editor.textState.blinkingInterval != null) {
+	                editor.restoreFromTextCache();
+	                clearInterval(editor.textState.blinkingInterval);
+	            }
+	        }
+	    },
+
+	    imageDataStack: [],
+
+	    imageDataCache: null,
+
+	    getSize: function () {
+	        return {
+	            width: this.props.width,
+	            height: this.props.height
+	        };
+	    },
+
+	    getMenuStyle: function () {
+	        var size = this.getSize();
+	        return {
+	            position: 'relative',
+	            width: size.width,
+	            height: size.height * 0.1,
+	            flex: 1,
+	            backgroundColor: '#f7f7f7'
+	        };
+	    },
+
+	    getImageGroupStyle: function () {
+	        return {
+	            position: 'relative',
+	            flex: 1,
+	            backgroundColor: '#eee'
+	        };
+	    },
+
+	    getImageStyle: function () {
+	        var size = this.getSize();
+	        return {
+	            position: 'absolute',
+	            left: 0,
+	            top: 0,
+	            right: 0,
+	            bottom: 0
+	        };
+	    },
+
+	    mousedown: {
+	        x: 0,
+	        y: 0
+	    },
+
+	    dragging: false,
+
+	    handleImageFilter: function (name) {
+	        this.restoreFromCache();
+	        var act = ['toGray', 'toThresh', 'toReverse', 'embossment', 'corrode', 'noise', 'dotted'];
+	        var img = this.state.image;
+	        if (this.state.tool == 'select' && this.selectState.selected == true) {
+	            img = this.selectState.selectDataImage;
+	            var ai = AlloyImage(img);
+	            if (act.indexOf(name) == -1) ai.ps(name).replace(img);else {
+	                if (name == 'toThresh') ai.act(name, 128).replace(img);else ai.act(name).replace(img);
+	            }
+	            this.applySelectState();
+	            this.restoreFromCache();
+	        } else {
+	            img.src = this.canvas.toDataURL();
+	            img.onload = function (that, act, name) {
+	                return function () {
+	                    var ai = AlloyImage(this);
+	                    if (act.indexOf(name) == -1) ai.ps(name).replace(this);else {
+	                        if (name == 'toThresh') ai.act(name, 128).replace(this);else ai.act(name).replace(this);
+	                    }
+	                    that.setState({
+	                        image: this,
+	                        tool: 'normal'
+	                    });
+	                };
+	            }(this, act, name);
+	        }
+	    },
+
+	    updateCanvas: function () {
+	        updateCursor();
+	    },
+
+	    listenToMouse: function () {
+	        var canvas = this.canvas;
+	        canvas.onmousedown = function (that) {
+	            return function (e) {
+	                var loc = that.windowToCanvas(e.clientX, e.clientY);
+
+	                e.preventDefault();
+	                that.mousedown.x = loc.x;
+	                that.mousedown.y = loc.y;
+	                that.dragging = true;
+
+	                that.handleMouseDown(e);
+	            };
+	        }(this);
+	        canvas.onmousemove = function (that) {
+	            return function (e) {
+	                e.preventDefault();
+	                var mousedown = this.mousedown;
+	                if (that.dragging) that.handleDragging(e, mousedown);
+	                if (that.handleMouseMove) that.handleMouseMove(e, mousedown);
+	            };
+	        }(this);
+	        canvas.onmouseup = function (that) {
+	            return function (e) {
+	                that.dragging = false;
+	                that.handleMouseUp(e);
+	            };
+	        }(this);
+	    },
+
+	    updateCursor: function () {
+	        var canvas = this.canvas;
+	        if (this.state.tool == 'eraser' || this.state.tool == 'select') {
+	            canvas.style.cursor = 'crosshair';
+	        }
+	        if (this.state.tool == 'text') {
+	            canvas.style.cursor = 'text';
+	        }
+	    },
+
+	    setEvents: function () {
+	        var canvas = this.canvas;
+	        this.handleMouseDown = function () {};
+	        this.handleMouseMove = function () {};
+	        this.handleDragging = function () {};
+	        this.handleMouseUp = function () {};
+	        if (this.state.tool == 'select') {
+	            this.setToSelect();
+	        }
+	        if (this.state.tool == 'pen') {
+	            this.setToPen();
+	        }
+	        if (this.state.tool == 'eraser') {
+	            this.setToEraser();
+	        }
+	        if (this.state.tool == 'text') {
+	            this.setToText();
+	        }
+	    },
+
+	    setToEraser: function () {
+	        this.canvas.style.cursor = 'default';
+	        var canvas = this.canvas;
+	        this.saveToCache();
+	        this.initEraserState();
+	        this.handleMouseDown = function (e) {
+	            this.restoreFromCache();
+	            this.saveState();
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.saveToCache();
+	            this.eraserState.x = loc.x;
+	            this.eraserState.y = loc.y;
+	        };
+	        this.handleMouseMove = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.restoreFromCache();
+	            this.drawEraser(loc);
+	            this.eraserState.x = loc.x;
+	            this.eraserState.y = loc.y;
+	        };
+	        this.handleDragging = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.eraseLast();
+	            this.saveToCache();
+	        }, this.handleMouseUp = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.eraseLast();
+	            this.saveToCache();
+	            this.drawEraser(loc);
+	        };
+	    },
+
+	    initEraserState: function () {
+	        this.eraserState = {
+	            width: 40,
+	            x: 0,
+	            y: 0
+	        };
+	    },
+
+	    setEraserState: function (name, value) {
+	        this.eraserState[name] = value;
+	    },
+
+	    eraseLast: function () {
+	        var context = this.canvas.getContext('2d');
+	        context.save();
+	        var x = this.eraserState.x;
+	        var y = this.eraserState.y;
+	        var width = this.eraserState.width;
+	        var lineWidth = context.lineWidth;
+	        context.beginPath();
+	        context.arc(x, y, width / 2 + lineWidth, 0, Math.PI * 2, false);
+	        context.clip();
+	        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	        context.restore();
+	    },
+
+	    drawEraser: function (loc) {
+	        var context = this.canvas.getContext('2d');
+	        context.save();
+	        var width = this.eraserState.width;
+	        var lineWidth = context.lineWidth;
+	        context.beginPath();
+	        context.arc(loc.x, loc.y, width / 2, 0, Math.PI * 2, false);
+	        context.stroke();
+	        context.restore();
+	    },
+
+	    setToPen: function () {
+	        var canvas = this.canvas;
+	        this.imageDataCache = null;
+	        this.saveToCache();
+	        this.initDrawingState();
+	        this.handleMouseDown = function (e) {
+	            this.restoreFromCache();
+	            this.saveState();
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.drawPen(loc);
+	            this.saveToCache();
+	            this.drawingState.pos.x = loc.x;
+	            this.drawingState.pos.y = loc.y;
+	            this.drawingState.startPoint.x = loc.x;
+	            this.drawingState.startPoint.y = loc.y;
+	        };
+	        this.handleMouseMove = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.restoreFromCache();
+	            this.drawPen(loc);
+	            this.drawingState.pos.x = loc.x;
+	            this.drawingState.pos.y = loc.y;
+	        };
+	        this.handleDragging = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            if (!this.drawingState.on) {
+	                this.drawingState.on = true;
+	                this.drawingState.pos.x = this.drawingState.startPoint.x;
+	                this.drawingState.pos.y = this.drawingState.startPoint.y;
+	            }
+	            this.drawPath(loc);
+	            this.saveToCache();
+	        }, this.handleMouseUp = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.saveToCache();
+	            this.drawingState.on = false;
+	        };
+	    },
+
+	    initDrawingState: function () {
+	        this.drawingState = {
+	            color: 'black',
+	            size: 4,
+	            on: false,
+	            pos: {
+	                x: 0,
+	                y: 0
+	            },
+	            startPoint: {
+	                x: 0,
+	                y: 0
+	            }
+	        };
+	    },
+
+	    setPenState: function (name, value) {
+	        this.drawingState[name] = value;
+	        console.log(name + ' update');
+	    },
+
+	    drawPen: function (loc) {
+	        var context = this.canvas.getContext('2d');
+	        var width = this.drawingState.size;
+	        context.save();
+	        context.fillStyle = this.drawingState.color;
+	        context.beginPath();
+	        context.arc(loc.x, loc.y, width / 2, 0, Math.PI * 2, false);
+	        context.fill();
+	        context.restore();
+	    },
+
+	    drawPath: function (loc) {
+	        var context = this.canvas.getContext('2d');
+	        var width = this.drawingState.size;
+	        var pos = this.drawingState.pos;
+	        context.save();
+	        context.strokeStyle = this.drawingState.color;
+	        context.lineWidth = width;
+	        context.beginPath();
+	        context.moveTo(pos.x, pos.y);
+	        context.lineTo(loc.x, loc.y);
+	        context.stroke();
+	        context.restore();
+	    },
+
+	    setToText: function () {
+	        var canvas = this.canvas;
+	        this.disableInput();
+	        this.textState = {
+	            textStyle: 'normal',
+	            textSize: 5,
+	            textValue: '',
+	            textSize: 'serif',
+	            pos: {},
+	            blinkingInterval: null,
+	            cache: null,
+	            input: null,
+	            textColor: '#000'
+	        };
+	        this.saveToCache();
+	        this.saveToTextCache();
+	        this.handleMouseDown = function (e) {
+	            this.enableInput();
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.updateTextPos(loc);
+	            this.restoreFromCache();
+	            this.drawTextCursor();
+	            this.blinkTextCursor();
+	        };
+	    },
+
+	    enableInput: function () {
+	        $("#text-input").removeClass("disabled");
+	        $("#text-input").find("input").focus();
+	    },
+
+	    disableInput: function () {
+	        $("#text-input").addClass("disabled");
+	    },
+
+	    updateTextPos: function (loc) {
+	        this.restoreFromTextCache();
+	        this.saveToCache();
+	        this.saveState();
+	        this.textState.pos = loc;
+	        if (this.textState.input) this.textState.input.clearText();
+	    },
+
+	    blinkTextCursor: function () {
+	        var context = this.canvas.getContext('2d');
+	        this.textState.blinkingInterval = setInterval(function (that) {
+	            return function (e) {
+	                that.restoreFromTextCache();
+	                setTimeout(function (that) {
+	                    return function (e) {
+	                        that.drawTextCursor();
+	                    };
+	                }(that), 500);
+	            };
+	        }(this), 1000);
+	    },
+
+	    drawTextCursor: function () {
+	        if (this.state.tool != 'text') return;
+	        var context = this.canvas.getContext('2d');
+	        context.save();
+	        context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+	        context.beginPath();
+	        var height = context.measureText('W').width;
+	        var textWidth = context.measureText(this.textState.textValue).width;
+	        context.fillRect(this.textState.pos.x + textWidth, this.textState.pos.y, 2, height);
+	        context.restore();
+	    },
+
+	    setTextState: function (textStyle, textSize, textFont) {
+	        this.textState.textStyle = textStyle;
+	        this.textState.textSize = textSize;
+	        this.textState.textFont = textFont;
+	        var context = this.canvas.getContext('2d');
+	        context.font = textStyle + ' ' + textSize + 'px ' + textFont;
+	        this.handleTextChange(this, this.textState.textValue, this.textState.input);
+	        $("#text-input").find("input").focus();
+	    },
+
+	    getTextColor: function (textColor) {
+	        this.textState.textColor = textColor;
+	        this.handleTextChange(this, this.textState.textValue, this.textState.input);
+	        $("#text-input").find("input").focus();
+	    },
+
+	    handleTextChange: function (that, text, input) {
+	        that.textState.textValue = text;
+	        that.restoreFromCache();
+	        var context = that.canvas.getContext('2d');
+	        context.save();
+	        context.fillStyle = that.textState.textColor;
+	        console.log(that.textState.textColor);
+	        context.textBaseline = 'hanging';
+	        context.fillText(text, that.textState.pos.x, that.textState.pos.y);
+	        context.restore();
+	        that.saveToTextCache();
+	        that.textState.input = input;
+	    },
+
+	    saveToTextCache: function () {
+	        var context = this.canvas.getContext('2d');
+	        this.textState.cache = context.getImageData(0, 0, this.canvas.width, this.canvas.height);
+	    },
+
+	    restoreFromTextCache: function () {
+	        if (this.textState.cache == null) return;
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        context.putImageData(this.textState.cache, 0, 0);
+	    },
+
+	    setToSelect: function () {
+	        var canvas = this.canvas;
+	        this.imageDataCache = null;
+	        this.initSelectState();
+	        this.handleMouseDown = function (e) {
+	            this.restoreFromCache();
+	            this.saveToCache();
+	        };
+	        this.handleDragging = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.restoreFromCache();
+	            this.updateRubberBand(loc);
+	        };
+	        this.handleMouseUp = function (e) {
+	            var loc = this.windowToCanvas(e.clientX, e.clientY);
+	            this.restoreFromCache();
+	            this.updateRubberBand(loc, true, true);
+	        };
+	    },
+
+	    initSelectState: function () {
+	        this.selectState = {
+	            selectData: null,
+	            selectDataImage: new Image(),
+	            selected: false,
+	            rubberBand: {
+	                width: 0,
+	                height: 0,
+	                left: 0,
+	                top: 0
+	            }
+	        };
+	    },
+
+	    stretchImage: function () {
+	        var context = this.canvas.getContext('2d');
+	        var rubberBand = this.selectState.rubberBand;
+	        if (rubberBand.width == 0 || rubberBand.height == 0) {
+	            this.selectState.selected = false;
+	            return;
+	        } else {
+	            this.selectState.selected = true;
+	        }
+	        this.selectState.selectData = context.getImageData(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
+	        var retCanvas = document.createElement('canvas');
+	        retCanvas.width = rubberBand.width;
+	        retCanvas.height = rubberBand.height;
+	        retCanvas.getContext('2d').putImageData(this.selectState.selectData, 0, 0);
+	        this.selectState.selectDataImage.src = retCanvas.toDataURL();
+	    },
+
+	    applySelectState: function () {
+	        var context = this.canvas.getContext('2d');
+	        var rubberBand = this.selectState.rubberBand;
+	        this.restoreFromCache();
+	        this.saveState();
+	        context.drawImage(this.selectState.selectDataImage, rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
+	        this.saveToCache();
+	        context.save();
+	        context.setLineDash([10, 10]);
+	        context.beginPath();
+	        context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
+	        context.restore();
+	    },
+
+	    updateRubberBand: function (loc, dash, stretch) {
+	        var context = this.canvas.getContext('2d');
+	        dash = false || dash;
+	        stretch = false || stretch;
+	        context.save();
+	        if (dash) context.setLineDash([10, 10]);
+	        this.drawRubberBandRect(loc, stretch);
+	        context.restore();
+	    },
+
+	    drawRubberBandRect: function (loc, stretch) {
+	        var context = this.canvas.getContext('2d');
+	        var rubberBand = this.selectState.rubberBand;
+	        if (stretch) this.stretchImage();
+	        rubberBand.width = Math.abs(loc.x - this.mousedown.x);
+	        rubberBand.height = Math.abs(loc.y - this.mousedown.y);
+	        rubberBand.left = this.mousedown.x < loc.x ? this.mousedown.x : loc.x;
+	        rubberBand.top = this.mousedown.y < loc.y ? this.mousedown.y : loc.y;
+	        context.beginPath();
+	        context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
+	    },
+
+	    windowToCanvas: function (x, y) {
+	        var canvas = this.canvas;
+	        var bbox = canvas.getBoundingClientRect();
+	        return {
+	            x: x - bbox.left * (canvas.width / bbox.width),
+	            y: y - bbox.top * (canvas.height / bbox.height) };
+	    },
+
+	    saveState: function () {
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        var imageData = this.imageDataCache;
+	        this.imageDataStack.push(imageData);
+	    },
+
+	    restoreState: function () {
+	        if (this.imageDataStack.length <= 0) {
+	            var imageData = this.initState;
+	            var canvas = this.canvas;
+	            var context = canvas.getContext('2d');
+	            context.putImageData(imageData, 0, 0);
+	            this.saveToCache();
+	            return;
+	        }
+	        var imageData = this.imageDataStack.pop();
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        context.putImageData(imageData, 0, 0);
+	        this.saveToCache();
+	    },
+
+	    saveToCache: function () {
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        this.imageDataCache = context.getImageData(0, 0, canvas.width, canvas.height);
+	    },
+
+	    restoreFromCache: function () {
+	        if (this.imageDataCache == null) return;
+	        var canvas = this.canvas;
+	        var context = canvas.getContext('2d');
+	        context.putImageData(this.imageDataCache, 0, 0);
+	    }
+
+	});
+
+	var FILTERS = [{ func: 'softenFace', name: '美肤' }, { func: 'sketch', name: '素描' }, { func: 'softEnhancement', name: '自然增强' }, { func: 'purpleStyle', name: '紫调' }, { func: 'soften', name: '柔焦' }, { func: 'vintage', name: '复古' }, { func: 'gray', name: '黑白' }, { func: 'lomo', name: '防lomo' }, { func: 'strongEnhancement', name: '亮白增强' }, { func: 'strongGray', name: '灰白' }, { func: 'lightGray', name: '灰色' }, { func: 'warmAutumn', name: '暖秋' }, { func: 'carveStyle', name: '木雕' }, { func: 'rough', name: '粗糙' }, { func: 'toGray', name: '灰度处理' }, { func: 'toThresh', name: '二值化' }, { func: 'toReverse', name: '反色' }, { func: 'embossment', name: '浮雕' }, { func: 'corrode', name: '腐蚀' }, { func: 'dotted', name: '喷点' }];
+
+	/*$(function() {
+	    ReactDOM.render(
+	        <div>
+	            <ImageEditor width={1200} height={800} src="/imgs/test.jpg" filterItems={FILTERS}/>,
+	        </div>,
+	        $("#editor-wrapper")[0], null);
+	})();
+	*/
+
+	module.exports = {
+	    editor: ImageEditor,
+	    filters: FILTERS
+	};
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// UMD (Universal Module Definition)
+	// See https://github.com/umdjs/umd for reference
+	//
+	// This file uses the following specific UMD implementation:
+	// https://github.com/umdjs/umd/blob/master/returnExports.js
+	(function(root, factory) {
+	  if (true) {
+	    // AMD. Register as an anonymous module.
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports === 'object') {
+	    // Node. Does not work with strict CommonJS, but
+	    // only CommonJS-like environments that support module.exports,
+	    // like Node.
+	    module.exports = factory();
+	  } else {
+	    // Browser globals (root is window)
+	    root.computeLayout = factory();
+	  }
+	}(this, function() {
+	  /**
+	 * Copyright (c) 2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+
+	var computeLayout = (function() {
+
+	  var CSS_UNDEFINED;
+
+	  var CSS_DIRECTION_INHERIT = 'inherit';
+	  var CSS_DIRECTION_LTR = 'ltr';
+	  var CSS_DIRECTION_RTL = 'rtl';
+
+	  var CSS_FLEX_DIRECTION_ROW = 'row';
+	  var CSS_FLEX_DIRECTION_ROW_REVERSE = 'row-reverse';
+	  var CSS_FLEX_DIRECTION_COLUMN = 'column';
+	  var CSS_FLEX_DIRECTION_COLUMN_REVERSE = 'column-reverse';
+
+	  var CSS_JUSTIFY_FLEX_START = 'flex-start';
+	  var CSS_JUSTIFY_CENTER = 'center';
+	  var CSS_JUSTIFY_FLEX_END = 'flex-end';
+	  var CSS_JUSTIFY_SPACE_BETWEEN = 'space-between';
+	  var CSS_JUSTIFY_SPACE_AROUND = 'space-around';
+
+	  var CSS_ALIGN_FLEX_START = 'flex-start';
+	  var CSS_ALIGN_CENTER = 'center';
+	  var CSS_ALIGN_FLEX_END = 'flex-end';
+	  var CSS_ALIGN_STRETCH = 'stretch';
+
+	  var CSS_POSITION_RELATIVE = 'relative';
+	  var CSS_POSITION_ABSOLUTE = 'absolute';
+
+	  var leading = {
+	    'row': 'left',
+	    'row-reverse': 'right',
+	    'column': 'top',
+	    'column-reverse': 'bottom'
+	  };
+	  var trailing = {
+	    'row': 'right',
+	    'row-reverse': 'left',
+	    'column': 'bottom',
+	    'column-reverse': 'top'
+	  };
+	  var pos = {
+	    'row': 'left',
+	    'row-reverse': 'right',
+	    'column': 'top',
+	    'column-reverse': 'bottom'
+	  };
+	  var dim = {
+	    'row': 'width',
+	    'row-reverse': 'width',
+	    'column': 'height',
+	    'column-reverse': 'height'
+	  };
+
+	  // When transpiled to Java / C the node type has layout, children and style
+	  // properties. For the JavaScript version this function adds these properties
+	  // if they don't already exist.
+	  function fillNodes(node) {
+	    if (!node.layout || node.isDirty) {
+	      node.layout = {
+	        width: undefined,
+	        height: undefined,
+	        top: 0,
+	        left: 0,
+	        right: 0,
+	        bottom: 0
+	      };
+	    }
+
+	    if (!node.style) {
+	      node.style = {};
+	    }
+
+	    if (!node.children) {
+	      node.children = [];
+	    }
+	    node.children.forEach(fillNodes);
+	    return node;
+	  }
+
+	  function isUndefined(value) {
+	    return value === undefined;
+	  }
+
+	  function isRowDirection(flexDirection) {
+	    return flexDirection === CSS_FLEX_DIRECTION_ROW ||
+	           flexDirection === CSS_FLEX_DIRECTION_ROW_REVERSE;
+	  }
+
+	  function isColumnDirection(flexDirection) {
+	    return flexDirection === CSS_FLEX_DIRECTION_COLUMN ||
+	           flexDirection === CSS_FLEX_DIRECTION_COLUMN_REVERSE;
+	  }
+
+	  function getLeadingMargin(node, axis) {
+	    if (node.style.marginStart !== undefined && isRowDirection(axis)) {
+	      return node.style.marginStart;
+	    }
+
+	    var value = null;
+	    switch (axis) {
+	      case 'row':            value = node.style.marginLeft;   break;
+	      case 'row-reverse':    value = node.style.marginRight;  break;
+	      case 'column':         value = node.style.marginTop;    break;
+	      case 'column-reverse': value = node.style.marginBottom; break;
+	    }
+
+	    if (value !== undefined) {
+	      return value;
+	    }
+
+	    if (node.style.margin !== undefined) {
+	      return node.style.margin;
+	    }
+
+	    return 0;
+	  }
+
+	  function getTrailingMargin(node, axis) {
+	    if (node.style.marginEnd !== undefined && isRowDirection(axis)) {
+	      return node.style.marginEnd;
+	    }
+
+	    var value = null;
+	    switch (axis) {
+	      case 'row':            value = node.style.marginRight;  break;
+	      case 'row-reverse':    value = node.style.marginLeft;   break;
+	      case 'column':         value = node.style.marginBottom; break;
+	      case 'column-reverse': value = node.style.marginTop;    break;
+	    }
+
+	    if (value != null) {
+	      return value;
+	    }
+
+	    if (node.style.margin !== undefined) {
+	      return node.style.margin;
+	    }
+
+	    return 0;
+	  }
+
+	  function getLeadingPadding(node, axis) {
+	    if (node.style.paddingStart !== undefined && node.style.paddingStart >= 0
+	        && isRowDirection(axis)) {
+	      return node.style.paddingStart;
+	    }
+
+	    var value = null;
+	    switch (axis) {
+	      case 'row':            value = node.style.paddingLeft;   break;
+	      case 'row-reverse':    value = node.style.paddingRight;  break;
+	      case 'column':         value = node.style.paddingTop;    break;
+	      case 'column-reverse': value = node.style.paddingBottom; break;
+	    }
+
+	    if (value != null && value >= 0) {
+	      return value;
+	    }
+
+	    if (node.style.padding !== undefined && node.style.padding >= 0) {
+	      return node.style.padding;
+	    }
+
+	    return 0;
+	  }
+
+	  function getTrailingPadding(node, axis) {
+	    if (node.style.paddingEnd !== undefined && node.style.paddingEnd >= 0
+	        && isRowDirection(axis)) {
+	      return node.style.paddingEnd;
+	    }
+
+	    var value = null;
+	    switch (axis) {
+	      case 'row':            value = node.style.paddingRight;  break;
+	      case 'row-reverse':    value = node.style.paddingLeft;   break;
+	      case 'column':         value = node.style.paddingBottom; break;
+	      case 'column-reverse': value = node.style.paddingTop;    break;
+	    }
+
+	    if (value != null && value >= 0) {
+	      return value;
+	    }
+
+	    if (node.style.padding !== undefined && node.style.padding >= 0) {
+	      return node.style.padding;
+	    }
+
+	    return 0;
+	  }
+
+	  function getLeadingBorder(node, axis) {
+	    if (node.style.borderStartWidth !== undefined && node.style.borderStartWidth >= 0
+	        && isRowDirection(axis)) {
+	      return node.style.borderStartWidth;
+	    }
+
+	    var value = null;
+	    switch (axis) {
+	      case 'row':            value = node.style.borderLeftWidth;   break;
+	      case 'row-reverse':    value = node.style.borderRightWidth;  break;
+	      case 'column':         value = node.style.borderTopWidth;    break;
+	      case 'column-reverse': value = node.style.borderBottomWidth; break;
+	    }
+
+	    if (value != null && value >= 0) {
+	      return value;
+	    }
+
+	    if (node.style.borderWidth !== undefined && node.style.borderWidth >= 0) {
+	      return node.style.borderWidth;
+	    }
+
+	    return 0;
+	  }
+
+	  function getTrailingBorder(node, axis) {
+	    if (node.style.borderEndWidth !== undefined && node.style.borderEndWidth >= 0
+	        && isRowDirection(axis)) {
+	      return node.style.borderEndWidth;
+	    }
+
+	    var value = null;
+	    switch (axis) {
+	      case 'row':            value = node.style.borderRightWidth;  break;
+	      case 'row-reverse':    value = node.style.borderLeftWidth;   break;
+	      case 'column':         value = node.style.borderBottomWidth; break;
+	      case 'column-reverse': value = node.style.borderTopWidth;    break;
+	    }
+
+	    if (value != null && value >= 0) {
+	      return value;
+	    }
+
+	    if (node.style.borderWidth !== undefined && node.style.borderWidth >= 0) {
+	      return node.style.borderWidth;
+	    }
+
+	    return 0;
+	  }
+
+	  function getLeadingPaddingAndBorder(node, axis) {
+	    return getLeadingPadding(node, axis) + getLeadingBorder(node, axis);
+	  }
+
+	  function getTrailingPaddingAndBorder(node, axis) {
+	    return getTrailingPadding(node, axis) + getTrailingBorder(node, axis);
+	  }
+
+	  function getBorderAxis(node, axis) {
+	    return getLeadingBorder(node, axis) + getTrailingBorder(node, axis);
+	  }
+
+	  function getMarginAxis(node, axis) {
+	    return getLeadingMargin(node, axis) + getTrailingMargin(node, axis);
+	  }
+
+	  function getPaddingAndBorderAxis(node, axis) {
+	    return getLeadingPaddingAndBorder(node, axis) +
+	        getTrailingPaddingAndBorder(node, axis);
+	  }
+
+	  function getJustifyContent(node) {
+	    if (node.style.justifyContent) {
+	      return node.style.justifyContent;
+	    }
+	    return 'flex-start';
+	  }
+
+	  function getAlignContent(node) {
+	    if (node.style.alignContent) {
+	      return node.style.alignContent;
+	    }
+	    return 'flex-start';
+	  }
+
+	  function getAlignItem(node, child) {
+	    if (child.style.alignSelf) {
+	      return child.style.alignSelf;
+	    }
+	    if (node.style.alignItems) {
+	      return node.style.alignItems;
+	    }
+	    return 'stretch';
+	  }
+
+	  function resolveAxis(axis, direction) {
+	    if (direction === CSS_DIRECTION_RTL) {
+	      if (axis === CSS_FLEX_DIRECTION_ROW) {
+	        return CSS_FLEX_DIRECTION_ROW_REVERSE;
+	      } else if (axis === CSS_FLEX_DIRECTION_ROW_REVERSE) {
+	        return CSS_FLEX_DIRECTION_ROW;
+	      }
+	    }
+
+	    return axis;
+	  }
+
+	  function resolveDirection(node, parentDirection) {
+	    var direction;
+	    if (node.style.direction) {
+	      direction = node.style.direction;
+	    } else {
+	      direction = CSS_DIRECTION_INHERIT;
+	    }
+
+	    if (direction === CSS_DIRECTION_INHERIT) {
+	      direction = (parentDirection === undefined ? CSS_DIRECTION_LTR : parentDirection);
+	    }
+
+	    return direction;
+	  }
+
+	  function getFlexDirection(node) {
+	    if (node.style.flexDirection) {
+	      return node.style.flexDirection;
+	    }
+	    return CSS_FLEX_DIRECTION_COLUMN;
+	  }
+
+	  function getCrossFlexDirection(flexDirection, direction) {
+	    if (isColumnDirection(flexDirection)) {
+	      return resolveAxis(CSS_FLEX_DIRECTION_ROW, direction);
+	    } else {
+	      return CSS_FLEX_DIRECTION_COLUMN;
+	    }
+	  }
+
+	  function getPositionType(node) {
+	    if (node.style.position) {
+	      return node.style.position;
+	    }
+	    return 'relative';
+	  }
+
+	  function isFlex(node) {
+	    return (
+	      getPositionType(node) === CSS_POSITION_RELATIVE &&
+	      node.style.flex > 0
+	    );
+	  }
+
+	  function isFlexWrap(node) {
+	    return node.style.flexWrap === 'wrap';
+	  }
+
+	  function getDimWithMargin(node, axis) {
+	    return node.layout[dim[axis]] + getMarginAxis(node, axis);
+	  }
+
+	  function isDimDefined(node, axis) {
+	    return node.style[dim[axis]] !== undefined && node.style[dim[axis]] >= 0;
+	  }
+
+	  function isPosDefined(node, pos) {
+	    return node.style[pos] !== undefined;
+	  }
+
+	  function isMeasureDefined(node) {
+	    return node.style.measure !== undefined;
+	  }
+
+	  function getPosition(node, pos) {
+	    if (node.style[pos] !== undefined) {
+	      return node.style[pos];
+	    }
+	    return 0;
+	  }
+
+	  function boundAxis(node, axis, value) {
+	    var min = {
+	      'row': node.style.minWidth,
+	      'row-reverse': node.style.minWidth,
+	      'column': node.style.minHeight,
+	      'column-reverse': node.style.minHeight
+	    }[axis];
+
+	    var max = {
+	      'row': node.style.maxWidth,
+	      'row-reverse': node.style.maxWidth,
+	      'column': node.style.maxHeight,
+	      'column-reverse': node.style.maxHeight
+	    }[axis];
+
+	    var boundValue = value;
+	    if (max !== undefined && max >= 0 && boundValue > max) {
+	      boundValue = max;
+	    }
+	    if (min !== undefined && min >= 0 && boundValue < min) {
+	      boundValue = min;
+	    }
+	    return boundValue;
+	  }
+
+	  function fmaxf(a, b) {
+	    if (a > b) {
+	      return a;
+	    }
+	    return b;
+	  }
+
+	  // When the user specifically sets a value for width or height
+	  function setDimensionFromStyle(node, axis) {
+	    // The parent already computed us a width or height. We just skip it
+	    if (node.layout[dim[axis]] !== undefined) {
+	      return;
+	    }
+	    // We only run if there's a width or height defined
+	    if (!isDimDefined(node, axis)) {
+	      return;
+	    }
+
+	    // The dimensions can never be smaller than the padding and border
+	    node.layout[dim[axis]] = fmaxf(
+	      boundAxis(node, axis, node.style[dim[axis]]),
+	      getPaddingAndBorderAxis(node, axis)
+	    );
+	  }
+
+	  function setTrailingPosition(node, child, axis) {
+	    child.layout[trailing[axis]] = node.layout[dim[axis]] -
+	        child.layout[dim[axis]] - child.layout[pos[axis]];
+	  }
+
+	  // If both left and right are defined, then use left. Otherwise return
+	  // +left or -right depending on which is defined.
+	  function getRelativePosition(node, axis) {
+	    if (node.style[leading[axis]] !== undefined) {
+	      return getPosition(node, leading[axis]);
+	    }
+	    return -getPosition(node, trailing[axis]);
+	  }
+
+	  function layoutNodeImpl(node, parentMaxWidth, /*css_direction_t*/parentDirection) {
+	    var/*css_direction_t*/ direction = resolveDirection(node, parentDirection);
+	    var/*(c)!css_flex_direction_t*//*(java)!int*/ mainAxis = resolveAxis(getFlexDirection(node), direction);
+	    var/*(c)!css_flex_direction_t*//*(java)!int*/ crossAxis = getCrossFlexDirection(mainAxis, direction);
+	    var/*(c)!css_flex_direction_t*//*(java)!int*/ resolvedRowAxis = resolveAxis(CSS_FLEX_DIRECTION_ROW, direction);
+
+	    // Handle width and height style attributes
+	    setDimensionFromStyle(node, mainAxis);
+	    setDimensionFromStyle(node, crossAxis);
+
+	    // Set the resolved resolution in the node's layout
+	    node.layout.direction = direction;
+
+	    // The position is set by the parent, but we need to complete it with a
+	    // delta composed of the margin and left/top/right/bottom
+	    node.layout[leading[mainAxis]] += getLeadingMargin(node, mainAxis) +
+	      getRelativePosition(node, mainAxis);
+	    node.layout[trailing[mainAxis]] += getTrailingMargin(node, mainAxis) +
+	      getRelativePosition(node, mainAxis);
+	    node.layout[leading[crossAxis]] += getLeadingMargin(node, crossAxis) +
+	      getRelativePosition(node, crossAxis);
+	    node.layout[trailing[crossAxis]] += getTrailingMargin(node, crossAxis) +
+	      getRelativePosition(node, crossAxis);
+
+	    // Inline immutable values from the target node to avoid excessive method
+	    // invocations during the layout calculation.
+	    var/*int*/ childCount = node.children.length;
+	    var/*float*/ paddingAndBorderAxisResolvedRow = getPaddingAndBorderAxis(node, resolvedRowAxis);
+
+	    if (isMeasureDefined(node)) {
+	      var/*bool*/ isResolvedRowDimDefined = !isUndefined(node.layout[dim[resolvedRowAxis]]);
+
+	      var/*float*/ width = CSS_UNDEFINED;
+	      if (isDimDefined(node, resolvedRowAxis)) {
+	        width = node.style.width;
+	      } else if (isResolvedRowDimDefined) {
+	        width = node.layout[dim[resolvedRowAxis]];
+	      } else {
+	        width = parentMaxWidth -
+	          getMarginAxis(node, resolvedRowAxis);
+	      }
+	      width -= paddingAndBorderAxisResolvedRow;
+
+	      // We only need to give a dimension for the text if we haven't got any
+	      // for it computed yet. It can either be from the style attribute or because
+	      // the element is flexible.
+	      var/*bool*/ isRowUndefined = !isDimDefined(node, resolvedRowAxis) && !isResolvedRowDimDefined;
+	      var/*bool*/ isColumnUndefined = !isDimDefined(node, CSS_FLEX_DIRECTION_COLUMN) &&
+	        isUndefined(node.layout[dim[CSS_FLEX_DIRECTION_COLUMN]]);
+
+	      // Let's not measure the text if we already know both dimensions
+	      if (isRowUndefined || isColumnUndefined) {
+	        var/*css_dim_t*/ measureDim = node.style.measure(
+	          /*(c)!node->context,*/
+	          /*(java)!layoutContext.measureOutput,*/
+	          width
+	        );
+	        if (isRowUndefined) {
+	          node.layout.width = measureDim.width +
+	            paddingAndBorderAxisResolvedRow;
+	        }
+	        if (isColumnUndefined) {
+	          node.layout.height = measureDim.height +
+	            getPaddingAndBorderAxis(node, CSS_FLEX_DIRECTION_COLUMN);
+	        }
+	      }
+	      if (childCount === 0) {
+	        return;
+	      }
+	    }
+
+	    var/*bool*/ isNodeFlexWrap = isFlexWrap(node);
+
+	    var/*css_justify_t*/ justifyContent = getJustifyContent(node);
+
+	    var/*float*/ leadingPaddingAndBorderMain = getLeadingPaddingAndBorder(node, mainAxis);
+	    var/*float*/ leadingPaddingAndBorderCross = getLeadingPaddingAndBorder(node, crossAxis);
+	    var/*float*/ paddingAndBorderAxisMain = getPaddingAndBorderAxis(node, mainAxis);
+	    var/*float*/ paddingAndBorderAxisCross = getPaddingAndBorderAxis(node, crossAxis);
+
+	    var/*bool*/ isMainDimDefined = !isUndefined(node.layout[dim[mainAxis]]);
+	    var/*bool*/ isCrossDimDefined = !isUndefined(node.layout[dim[crossAxis]]);
+	    var/*bool*/ isMainRowDirection = isRowDirection(mainAxis);
+
+	    var/*int*/ i;
+	    var/*int*/ ii;
+	    var/*css_node_t**/ child;
+	    var/*(c)!css_flex_direction_t*//*(java)!int*/ axis;
+
+	    var/*css_node_t**/ firstAbsoluteChild = null;
+	    var/*css_node_t**/ currentAbsoluteChild = null;
+
+	    var/*float*/ definedMainDim = CSS_UNDEFINED;
+	    if (isMainDimDefined) {
+	      definedMainDim = node.layout[dim[mainAxis]] - paddingAndBorderAxisMain;
+	    }
+
+	    // We want to execute the next two loops one per line with flex-wrap
+	    var/*int*/ startLine = 0;
+	    var/*int*/ endLine = 0;
+	    // var/*int*/ nextOffset = 0;
+	    var/*int*/ alreadyComputedNextLayout = 0;
+	    // We aggregate the total dimensions of the container in those two variables
+	    var/*float*/ linesCrossDim = 0;
+	    var/*float*/ linesMainDim = 0;
+	    var/*int*/ linesCount = 0;
+	    while (endLine < childCount) {
+	      // <Loop A> Layout non flexible children and count children by type
+
+	      // mainContentDim is accumulation of the dimensions and margin of all the
+	      // non flexible children. This will be used in order to either set the
+	      // dimensions of the node if none already exist, or to compute the
+	      // remaining space left for the flexible children.
+	      var/*float*/ mainContentDim = 0;
+
+	      // There are three kind of children, non flexible, flexible and absolute.
+	      // We need to know how many there are in order to distribute the space.
+	      var/*int*/ flexibleChildrenCount = 0;
+	      var/*float*/ totalFlexible = 0;
+	      var/*int*/ nonFlexibleChildrenCount = 0;
+
+	      // Use the line loop to position children in the main axis for as long
+	      // as they are using a simple stacking behaviour. Children that are
+	      // immediately stacked in the initial loop will not be touched again
+	      // in <Loop C>.
+	      var/*bool*/ isSimpleStackMain =
+	          (isMainDimDefined && justifyContent === CSS_JUSTIFY_FLEX_START) ||
+	          (!isMainDimDefined && justifyContent !== CSS_JUSTIFY_CENTER);
+	      var/*int*/ firstComplexMain = (isSimpleStackMain ? childCount : startLine);
+
+	      // Use the initial line loop to position children in the cross axis for
+	      // as long as they are relatively positioned with alignment STRETCH or
+	      // FLEX_START. Children that are immediately stacked in the initial loop
+	      // will not be touched again in <Loop D>.
+	      var/*bool*/ isSimpleStackCross = true;
+	      var/*int*/ firstComplexCross = childCount;
+
+	      var/*css_node_t**/ firstFlexChild = null;
+	      var/*css_node_t**/ currentFlexChild = null;
+
+	      var/*float*/ mainDim = leadingPaddingAndBorderMain;
+	      var/*float*/ crossDim = 0;
+
+	      var/*float*/ maxWidth;
+	      for (i = startLine; i < childCount; ++i) {
+	        child = node.children[i];
+	        child.lineIndex = linesCount;
+
+	        child.nextAbsoluteChild = null;
+	        child.nextFlexChild = null;
+
+	        var/*css_align_t*/ alignItem = getAlignItem(node, child);
+
+	        // Pre-fill cross axis dimensions when the child is using stretch before
+	        // we call the recursive layout pass
+	        if (alignItem === CSS_ALIGN_STRETCH &&
+	            getPositionType(child) === CSS_POSITION_RELATIVE &&
+	            isCrossDimDefined &&
+	            !isDimDefined(child, crossAxis)) {
+	          child.layout[dim[crossAxis]] = fmaxf(
+	            boundAxis(child, crossAxis, node.layout[dim[crossAxis]] -
+	              paddingAndBorderAxisCross - getMarginAxis(child, crossAxis)),
+	            // You never want to go smaller than padding
+	            getPaddingAndBorderAxis(child, crossAxis)
+	          );
+	        } else if (getPositionType(child) === CSS_POSITION_ABSOLUTE) {
+	          // Store a private linked list of absolutely positioned children
+	          // so that we can efficiently traverse them later.
+	          if (firstAbsoluteChild === null) {
+	            firstAbsoluteChild = child;
+	          }
+	          if (currentAbsoluteChild !== null) {
+	            currentAbsoluteChild.nextAbsoluteChild = child;
+	          }
+	          currentAbsoluteChild = child;
+
+	          // Pre-fill dimensions when using absolute position and both offsets for the axis are defined (either both
+	          // left and right or top and bottom).
+	          for (ii = 0; ii < 2; ii++) {
+	            axis = (ii !== 0) ? CSS_FLEX_DIRECTION_ROW : CSS_FLEX_DIRECTION_COLUMN;
+	            if (!isUndefined(node.layout[dim[axis]]) &&
+	                !isDimDefined(child, axis) &&
+	                isPosDefined(child, leading[axis]) &&
+	                isPosDefined(child, trailing[axis])) {
+	              child.layout[dim[axis]] = fmaxf(
+	                boundAxis(child, axis, node.layout[dim[axis]] -
+	                  getPaddingAndBorderAxis(node, axis) -
+	                  getMarginAxis(child, axis) -
+	                  getPosition(child, leading[axis]) -
+	                  getPosition(child, trailing[axis])),
+	                // You never want to go smaller than padding
+	                getPaddingAndBorderAxis(child, axis)
+	              );
+	            }
+	          }
+	        }
+
+	        var/*float*/ nextContentDim = 0;
+
+	        // It only makes sense to consider a child flexible if we have a computed
+	        // dimension for the node.
+	        if (isMainDimDefined && isFlex(child)) {
+	          flexibleChildrenCount++;
+	          totalFlexible += child.style.flex;
+
+	          // Store a private linked list of flexible children so that we can
+	          // efficiently traverse them later.
+	          if (firstFlexChild === null) {
+	            firstFlexChild = child;
+	          }
+	          if (currentFlexChild !== null) {
+	            currentFlexChild.nextFlexChild = child;
+	          }
+	          currentFlexChild = child;
+
+	          // Even if we don't know its exact size yet, we already know the padding,
+	          // border and margin. We'll use this partial information, which represents
+	          // the smallest possible size for the child, to compute the remaining
+	          // available space.
+	          nextContentDim = getPaddingAndBorderAxis(child, mainAxis) +
+	            getMarginAxis(child, mainAxis);
+
+	        } else {
+	          maxWidth = CSS_UNDEFINED;
+	          if (!isMainRowDirection) {
+	            if (isDimDefined(node, resolvedRowAxis)) {
+	              maxWidth = node.layout[dim[resolvedRowAxis]] -
+	                paddingAndBorderAxisResolvedRow;
+	            } else {
+	              maxWidth = parentMaxWidth -
+	                getMarginAxis(node, resolvedRowAxis) -
+	                paddingAndBorderAxisResolvedRow;
+	            }
+	          }
+
+	          // This is the main recursive call. We layout non flexible children.
+	          if (alreadyComputedNextLayout === 0) {
+	            layoutNode(/*(java)!layoutContext, */child, maxWidth, direction);
+	          }
+
+	          // Absolute positioned elements do not take part of the layout, so we
+	          // don't use them to compute mainContentDim
+	          if (getPositionType(child) === CSS_POSITION_RELATIVE) {
+	            nonFlexibleChildrenCount++;
+	            // At this point we know the final size and margin of the element.
+	            nextContentDim = getDimWithMargin(child, mainAxis);
+	          }
+	        }
+
+	        // The element we are about to add would make us go to the next line
+	        if (isNodeFlexWrap &&
+	            isMainDimDefined &&
+	            mainContentDim + nextContentDim > definedMainDim &&
+	            // If there's only one element, then it's bigger than the content
+	            // and needs its own line
+	            i !== startLine) {
+	          nonFlexibleChildrenCount--;
+	          alreadyComputedNextLayout = 1;
+	          break;
+	        }
+
+	        // Disable simple stacking in the main axis for the current line as
+	        // we found a non-trivial child. The remaining children will be laid out
+	        // in <Loop C>.
+	        if (isSimpleStackMain &&
+	            (getPositionType(child) !== CSS_POSITION_RELATIVE || isFlex(child))) {
+	          isSimpleStackMain = false;
+	          firstComplexMain = i;
+	        }
+
+	        // Disable simple stacking in the cross axis for the current line as
+	        // we found a non-trivial child. The remaining children will be laid out
+	        // in <Loop D>.
+	        if (isSimpleStackCross &&
+	            (getPositionType(child) !== CSS_POSITION_RELATIVE ||
+	                (alignItem !== CSS_ALIGN_STRETCH && alignItem !== CSS_ALIGN_FLEX_START) ||
+	                isUndefined(child.layout[dim[crossAxis]]))) {
+	          isSimpleStackCross = false;
+	          firstComplexCross = i;
+	        }
+
+	        if (isSimpleStackMain) {
+	          child.layout[pos[mainAxis]] += mainDim;
+	          if (isMainDimDefined) {
+	            setTrailingPosition(node, child, mainAxis);
+	          }
+
+	          mainDim += getDimWithMargin(child, mainAxis);
+	          crossDim = fmaxf(crossDim, boundAxis(child, crossAxis, getDimWithMargin(child, crossAxis)));
+	        }
+
+	        if (isSimpleStackCross) {
+	          child.layout[pos[crossAxis]] += linesCrossDim + leadingPaddingAndBorderCross;
+	          if (isCrossDimDefined) {
+	            setTrailingPosition(node, child, crossAxis);
+	          }
+	        }
+
+	        alreadyComputedNextLayout = 0;
+	        mainContentDim += nextContentDim;
+	        endLine = i + 1;
+	      }
+
+	      // <Loop B> Layout flexible children and allocate empty space
+
+	      // In order to position the elements in the main axis, we have two
+	      // controls. The space between the beginning and the first element
+	      // and the space between each two elements.
+	      var/*float*/ leadingMainDim = 0;
+	      var/*float*/ betweenMainDim = 0;
+
+	      // The remaining available space that needs to be allocated
+	      var/*float*/ remainingMainDim = 0;
+	      if (isMainDimDefined) {
+	        remainingMainDim = definedMainDim - mainContentDim;
+	      } else {
+	        remainingMainDim = fmaxf(mainContentDim, 0) - mainContentDim;
+	      }
+
+	      // If there are flexible children in the mix, they are going to fill the
+	      // remaining space
+	      if (flexibleChildrenCount !== 0) {
+	        var/*float*/ flexibleMainDim = remainingMainDim / totalFlexible;
+	        var/*float*/ baseMainDim;
+	        var/*float*/ boundMainDim;
+
+	        // If the flex share of remaining space doesn't meet min/max bounds,
+	        // remove this child from flex calculations.
+	        currentFlexChild = firstFlexChild;
+	        while (currentFlexChild !== null) {
+	          baseMainDim = flexibleMainDim * currentFlexChild.style.flex +
+	              getPaddingAndBorderAxis(currentFlexChild, mainAxis);
+	          boundMainDim = boundAxis(currentFlexChild, mainAxis, baseMainDim);
+
+	          if (baseMainDim !== boundMainDim) {
+	            remainingMainDim -= boundMainDim;
+	            totalFlexible -= currentFlexChild.style.flex;
+	          }
+
+	          currentFlexChild = currentFlexChild.nextFlexChild;
+	        }
+	        flexibleMainDim = remainingMainDim / totalFlexible;
+
+	        // The non flexible children can overflow the container, in this case
+	        // we should just assume that there is no space available.
+	        if (flexibleMainDim < 0) {
+	          flexibleMainDim = 0;
+	        }
+
+	        currentFlexChild = firstFlexChild;
+	        while (currentFlexChild !== null) {
+	          // At this point we know the final size of the element in the main
+	          // dimension
+	          currentFlexChild.layout[dim[mainAxis]] = boundAxis(currentFlexChild, mainAxis,
+	            flexibleMainDim * currentFlexChild.style.flex +
+	                getPaddingAndBorderAxis(currentFlexChild, mainAxis)
+	          );
+
+	          maxWidth = CSS_UNDEFINED;
+	          if (isDimDefined(node, resolvedRowAxis)) {
+	            maxWidth = node.layout[dim[resolvedRowAxis]] -
+	              paddingAndBorderAxisResolvedRow;
+	          } else if (!isMainRowDirection) {
+	            maxWidth = parentMaxWidth -
+	              getMarginAxis(node, resolvedRowAxis) -
+	              paddingAndBorderAxisResolvedRow;
+	          }
+
+	          // And we recursively call the layout algorithm for this child
+	          layoutNode(/*(java)!layoutContext, */currentFlexChild, maxWidth, direction);
+
+	          child = currentFlexChild;
+	          currentFlexChild = currentFlexChild.nextFlexChild;
+	          child.nextFlexChild = null;
+	        }
+
+	      // We use justifyContent to figure out how to allocate the remaining
+	      // space available
+	      } else if (justifyContent !== CSS_JUSTIFY_FLEX_START) {
+	        if (justifyContent === CSS_JUSTIFY_CENTER) {
+	          leadingMainDim = remainingMainDim / 2;
+	        } else if (justifyContent === CSS_JUSTIFY_FLEX_END) {
+	          leadingMainDim = remainingMainDim;
+	        } else if (justifyContent === CSS_JUSTIFY_SPACE_BETWEEN) {
+	          remainingMainDim = fmaxf(remainingMainDim, 0);
+	          if (flexibleChildrenCount + nonFlexibleChildrenCount - 1 !== 0) {
+	            betweenMainDim = remainingMainDim /
+	              (flexibleChildrenCount + nonFlexibleChildrenCount - 1);
+	          } else {
+	            betweenMainDim = 0;
+	          }
+	        } else if (justifyContent === CSS_JUSTIFY_SPACE_AROUND) {
+	          // Space on the edges is half of the space between elements
+	          betweenMainDim = remainingMainDim /
+	            (flexibleChildrenCount + nonFlexibleChildrenCount);
+	          leadingMainDim = betweenMainDim / 2;
+	        }
+	      }
+
+	      // <Loop C> Position elements in the main axis and compute dimensions
+
+	      // At this point, all the children have their dimensions set. We need to
+	      // find their position. In order to do that, we accumulate data in
+	      // variables that are also useful to compute the total dimensions of the
+	      // container!
+	      mainDim += leadingMainDim;
+
+	      for (i = firstComplexMain; i < endLine; ++i) {
+	        child = node.children[i];
+
+	        if (getPositionType(child) === CSS_POSITION_ABSOLUTE &&
+	            isPosDefined(child, leading[mainAxis])) {
+	          // In case the child is position absolute and has left/top being
+	          // defined, we override the position to whatever the user said
+	          // (and margin/border).
+	          child.layout[pos[mainAxis]] = getPosition(child, leading[mainAxis]) +
+	            getLeadingBorder(node, mainAxis) +
+	            getLeadingMargin(child, mainAxis);
+	        } else {
+	          // If the child is position absolute (without top/left) or relative,
+	          // we put it at the current accumulated offset.
+	          child.layout[pos[mainAxis]] += mainDim;
+
+	          // Define the trailing position accordingly.
+	          if (isMainDimDefined) {
+	            setTrailingPosition(node, child, mainAxis);
+	          }
+
+	          // Now that we placed the element, we need to update the variables
+	          // We only need to do that for relative elements. Absolute elements
+	          // do not take part in that phase.
+	          if (getPositionType(child) === CSS_POSITION_RELATIVE) {
+	            // The main dimension is the sum of all the elements dimension plus
+	            // the spacing.
+	            mainDim += betweenMainDim + getDimWithMargin(child, mainAxis);
+	            // The cross dimension is the max of the elements dimension since there
+	            // can only be one element in that cross dimension.
+	            crossDim = fmaxf(crossDim, boundAxis(child, crossAxis, getDimWithMargin(child, crossAxis)));
+	          }
+	        }
+	      }
+
+	      var/*float*/ containerCrossAxis = node.layout[dim[crossAxis]];
+	      if (!isCrossDimDefined) {
+	        containerCrossAxis = fmaxf(
+	          // For the cross dim, we add both sides at the end because the value
+	          // is aggregate via a max function. Intermediate negative values
+	          // can mess this computation otherwise
+	          boundAxis(node, crossAxis, crossDim + paddingAndBorderAxisCross),
+	          paddingAndBorderAxisCross
+	        );
+	      }
+
+	      // <Loop D> Position elements in the cross axis
+	      for (i = firstComplexCross; i < endLine; ++i) {
+	        child = node.children[i];
+
+	        if (getPositionType(child) === CSS_POSITION_ABSOLUTE &&
+	            isPosDefined(child, leading[crossAxis])) {
+	          // In case the child is absolutely positionned and has a
+	          // top/left/bottom/right being set, we override all the previously
+	          // computed positions to set it correctly.
+	          child.layout[pos[crossAxis]] = getPosition(child, leading[crossAxis]) +
+	            getLeadingBorder(node, crossAxis) +
+	            getLeadingMargin(child, crossAxis);
+
+	        } else {
+	          var/*float*/ leadingCrossDim = leadingPaddingAndBorderCross;
+
+	          // For a relative children, we're either using alignItems (parent) or
+	          // alignSelf (child) in order to determine the position in the cross axis
+	          if (getPositionType(child) === CSS_POSITION_RELATIVE) {
+	            /*eslint-disable */
+	            // This variable is intentionally re-defined as the code is transpiled to a block scope language
+	            var/*css_align_t*/ alignItem = getAlignItem(node, child);
+	            /*eslint-enable */
+	            if (alignItem === CSS_ALIGN_STRETCH) {
+	              // You can only stretch if the dimension has not already been set
+	              // previously.
+	              if (isUndefined(child.layout[dim[crossAxis]])) {
+	                child.layout[dim[crossAxis]] = fmaxf(
+	                  boundAxis(child, crossAxis, containerCrossAxis -
+	                    paddingAndBorderAxisCross - getMarginAxis(child, crossAxis)),
+	                  // You never want to go smaller than padding
+	                  getPaddingAndBorderAxis(child, crossAxis)
+	                );
+	              }
+	            } else if (alignItem !== CSS_ALIGN_FLEX_START) {
+	              // The remaining space between the parent dimensions+padding and child
+	              // dimensions+margin.
+	              var/*float*/ remainingCrossDim = containerCrossAxis -
+	                paddingAndBorderAxisCross - getDimWithMargin(child, crossAxis);
+
+	              if (alignItem === CSS_ALIGN_CENTER) {
+	                leadingCrossDim += remainingCrossDim / 2;
+	              } else { // CSS_ALIGN_FLEX_END
+	                leadingCrossDim += remainingCrossDim;
+	              }
+	            }
+	          }
+
+	          // And we apply the position
+	          child.layout[pos[crossAxis]] += linesCrossDim + leadingCrossDim;
+
+	          // Define the trailing position accordingly.
+	          if (isCrossDimDefined) {
+	            setTrailingPosition(node, child, crossAxis);
+	          }
+	        }
+	      }
+
+	      linesCrossDim += crossDim;
+	      linesMainDim = fmaxf(linesMainDim, mainDim);
+	      linesCount += 1;
+	      startLine = endLine;
+	    }
+
+	    // <Loop E>
+	    //
+	    // Note(prenaux): More than one line, we need to layout the crossAxis
+	    // according to alignContent.
+	    //
+	    // Note that we could probably remove <Loop D> and handle the one line case
+	    // here too, but for the moment this is safer since it won't interfere with
+	    // previously working code.
+	    //
+	    // See specs:
+	    // http://www.w3.org/TR/2012/CR-css3-flexbox-20120918/#layout-algorithm
+	    // section 9.4
+	    //
+	    if (linesCount > 1 && isCrossDimDefined) {
+	      var/*float*/ nodeCrossAxisInnerSize = node.layout[dim[crossAxis]] -
+	          paddingAndBorderAxisCross;
+	      var/*float*/ remainingAlignContentDim = nodeCrossAxisInnerSize - linesCrossDim;
+
+	      var/*float*/ crossDimLead = 0;
+	      var/*float*/ currentLead = leadingPaddingAndBorderCross;
+
+	      var/*css_align_t*/ alignContent = getAlignContent(node);
+	      if (alignContent === CSS_ALIGN_FLEX_END) {
+	        currentLead += remainingAlignContentDim;
+	      } else if (alignContent === CSS_ALIGN_CENTER) {
+	        currentLead += remainingAlignContentDim / 2;
+	      } else if (alignContent === CSS_ALIGN_STRETCH) {
+	        if (nodeCrossAxisInnerSize > linesCrossDim) {
+	          crossDimLead = (remainingAlignContentDim / linesCount);
+	        }
+	      }
+
+	      var/*int*/ endIndex = 0;
+	      for (i = 0; i < linesCount; ++i) {
+	        var/*int*/ startIndex = endIndex;
+
+	        // compute the line's height and find the endIndex
+	        var/*float*/ lineHeight = 0;
+	        for (ii = startIndex; ii < childCount; ++ii) {
+	          child = node.children[ii];
+	          if (getPositionType(child) !== CSS_POSITION_RELATIVE) {
+	            continue;
+	          }
+	          if (child.lineIndex !== i) {
+	            break;
+	          }
+	          if (!isUndefined(child.layout[dim[crossAxis]])) {
+	            lineHeight = fmaxf(
+	              lineHeight,
+	              child.layout[dim[crossAxis]] + getMarginAxis(child, crossAxis)
+	            );
+	          }
+	        }
+	        endIndex = ii;
+	        lineHeight += crossDimLead;
+
+	        for (ii = startIndex; ii < endIndex; ++ii) {
+	          child = node.children[ii];
+	          if (getPositionType(child) !== CSS_POSITION_RELATIVE) {
+	            continue;
+	          }
+
+	          var/*css_align_t*/ alignContentAlignItem = getAlignItem(node, child);
+	          if (alignContentAlignItem === CSS_ALIGN_FLEX_START) {
+	            child.layout[pos[crossAxis]] = currentLead + getLeadingMargin(child, crossAxis);
+	          } else if (alignContentAlignItem === CSS_ALIGN_FLEX_END) {
+	            child.layout[pos[crossAxis]] = currentLead + lineHeight - getTrailingMargin(child, crossAxis) - child.layout[dim[crossAxis]];
+	          } else if (alignContentAlignItem === CSS_ALIGN_CENTER) {
+	            var/*float*/ childHeight = child.layout[dim[crossAxis]];
+	            child.layout[pos[crossAxis]] = currentLead + (lineHeight - childHeight) / 2;
+	          } else if (alignContentAlignItem === CSS_ALIGN_STRETCH) {
+	            child.layout[pos[crossAxis]] = currentLead + getLeadingMargin(child, crossAxis);
+	            // TODO(prenaux): Correctly set the height of items with undefined
+	            //                (auto) crossAxis dimension.
+	          }
+	        }
+
+	        currentLead += lineHeight;
+	      }
+	    }
+
+	    var/*bool*/ needsMainTrailingPos = false;
+	    var/*bool*/ needsCrossTrailingPos = false;
+
+	    // If the user didn't specify a width or height, and it has not been set
+	    // by the container, then we set it via the children.
+	    if (!isMainDimDefined) {
+	      node.layout[dim[mainAxis]] = fmaxf(
+	        // We're missing the last padding at this point to get the final
+	        // dimension
+	        boundAxis(node, mainAxis, linesMainDim + getTrailingPaddingAndBorder(node, mainAxis)),
+	        // We can never assign a width smaller than the padding and borders
+	        paddingAndBorderAxisMain
+	      );
+
+	      if (mainAxis === CSS_FLEX_DIRECTION_ROW_REVERSE ||
+	          mainAxis === CSS_FLEX_DIRECTION_COLUMN_REVERSE) {
+	        needsMainTrailingPos = true;
+	      }
+	    }
+
+	    if (!isCrossDimDefined) {
+	      node.layout[dim[crossAxis]] = fmaxf(
+	        // For the cross dim, we add both sides at the end because the value
+	        // is aggregate via a max function. Intermediate negative values
+	        // can mess this computation otherwise
+	        boundAxis(node, crossAxis, linesCrossDim + paddingAndBorderAxisCross),
+	        paddingAndBorderAxisCross
+	      );
+
+	      if (crossAxis === CSS_FLEX_DIRECTION_ROW_REVERSE ||
+	          crossAxis === CSS_FLEX_DIRECTION_COLUMN_REVERSE) {
+	        needsCrossTrailingPos = true;
+	      }
+	    }
+
+	    // <Loop F> Set trailing position if necessary
+	    if (needsMainTrailingPos || needsCrossTrailingPos) {
+	      for (i = 0; i < childCount; ++i) {
+	        child = node.children[i];
+
+	        if (needsMainTrailingPos) {
+	          setTrailingPosition(node, child, mainAxis);
+	        }
+
+	        if (needsCrossTrailingPos) {
+	          setTrailingPosition(node, child, crossAxis);
+	        }
+	      }
+	    }
+
+	    // <Loop G> Calculate dimensions for absolutely positioned elements
+	    currentAbsoluteChild = firstAbsoluteChild;
+	    while (currentAbsoluteChild !== null) {
+	      // Pre-fill dimensions when using absolute position and both offsets for
+	      // the axis are defined (either both left and right or top and bottom).
+	      for (ii = 0; ii < 2; ii++) {
+	        axis = (ii !== 0) ? CSS_FLEX_DIRECTION_ROW : CSS_FLEX_DIRECTION_COLUMN;
+
+	        if (!isUndefined(node.layout[dim[axis]]) &&
+	            !isDimDefined(currentAbsoluteChild, axis) &&
+	            isPosDefined(currentAbsoluteChild, leading[axis]) &&
+	            isPosDefined(currentAbsoluteChild, trailing[axis])) {
+	          currentAbsoluteChild.layout[dim[axis]] = fmaxf(
+	            boundAxis(currentAbsoluteChild, axis, node.layout[dim[axis]] -
+	              getBorderAxis(node, axis) -
+	              getMarginAxis(currentAbsoluteChild, axis) -
+	              getPosition(currentAbsoluteChild, leading[axis]) -
+	              getPosition(currentAbsoluteChild, trailing[axis])
+	            ),
+	            // You never want to go smaller than padding
+	            getPaddingAndBorderAxis(currentAbsoluteChild, axis)
+	          );
+	        }
+
+	        if (isPosDefined(currentAbsoluteChild, trailing[axis]) &&
+	            !isPosDefined(currentAbsoluteChild, leading[axis])) {
+	          currentAbsoluteChild.layout[leading[axis]] =
+	            node.layout[dim[axis]] -
+	            currentAbsoluteChild.layout[dim[axis]] -
+	            getPosition(currentAbsoluteChild, trailing[axis]);
+	        }
+	      }
+
+	      child = currentAbsoluteChild;
+	      currentAbsoluteChild = currentAbsoluteChild.nextAbsoluteChild;
+	      child.nextAbsoluteChild = null;
+	    }
+	  }
+
+	  function layoutNode(node, parentMaxWidth, parentDirection) {
+	    node.shouldUpdate = true;
+
+	    var direction = node.style.direction || CSS_DIRECTION_LTR;
+	    var skipLayout =
+	      !node.isDirty &&
+	      node.lastLayout &&
+	      node.lastLayout.requestedHeight === node.layout.height &&
+	      node.lastLayout.requestedWidth === node.layout.width &&
+	      node.lastLayout.parentMaxWidth === parentMaxWidth &&
+	      node.lastLayout.direction === direction;
+
+	    if (skipLayout) {
+	      node.layout.width = node.lastLayout.width;
+	      node.layout.height = node.lastLayout.height;
+	      node.layout.top = node.lastLayout.top;
+	      node.layout.left = node.lastLayout.left;
+	    } else {
+	      if (!node.lastLayout) {
+	        node.lastLayout = {};
+	      }
+
+	      node.lastLayout.requestedWidth = node.layout.width;
+	      node.lastLayout.requestedHeight = node.layout.height;
+	      node.lastLayout.parentMaxWidth = parentMaxWidth;
+	      node.lastLayout.direction = direction;
+
+	      // Reset child layouts
+	      node.children.forEach(function(child) {
+	        child.layout.width = undefined;
+	        child.layout.height = undefined;
+	        child.layout.top = 0;
+	        child.layout.left = 0;
+	      });
+
+	      layoutNodeImpl(node, parentMaxWidth, parentDirection);
+
+	      node.lastLayout.width = node.layout.width;
+	      node.lastLayout.height = node.layout.height;
+	      node.lastLayout.top = node.layout.top;
+	      node.lastLayout.left = node.layout.left;
+	    }
+	  }
+
+	  return {
+	    layoutNodeImpl: layoutNodeImpl,
+	    computeLayout: layoutNode,
+	    fillNodes: fillNodes
+	  };
+	})();
+
+	// This module export is only used for the purposes of unit testing this file. When
+	// the library is packaged this file is included within css-layout.js which forms
+	// the public API.
+	if (true) {
+	  module.exports = computeLayout;
+	}
+
+
+	  return function(node) {
+	    /*eslint-disable */
+	    // disabling ESLint because this code relies on the above include
+	    computeLayout.fillNodes(node);
+	    computeLayout.computeLayout(node);
+	    /*eslint-enable */
+	  };
+	}));
+
+
+/***/ },
+/* 172 */
+/***/ function(module, exports) {
+
+	Array.prototype.del = function (h) {
+	  h.sort();for (var q = this.concat([]), b = h.length - 1; 0 <= b; b--) q = q.slice(0, h[b]).concat(q.slice(h[b] + 1));return q;
+	};HTMLImageElement.prototype.loadOnce = function (h) {
+	  var q = 0;this.onload = function () {
+	    q || h.call(this, null);q++;
+	  };
+	};
+	(function (h) {
+	  var q = { lib: [], init: function () {
+	      this.require("config");
+	    }, module: function (b, a) {
+	      this.lib[b] = a.call(null, this);
+	    }, require: function (b) {
+	      var a = this,
+	          c = document.createElement("script");document.body.appendChild(c);c.src = "./js/module/" + b + ".js";c.onload = c.onerror = function (c) {
+	        a.handlerror(c);
+	      };
+	    }, handlerror: function () {}, destroySelf: function (b) {
+	      delete window[h];throw Error(b);
+	    }, reflect: function (b, a, c) {
+	      b = this.lib.config.getModuleName(b);return this.lib[b].process(a, c);
+	    }, reflectEasy: function (b) {
+	      b = this.lib.config.getEasyFun(b);
+	      return this.lib.easy.getFun(b);
+	    }, add: function (b, a, c, f, g, e, j, l) {
+	      return this.lib.addLayer.add(b, a, c, f, g, e, j, l);
+	    }, applyMatrix: function () {} };window[h] = function (b, a, c) {
+	    if (this instanceof window[h]) {
+	      this.startTime = +new Date();var f = document.createElement("canvas"),
+	          g = f.getContext("2d");isNaN(b) ? (f.width = parseInt(b.width), f.height = parseInt(b.height), a = getComputedStyle(b), imgWidth = parseInt(a.getPropertyValue("width")), imgHeight = parseInt(a.getPropertyValue("height")), isNaN(imgWidth) ? g.drawImage(b, 0, 0) : g.drawImage(b, 0, 0, imgWidth, imgHeight)) : (f.width = b, f.height = a, g.fillStyle = c || "#fff", g.fillRect(0, 0, b, a));this.canvas = f;this.context = g;this.imgData = g.getImageData(0, 0, f.width, f.height);this.name = h + "_" + Math.random();this.canvas.id = this.name;this.layers = [];b = document.createElement("canvas");b.width = f.width;b.height = f.height;this.ctxCanvas = b;this.ctxContext = f.getContext("2d");
+	    } else return new window[h](b, a, c);
+	  };window[h].module = function (b, a) {
+	    q.module(b, a);
+	  };window[h].dorsyMath = function () {
+	    return q.lib.dorsyMath;
+	  };window[h].prototype = { act: function (b, a) {
+	      var c = [],
+	          c = Array.prototype.slice.call(arguments, 1);q.reflect(b, this.imgData, c);return this;
+	    }, view: function (b, a, c, f, g) {
+	      var e = this.clone();e.type = 1;this.addLayer(e, "\u6b63\u5e38", 0, 0);e.act(b, a, c, f, g);return this;
+	    }, excute: function () {
+	      var b = this.layers,
+	          a = b.length;b[a - 1] && 1 == b[a - 1][0].type && (this.imgData = b[a - 1][0].imgData, delete b[a - 1]);
+	    }, cancel: function () {
+	      var b = this.layers,
+	          a = b.length;b[a - 1] && 1 == b[a - 1][0].type && delete b[a - 1];
+	    }, show: function (b, a) {
+	      var c = new window[h](this.canvas.width, this.canvas.height);
+	      c.add(this, "\u6b63\u5e38", 0, 0, a);this.tempPsLib = c;for (var f = 0; f < this.layers.length; f++) {
+	        var g = this.layers[f],
+	            e = g[0].layers,
+	            j = g[0];e[e.length - 1] && 1 == e[e.length - 1][0].type && (j = e[e.length - 1][0]);c.add(j, g[1], g[2], g[3], a);
+	      }this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);this.context.putImageData(c.imgData, 0, 0);b ? document.querySelector(b).appendChild(this.canvas) : document.body.appendChild(this.canvas);return this;
+	    }, replace: function (b) {
+	      b && (b.onload = function () {}, b.src = this.save());return this;
+	    },
+	    add: function () {
+	      var b = [],
+	          a,
+	          c,
+	          f,
+	          g,
+	          e;for (f = 0; f < arguments.length; f++) if (f) switch (typeof arguments[f]) {case "string":
+	          /\d+%/.test(arguments[f]) ? c = arguments[f].replace("%", "") : /[RGB]+/.test(arguments[f]) ? e = arguments[f] : a = arguments[f];break;case "number":
+	          b.push(arguments[f]);break;case "boolean":
+	          g = arguments[f];}f = b[0] || 0;b = b[1] || 0;this.imgData = q.add(this.imgData, arguments[0].imgData, a || "\u6b63\u5e38", c / 100 || 1, f, b, g || !1, e || "RGB");return this;
+	    }, addLayer: function (b, a, c, f) {
+	      this.layers.push([b, a, c, f]);return this;
+	    },
+	    clone: function () {
+	      var b = new window[h](this.canvas.width, this.canvas.height);b.context.putImageData(this.imgData, 0, 0);b.imgData = b.context.getImageData(0, 0, this.canvas.width, this.canvas.height);return b;
+	    }, swap: function (b, a) {
+	      var c = this.layers[b];this.layers[b] = this.layers[a];this.layers[a] = c;return this;
+	    }, deleteLayers: function (b) {
+	      this.layers = this.layers.del(b);
+	    }, save: function (b) {
+	      if (!this.layers.length) return this.context.putImageData(this.imgData, 0, 0), this.canvas.toDataURL();var a = new window[h](this.canvas.width, this.canvas.height);a.add(this, "\u6b63\u5e38", 0, 0, b);this.tempPsLib = a;for (var c = 0; c < this.layers.length; c++) {
+	        var f = this.layers[c],
+	            g = f[0].layers,
+	            e = f[0];g[g.length - 1] && 1 == g[g.length - 1][0].type && (e = g[g.length - 1][0]);a.add(e, f[1], f[2], f[3], b);
+	      }this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);this.context.putImageData(a.imgData, 0, 0);return this.canvas.toDataURL();
+	    }, drawRect: function () {
+	      var b;if (!(b = document.getElementById("imgRect"))) b = document.createElement("canvas"), b.id = "imgRect", document.body.appendChild(b), b.width = parseInt(this.canvas.width), b.height = parseInt(this.canvas.height);var a = b.getContext("2d");a.clearRect(0, 0, b.width, b.height);for (var c = [], f = this.tempPsLib.imgData.data, g = 0, e = f.length; g < e; g++) c[f[g]] ? c[f[g]]++ : c[f[g]] = 1;a.beginPath();a.moveTo(0, b.height);for (g = f = 0; 255 > g; g++) c[g] > f && (f = c[g]);for (g = 0; 255 > g; g++) e = c[g] || 0, e = b.height - 0.8 * (e / f) * b.height, a.lineTo(g / 256 * b.width, e, 1, 1);a.lineTo(b.width + 10, b.height);a.fill();
+	    }, ps: function (b) {
+	      var a;a = q.reflectEasy(b).call(this);this.logTime("\u7ec4\u5408\u6548\u679c" + b);return a;
+	    }, logTime: function (b) {
+	      console.log(b + ": " + (+new Date() - this.startTime) / 1E3 + "s");
+	    }, ctx: function (b) {
+	      var a = this.ctxContext;a.putImageData(this.imgData, 0, 0);b.call(a);this.imgData = a.getImageData(0, 0, this.canvas.width, this.canvas.height);return this;
+	    } };
+	})("psLib");window.AlloyImage = $AI = window.psLib;(function (h) {
+	  window[h].module("ImageEnhance", function () {
+	    return { process: function (q) {
+	        for (var b = q.data, a = 0, c = b.length; a < c; a += 4);q.data = b;return q;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("addLayer", function () {
+	    return { add: function (q, b, a, c, f, g, e, j) {
+	        e = q.data;var l = b.data;f = f || 0;g = g || 0;c = c || 1;j = j || "RGB";/[RGB]+/.test(j) || (j = "RGB");var n = j.replace("R", "0").replace("G", "1").replace("B", "2"),
+	            k;j = q.width;var h = l.length;b = b.width;for (var n = [-1 < n.indexOf("0"), -1 < n.indexOf("1"), -1 < n.indexOf("2")], d, p, m = 0, s = e.length; m < s; m += 4) if (d = m / 4, p = parseInt(d / j), d %= j, p -= g, d -= f, p = p * b + d, p *= 4, 0 <= p && p < h - 4 && d < b && 0 <= d) for (d = 0; 3 > d && 0 != l[p + 3]; d++) switch (e[m + 3] = l[p + 3], a) {case "\u989c\u8272\u51cf\u6de1":
+	            n[d] && (k = e[m + d] + e[m + d] * l[p + d] / (255 - l[p + d]), e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u53d8\u6697":
+	            n[d] && (k = e[m + d] < l[p + d] ? e[m + d] : l[p + d], e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u53d8\u4eae":
+	            n[d] && (k = e[m + d] > l[p + d] ? e[m + d] : l[p + d], e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u6b63\u7247\u53e0\u5e95":
+	            n[d] && (k = parseInt(e[m + d] * l[p + d] / 255), e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u6ee4\u8272":
+	            n[d] && (k = parseInt(255 - (255 - e[m + d]) * (255 - l[p + d]) / 255), e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u53e0\u52a0":
+	            n[d] && (k = 127.5 >= e[m + d] ? e[m + d] * l[p + d] / 127.5 : 255 - (255 - e[m + d]) * (255 - l[p + d]) / 127.5, e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u5f3a\u5149":
+	            n[d] && (k = 127.5 >= l[p + d] ? e[m + d] * l[p + d] / 127.5 : e[m + d] + (255 - e[m + d]) * (l[p + d] - 127.5) / 127.5, e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u5dee\u503c":
+	            n[d] && (k = e[m + d] > l[p + d] ? e[m + d] - l[p + d] : l[p + d] - e[m + d], e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u6392\u9664":
+	            n[d] && (k = e[m + d] + l[p + d] - e[m + d] * l[p + d] / 127.5, e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u70b9\u5149":
+	            n[d] && (k = e[m + d] < 2 * l[p + d] - 255 ? 2 * l[p + d] - 255 : e[m + d] < 2 * l[p + d] ? e[m + d] : 2 * l[p + d], e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u989c\u8272\u52a0\u6df1":
+	            n[d] && (k = 255 - 255 * (255 - e[m + d]) / l[p + d], e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u7ebf\u6027\u52a0\u6df1":
+	            n[d] && (k = e[m + d] + l[p + d], k = 255 < k ? k - 255 : 0, e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u7ebf\u6027\u51cf\u6de1":
+	            n[d] && (k = e[m + d] + l[p + d], k = 255 < k ? 255 : k, e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u67d4\u5149":
+	            n[d] && (k = 127.5 > l[p + d] ? ((2 * l[p + d] - 255) * (255 - e[m + d]) / 65025 + 1) * e[m + d] : (2 * l[p + d] - 255) * (Math.sqrt(e[m + d] / 255) - e[m + d] / 255) + e[m + d], e[m + d] = (1 - c) * e[m + d] + c * k);
+	            break;case "\u4eae\u5149":
+	            n[d] && (k = 127.5 > l[p + d] ? 255 * (1 - (255 - e[m + d]) / (2 * l[p + d])) : e[m + d] / (2 * (1 - l[p + d] / 255)), e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u7ebf\u6027\u5149":
+	            n[d] && (k = e[m + d] + 2 * l[p + d] - 255, k = 255 < k ? 255 : k, e[m + d] = (1 - c) * e[m + d] + c * k);break;case "\u5b9e\u8272\u6df7\u5408":
+	            n[d] && (k = l[p + d] < 255 - e[m + d] ? 0 : 255, e[m + d] = (1 - c) * e[m + d] + c * k);break;default:
+	            n[d] && (k = l[p + d], e[m + d] = (1 - c) * e[m + d] + c * k);}return q;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("brightness", function () {
+	    return { process: function (q, b) {
+	        for (var a = q.data, c = b[0] / 50, f = Math.tan((45 + 44 * ((b[1] || 0) / 50)) * Math.PI / 180), g = 0, e = a.length; g < e; g += 4) for (var j = 0; 3 > j; j++) a[g + j] = (a[g + j] - 127.5 * (1 - c)) * f + 127.5 * (1 + c);return q;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("applyMatrix", function (q) {
+	    return { process: function (b) {
+	        for (var a = b.data, c = b.width, f = new q.lib.dorsyMath.Matrix([-2, -4, -4, -4, -2, -4, 0, 8, 0, -4, -4, 8, 24, 8, -4, -4, 0, 8, 0, -4, -2, -4, -4, -4, -2], 25, 1), g = [], e = 0, j = a.length; e < j; e += 4) {
+	          var l = e / 4,
+	              n = parseInt(l / c),
+	              k = l % c;if (!(0 == n || 0 == k)) {
+	            for (var h = [[], [], []], d = -2; 3 > d; d++) for (var p = n + d, m = -2; 3 > m; m++) for (var s = 4 * (p * c + (k + m)), l = 0; 3 > l; l++) h[l].push(a[s + l]);n = new q.lib.dorsyMath.Matrix(h, 3, matrixSize).mutiply(f);for (l = 0; 3 > l; l++) g[e + l] = n.data[l];g[e + 4] = a[e + 4];
+	          }
+	        }e = 0;for (j = a.length; e < j; e++) a[e] = g[e] || a[e];return b;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("config", function () {
+	    var q = { "\u7070\u5ea6\u5904\u7406": "toGray", "\u53cd\u8272": "toReverse", "\u7070\u5ea6\u9608\u503c": "toThresh", "\u9ad8\u65af\u6a21\u7cca": "gaussBlur", "\u4eae\u5ea6": "brightness", "\u6d6e\u96d5\u6548\u679c": "embossment", "\u67e5\u627e\u8fb9\u7f18": "borderline", "\u8272\u76f8/\u9971\u548c\u5ea6\u8c03\u8282": "setHSI", "\u9a6c\u8d5b\u514b": "mosaic", "\u6cb9\u753b": "oilPainting", "\u8150\u8680": "corrode", "\u9510\u5316": "sharp", "\u6dfb\u52a0\u6742\u8272": "noise",
+	      "\u66f2\u7ebf": "curve", "\u6697\u89d2": "darkCorner", "\u55b7\u70b9": "dotted" },
+	        b = { "\u7f8e\u80a4": "softenFace", "\u7d20\u63cf": "sketch", "\u81ea\u7136\u589e\u5f3a": "softEnhancement", "\u7d2b\u8c03": "purpleStyle", "\u67d4\u7126": "soften", "\u590d\u53e4": "vintage", "\u9ed1\u767d": "gray", "\u4efflomo": "lomo", "\u4eae\u767d\u589e\u5f3a": "strongEnhancement", "\u7070\u767d": "strongGray", "\u7070\u8272": "lightGray", "\u6696\u79cb": "warmAutumn", "\u6728\u96d5": "carveStyle", "\u7c97\u7cd9": "rough" };return { getModuleName: function (a) {
+	        return q[a] || a;
+	      }, getEasyFun: function (a) {
+	        return b[a] || a;
+	      } };
+	  });
+	})("psLib");(function (h) {
+	  window[h].module("corrode", function () {
+	    return { process: function (q, b) {
+	        for (var a = parseInt(b[0]) || 3, c = q.data, f = q.width, g = q.height, e = 0; e < f; e++) for (var j = 0; j < g; j++) for (var l = parseInt(2 * Math.random() * a) - a, n = parseInt(2 * Math.random() * a) - a, k = j * f + e, l = (j + l) * f + e + n, n = 0; 3 > n; n++) c[4 * k + n] = c[4 * l + n];return q;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("curve", function (q) {
+	    return { process: function (b, a) {
+	        for (var c = q.lib.dorsyMath.lagrange(a[0], a[1]), f = b.data, g = b.width, e = b.height, j = 0; j < g; j++) for (var l = 0; l < e; l++) for (var n = l * g + j, k = 0; 3 > k; k++) f[4 * n + k] = c(f[4 * n + k]);return b;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("darkCorner", function (q) {
+	    return { process: function (b, a) {
+	        for (var c = parseInt(a[0]) || 3, f = a[1] || 30, g = b.data, e = b.width, j = b.height, l = 2 * e / 3, n = 1 * j / 2, k = q.lib.dorsyMath.distance([l, n]), c = k * (1 - c / 10), h = 0; h < e; h++) for (var d = 0; d < j; d++) for (var p = d * e + h, m = 0; 3 > m; m++) {
+	          var s;s = g[4 * p + m];var r = (q.lib.dorsyMath.distance([h, d], [l, n]) - c) / (k - c);0 > r && (r = 0);s = (0 * Math.pow(1 - r, 3) + 0.06 * r * Math.pow(1 - r, 2) + 3 * 0.3 * r * r * (1 - r) + 1 * Math.pow(r, 3)) * s * f / 255;g[4 * p + m] -= s;
+	        }return b;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("dorsyMath", function (q) {
+	    var b = { FFT1: function (a) {
+	        function c() {
+	          g++;for (var j = f / Math.pow(2, g), n = f / j, k = 0; k < j; k++) for (var q = k * n, d = (k + 1) * n - 1, p = g, m = Math.pow(2, p - 1), h = 0; q <= d - m; q++) {
+	            var r = q + m,
+	                v = h * f / Math.pow(2, p),
+	                u = v + f / 4;a[q] instanceof b.C || (a[q] = new b.C(a[q]));a[r] instanceof b.C || (a[r] = new b.C(a[r]));v = a[q].plus(a[r].mutiply(e[v]));u = a[q].plus(a[r].mutiply(e[u]));a[q] = v;a[r] = u;h++;
+	          }1 < j && c();
+	        }for (var f = a.length, g = 0, e = [], j = 0; j < f; j++) e[j] = this.exp(-2 * Math.PI * j / f);c();return a;
+	      }, DFT: function () {},
+	      Matrix: function (a, c, b) {
+	        var g = [];if (c) {
+	          if (isNaN(c)) {
+	            var e = /(\d+)\*/.exec(c)[1];c = /\*(\d+)/.exec(c)[1];
+	          } else e = c, c = b;if (a[0] && a[0][0]) for (b = 0; b < e; b++) {
+	            g[b] = [];for (var j = 0; j < c; j++) g[b][j] = a[b][j] || 0;
+	          } else for (b = 0; b < e; b++) {
+	            g[b] = [];for (j = 0; j < c; j++) g[b][j] = a[b * c + j] || 0;
+	          }this.m = e;this.n = c;
+	        } else this.m = a.length, this.n = a[0].length;this.data = g;
+	      }, C: function (a, c) {
+	        this.r = a || 0;this.i = c || 0;
+	      }, exp: function (a, c) {
+	        a = a || 0;c = c || 1;var f = new b.C();f.r = c * Math.cos(a);f.i = c * Math.sin(a);return f;
+	      }, lagrange: function (a, c) {
+	        var b = a.length;
+	        return function (g) {
+	          for (var e = 0, j = 0; j < b; j++) {
+	            for (var l = 1, n = 1, k = 0; k < b; k++) k != j && (l *= a[j] - a[k], n *= g - a[k]);e += c[j] * (n / l);
+	          }return e;
+	        };
+	      }, applyMatrix: function (a, c, f) {
+	        f = f || 0;var g = a.data,
+	            e = a.width,
+	            j = c.length;c = new b.Matrix(c, j, 1);for (var l = [], n = -(Math.sqrt(j) - 1) / 2, k = 0, h = g.length; k < h; k += 4) {
+	          var d = k / 4,
+	              p = parseInt(d / e),
+	              m = d % e;if (!(0 == p || 0 == m)) {
+	            for (var s = [[], [], []], r = n; r <= -n; r++) for (var v = p + r, u = n; u <= -n; u++) for (var w = 4 * (v * e + (m + u)), d = 0; 3 > d; d++) s[d].push(g[w + d]);p = new q.lib.dorsyMath.Matrix(s, 3, j).mutiply(c);for (d = 0; 3 > d; d++) l[k + d] = p.data[d];l[k + 4] = g[k + 4];
+	          }
+	        }k = 0;for (h = g.length; k < h; k++) l[k] && (g[k] = l[k] < f ? l[k] : g[k]);return a;
+	      }, RGBToHSI: function (a, c, b) {
+	        var g = (a - c + a - b) / 2 / Math.sqrt((a - c) * (a - c) + (a - b) * (c - b)) || 0,
+	            g = Math.acos(g),
+	            g = b > c ? 2 * Math.PI - g : g,
+	            e = 1 - 3 * Math.min(a, c, b) / (a + c + b);g > 2 * Math.PI && (g = 2 * Math.PI);0 > g && (g = 0);return { H: g, S: e, I: (a + c + b) / 3 };
+	      }, HSIToRGB: function (a, b, f) {
+	        0 > a ? (a %= 2 * Math.PI, a += 2 * Math.PI) : a %= 2 * Math.PI;if (a <= 2 * Math.PI / 3) var g = f * (1 - b),
+	            e = f * (1 + b * Math.cos(a) / Math.cos(Math.PI / 3 - a)),
+	            j = 3 * f - (e + g);else a <= 4 * Math.PI / 3 ? (a -= 2 * Math.PI / 3, e = f * (1 - b), j = f * (1 + b * Math.cos(a) / Math.cos(Math.PI / 3 - a)), g = 3 * f - (j + e)) : (a -= 4 * Math.PI / 3, j = f * (1 - b), g = f * (1 + b * Math.cos(a) / Math.cos(Math.PI / 3 - a)), e = 3 * f - (j + g));return { R: e, G: j, B: g };
+	      }, applyInHSI: function (a, b) {
+	        for (var f = a.data, g = 0, e = f.length; g < e; g += 4) {
+	          var j = this.RGBToHSI(f[g], f[g + 1], f[g + 2]);b(j);1 < j.S && (j.S = 1);0 > j.S && (j.S = 0);j = this.HSIToRGB(j.H, j.S, j.I);f[g] = j.R;f[g + 1] = j.G;f[g + 2] = j.B;
+	        }
+	      }, applyInCoordinate: function () {}, distance: function (a, c) {
+	        c = c || [0, 0];a = new b.C(a[0], a[1]);c = new b.C(c[0], c[1]);return a.minus(c).distance();
+	      },
+	      xyToIFun: function (a) {
+	        return function (b, f, g) {
+	          return 4 * (f * a + b) + (g || 0);
+	        };
+	      }, xyCal: function (a, b, f, g, e) {
+	        for (var j = this.xyToIFun(a.width), l = 0; 3 > l; l++) {
+	          var n = j(b, f, l);a[n] = g(a[n]);
+	        }e && (a[n + 1] = e(a[n + 1]));
+	      } };b.Matrix.prototype = { plus: function (a) {
+	        if (this.m != a.m || this.n != a.n) throw Error("\u77e9\u9635\u52a0\u6cd5\u884c\u5217\u4e0d\u5339\u914d");for (var c = new b.Matrix([], this.m, this.n), f = 0; f < this.m; f++) for (var g = 0; g < this.n; g++) c.data[f][g] = this.data[f][g] + a.data[f][g];return c;
+	      }, minus: function (a) {
+	        if (this.m != a.m || this.n != a.n) throw Error("\u77e9\u9635\u51cf\u6cd5\u6cd5\u884c\u5217\u4e0d\u5339\u914d");for (var c = new b.Matrix([], this.m, this.n), f = 0; f < this.m; f++) for (var g = 0; g < this.n; g++) c.data[f][g] = this.data[f][g] - a.data[f][g];return c;
+	      }, mutiply: function (a) {
+	        if (this.n != a.m) throw Error("\u77e9\u9635\u4e58\u6cd5\u884c\u5217\u4e0d\u5339\u914d");for (var c = new b.Matrix([], this.m, a.n), f = 0; f < this.m; f++) for (var g = 0; g < a.n; g++) {
+	          for (var e = 0, j = 0; j < this.n; j++) e += this.data[f][j] * a.data[j][g];c.data[f][g] = e;
+	        }return c;
+	      } };b.C.prototype = { plus: function (a) {
+	        var c = new b.C();c.r = this.r + a.r;c.i = this.i + a.i;return c;
+	      }, minus: function (a) {
+	        var c = new b.C();c.r = this.r - a.r;c.i = this.i - a.i;return c;
+	      }, mutiply: function (a) {
+	        var c = new b.C();c.r = this.r * a.r - this.i * a.i;c.i = this.r * a.i + this.i * a.r;return c;
+	      }, divide: function (a) {
+	        var c = new b.C(),
+	            f = a.mutiply(a.conjugated());a = this.mutiply(a.conjugated());c.r = a.r / f.r;c.i = a.i / f.r;return c;
+	      }, conjugated: function () {
+	        return new b.C(this.r, -this.i);
+	      }, distance: function () {
+	        return Math.sqrt(this.r * this.r + this.i * this.i);
+	      } };return b;
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("dotted", function (q) {
+	    return { process: function (b, a) {
+	        for (var c = parseInt(a[0]) || 1, f = parseInt(a[1]) || 1, g = b.data, e = b.width, j = b.height, l = 2 * c + 1, n = [], k = f * f, f = -c; f < c; f++) for (var h = -c; h < c; h++) f * f + h * h > k && n.push([f, h]);c = q.lib.dorsyMath.xyToIFun(e);f = 0;for (e = parseInt(e / l); f < e; f++) {
+	          h = 0;for (k = parseInt(j / l); h < k; h++) for (var d = parseInt((f + 0.5) * l), p = parseInt((h + 0.5) * l), m = 0; m < n.length; m++) {
+	            var s = d + n[m][0],
+	                r = p + n[m][1];g[c(s, r, 3)] = 225;g[c(s, r, 2)] = 225;g[c(s, r, 0)] = 225;g[c(s, r, 1)] = 225;
+	          }
+	        }return b;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("easy", function () {
+	    return { getFun: function (q) {
+	        return { softenFace: function () {
+	            return this.clone().add(this.act("\u9ad8\u65af\u6a21\u7cca", 10), "\u6ee4\u8272").act("\u4eae\u5ea6", -10, 5);
+	          }, sketch: function () {
+	            var b = this.act("\u7070\u5ea6\u5904\u7406").clone();return this.add(b.act("\u53cd\u8272").act("\u9ad8\u65af\u6a21\u7cca", 8), "\u989c\u8272\u51cf\u6de1").act("\u9510\u5316", 1);
+	          }, softEnhancement: function () {
+	            return this.act("\u66f2\u7ebf", [0, 190, 255], [0, 229, 255]);
+	          }, purpleStyle: function () {
+	            var b = this.clone();return this.add(b.act("\u9ad8\u65af\u6a21\u7cca", 3), "\u6b63\u7247\u53e0\u5e95", "RG");
+	          }, soften: function () {
+	            var b = this.clone();return this.add(b.act("\u9ad8\u65af\u6a21\u7cca", 6), "\u53d8\u6697");
+	          }, vintage: function () {
+	            this.clone();return this.act("\u7070\u5ea6\u5904\u7406").add(window[h](this.canvas.width, this.canvas.height, "#808080").act("\u6dfb\u52a0\u6742\u8272").act("\u9ad8\u65af\u6a21\u7cca", 4).act("\u8272\u76f8/\u9971\u548c\u5ea6\u8c03\u8282", 32, 19, 0, !0), "\u53e0\u52a0");
+	          }, gray: function () {
+	            return this.act("\u7070\u5ea6\u5904\u7406");
+	          },
+	          lomo: function () {
+	            return this.clone().add(this.clone(), "\u6ee4\u8272").add(this.clone(), "\u67d4\u5149").add(this.clone().act("\u53cd\u8272"), "\u6b63\u5e38", "20%", "B").act("\u6697\u89d2", 6, 200);
+	          }, strongEnhancement: function () {
+	            return this.clone().add(this.clone().act("\u66f2\u7ebf", [0, 50, 255], [0, 234, 255]), "\u67d4\u5149");
+	          }, strongGray: function () {
+	            return this.act("\u7070\u5ea6\u5904\u7406").act("\u66f2\u7ebf", [0, 61, 69, 212, 255], [0, 111, 176, 237, 255]);
+	          }, lightGray: function () {
+	            return this.act("\u7070\u5ea6\u5904\u7406").act("\u66f2\u7ebf", [0, 60, 142, 194, 255], [0, 194, 240, 247, 255]);
+	          }, warmAutumn: function () {
+	            var b = this.clone().act("\u8272\u76f8/\u9971\u548c\u5ea6\u8c03\u8282", 36, 47, 8, !0).act("\u6697\u89d2", 6, 150);return this.add(b, "\u53e0\u52a0");
+	          }, carveStyle: function () {
+	            var b = this.clone().act("\u9a6c\u8d5b\u514b").act("\u67e5\u627e\u8fb9\u7f18").act("\u6d6e\u96d5\u6548\u679c");return this.add(b, "\u7ebf\u6027\u5149");
+	          }, rough: function () {
+	            return this.add(window[h](this.canvas.width, this.canvas.height, "#000").act("\u55b7\u70b9").act("\u53cd\u8272").act("\u6d6e\u96d5\u6548\u679c"), "\u53e0\u52a0");
+	          } }[q];
+	      } };
+	  });
+	})("psLib");(function (h) {
+	  window[h].module("embossment", function () {
+	    return { process: function (q) {
+	        for (var b = q.data, a = q.width, c = [], f = 0, g = b.length; f < g; f += 4) {
+	          var e = f / 4,
+	              j = parseInt(e / a),
+	              l = e % a,
+	              e = 4 * ((j - 1) * a + (l - 1)),
+	              n = 4 * (j + 1) * a + 4 * (l + 1);if (!(0 == j || 0 == l)) {
+	            for (j = 0; 3 > j; j++) c[f + j] = b[e + j] - b[n + j] + 127.5;c[f + 4] = b[f + 4];
+	          }
+	        }f = 0;for (g = b.length; f < g; f++) b[f] = c[f] || b[f];return q;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("gaussBlur", function () {
+	    return { process: function (q, b, a) {
+	        var c = q.data,
+	            f = q.width,
+	            g = q.height,
+	            e = [],
+	            j = 0,
+	            l,
+	            n,
+	            k,
+	            h,
+	            d,
+	            p;b = Math.floor(b) || 3;a = a || b / 3;l = 1 / (Math.sqrt(2 * Math.PI) * a);h = -1 / (2 * a * a);d = 0;for (a = -b; a <= b; a++, d++) k = l * Math.exp(h * a * a), e[d] = k, j += k;d = 0;for (a = e.length; d < a; d++) e[d] /= j;for (l = 0; l < g; l++) for (a = 0; a < f; a++) {
+	          j = n = k = h = 0;for (p = -b; p <= b; p++) d = a + p, 0 <= d && d < f && (d = 4 * (l * f + d), n += c[d] * e[p + b], k += c[d + 1] * e[p + b], h += c[d + 2] * e[p + b], j += e[p + b]);d = 4 * (l * f + a);c[d] = n / j;c[d + 1] = k / j;c[d + 2] = h / j;
+	        }for (a = 0; a < f; a++) for (l = 0; l < g; l++) {
+	          j = n = k = h = 0;for (p = -b; p <= b; p++) d = l + p, 0 <= d && d < g && (d = 4 * (d * f + a), n += c[d] * e[p + b], k += c[d + 1] * e[p + b], h += c[d + 2] * e[p + b], j += e[p + b]);d = 4 * (l * f + a);c[d] = n / j;c[d + 1] = k / j;c[d + 2] = h / j;
+	        }q.data = c;return q;
+	      } };
+	  });
+	})("psLib");(function (h) {
+	  window[h].module("borderline", function (h) {
+	    return { process: function (b) {
+	        return h.lib.dorsyMath.applyMatrix(b, [0, 1, 0, 1, -4, 1, 0, 1, 0], 250);
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("mosaic", function () {
+	    return { process: function (h, b) {
+	        for (var a = parseInt(b[0]) || 3, c = h.data, f = h.width, g = h.height, a = 2 * a + 1, e = 0, j = parseInt(f / a); e < j; e++) for (var l = 0, n = parseInt(g / a); l < n; l++) {
+	          for (var k = [], t = [0, 0, 0], d = 0; d < a; d++) for (var p = 0; p < a; p++) {
+	            var m = (l * a + d) * f + e * a + p;t[0] += c[4 * m];t[1] += c[4 * m + 1];t[2] += c[4 * m + 2];
+	          }k[0] = t[0] / (a * a);k[1] = t[1] / (a * a);k[2] = t[2] / (a * a);for (d = 0; d < a; d++) for (p = 0; p < a; p++) m = (l * a + d) * f + e * a + p, c[4 * m] = k[0], c[4 * m + 1] = k[1], c[4 * m + 2] = k[2];
+	        }return h;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("noise", function () {
+	    return { process: function (h, b) {
+	        for (var a = parseInt(b[0]) || 100, c = h.data, f = h.width, g = h.height, e = 0; e < f; e++) for (var j = 0; j < g; j++) for (var l = j * f + e, n = 0; 3 > n; n++) {
+	          var k = parseInt(2 * Math.random() * a) - a;c[4 * l + n] += k;
+	        }return h;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("oilPainting", function () {
+	    return { process: function (h, b) {
+	        for (var a = parseInt(b[0]) || 16, c = h.data, f = h.width, g = h.height, e = 0; e < f; e++) for (var j = 0; j < g; j++) {
+	          for (var l = j * f + e, n = 0, k = 0; 3 > k; k++) n += c[4 * l + k];n /= 3;n = parseInt(n / a) * a;for (k = 0; 3 > k; k++) c[4 * l + k] = n;
+	        }return h;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("setHSI", function (h) {
+	    return { process: function (b, a) {
+	        a[0] = a[0] / 180 * Math.PI;a[1] = a[1] / 100 || 0;a[2] = 255 * (a[2] / 100) || 0;a[3] = a[3] || !1;h.lib.dorsyMath.applyInHSI(b, function (b) {
+	          a[3] ? (b.H = a[0], b.S = a[1]) : (b.H += a[0], b.S += a[1]);b.I += a[2];
+	        });return b;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("sharp", function () {
+	    return { process: function (h, b) {
+	        for (var a = b[0] || 0.6, c = h.data, f = h.width, g = 0, e = c.length; g < e; g += 4) {
+	          var j = g / 4,
+	              l = parseInt(j / f),
+	              n = j % f;if (!(0 == l || 0 == n)) for (var k = 4 * ((l - 1) * f + (n - 1)), l = 4 * ((l - 1) * f + n), j = 4 * (j - 1), n = 0; 3 > n; n++) c[g + n] += (c[g + n] - (c[l + n] + c[j + n] + c[k + n]) / 3) * a;
+	        }return h;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("toGray", function () {
+	    return { process: function (h) {
+	        for (var b = h.data, a = 0, c = b.length; a < c; a += 4) {
+	          var f = parseInt((b[a] + b[a + 1] + b[a + 2]) / 3);b[a + 2] = b[a + 1] = b[a] = f;
+	        }h.data = b;return h;
+	      } };
+	  });
+	})("psLib");(function (h) {
+	  window[h].module("toReverse", function () {
+	    return { process: function (h) {
+	        for (var b = h.data, a = 0, c = b.length; a < c; a += 4) b[a] = 255 - b[a], b[a + 1] = 255 - b[a + 1], b[a + 2] = 255 - b[a + 2];h.data = b;return h;
+	      } };
+	  });
+	})("psLib");
+	(function (h) {
+	  window[h].module("toThresh", function (h) {
+	    return { process: function (b, a) {
+	        b = h.lib.toGray.process(b);var c = b.data;a = a[0] || 128;for (var f = 0, g = c.length; f < g; f++) (f + 1) % 4 && (c[f] = c[f] > a ? 255 : 0);b.data = c;return b;
+	      } };
+	  });
+	})("psLib");
+
+/***/ },
+/* 173 */
+/***/ function(module, exports) {
+
+	/*!
+	 * # Semantic UI 2.1.6 - Dropdown
+	 * http://github.com/semantic-org/semantic-ui/
+	 *
+	 *
+	 * Copyright 2015 Contributors
+	 * Released under the MIT license
+	 * http://opensource.org/licenses/MIT
+	 *
+	 */
+	!function (e, t, n, i) {
+	  "use strict";
+	  e.fn.dropdown = function (a) {
+	    var o,
+	        s = e(this),
+	        r = e(n),
+	        l = s.selector || "",
+	        c = "ontouchstart" in n.documentElement,
+	        u = new Date().getTime(),
+	        d = [],
+	        v = arguments[0],
+	        m = "string" == typeof v,
+	        f = [].slice.call(arguments, 1);return s.each(function (h) {
+	      var g,
+	          p,
+	          b,
+	          w,
+	          x,
+	          C,
+	          S,
+	          y = e.isPlainObject(a) ? e.extend(!0, {}, e.fn.dropdown.settings, a) : e.extend({}, e.fn.dropdown.settings),
+	          T = y.className,
+	          A = y.message,
+	          k = y.fields,
+	          L = y.keys,
+	          D = y.metadata,
+	          I = y.namespace,
+	          R = y.regExp,
+	          q = y.selector,
+	          V = y.error,
+	          E = y.templates,
+	          O = "." + I,
+	          F = "module-" + I,
+	          P = e(this),
+	          M = e(y.context),
+	          H = P.find(q.text),
+	          z = P.find(q.search),
+	          j = P.find(q.input),
+	          U = P.find(q.icon),
+	          N = P.prev().find(q.text).length > 0 ? P.prev().find(q.text) : P.prev(),
+	          B = P.children(q.menu),
+	          W = B.find(q.item),
+	          K = !1,
+	          $ = !1,
+	          Q = !1,
+	          Y = this,
+	          G = P.data(F);S = { initialize: function () {
+	          S.debug("Initializing dropdown", y), S.is.alreadySetup() ? S.setup.reference() : (S.setup.layout(), S.refreshData(), S.save.defaults(), S.restore.selected(), S.create.id(), S.bind.events(), S.observeChanges(), S.instantiate());
+	        }, instantiate: function () {
+	          S.verbose("Storing instance of dropdown", S), G = S, P.data(F, S);
+	        }, destroy: function () {
+	          S.verbose("Destroying previous dropdown", P), S.remove.tabbable(), P.off(O).removeData(F), B.off(O), r.off(b), x && x.disconnect(), C && C.disconnect();
+	        }, observeChanges: function () {
+	          "MutationObserver" in t && (x = new MutationObserver(function (e) {
+	            S.debug("<select> modified, recreating menu"), S.setup.select();
+	          }), C = new MutationObserver(function (e) {
+	            S.debug("Menu modified, updating selector cache"), S.refresh();
+	          }), S.has.input() && x.observe(j[0], { childList: !0, subtree: !0 }), S.has.menu() && C.observe(B[0], { childList: !0, subtree: !0 }), S.debug("Setting up mutation observer", x, C));
+	        }, create: { id: function () {
+	            w = (Math.random().toString(16) + "000000000").substr(2, 8), b = "." + w, S.verbose("Creating unique id for element", w);
+	          }, userChoice: function (t) {
+	            var n, a, o;return (t = t || S.get.userValues()) ? (t = e.isArray(t) ? t : [t], e.each(t, function (t, s) {
+	              S.get.item(s) === !1 && (o = y.templates.addition(S.add.variables(A.addResult, s)), a = e("<div />").html(o).attr("data-" + D.value, s).attr("data-" + D.text, s).addClass(T.addition).addClass(T.item), n = n === i ? a : n.add(a), S.verbose("Creating user choices for value", s, a));
+	            }), n) : !1;
+	          }, userLabels: function (t) {
+	            var n = S.get.userValues();n && (S.debug("Adding user labels", n), e.each(n, function (e, t) {
+	              S.verbose("Adding custom user value"), S.add.label(t, t);
+	            }));
+	          }, menu: function () {
+	            B = e("<div />").addClass(T.menu).appendTo(P);
+	          } }, search: function (e) {
+	          e = e !== i ? e : S.get.query(), S.verbose("Searching for query", e), S.filter(e);
+	        }, select: { firstUnfiltered: function () {
+	            S.verbose("Selecting first non-filtered element"), S.remove.selectedItem(), W.not(q.unselectable).eq(0).addClass(T.selected);
+	          }, nextAvailable: function (e) {
+	            e = e.eq(0);var t = e.nextAll(q.item).not(q.unselectable).eq(0),
+	                n = e.prevAll(q.item).not(q.unselectable).eq(0),
+	                i = t.length > 0;i ? (S.verbose("Moving selection to", t), t.addClass(T.selected)) : (S.verbose("Moving selection to", n), n.addClass(T.selected));
+	          } }, setup: { api: function () {
+	            var e = { debug: y.debug, on: !1 };S.verbose("First request, initializing API"), P.api(e);
+	          }, layout: function () {
+	            P.is("select") && (S.setup.select(), S.setup.returnedObject()), S.has.menu() || S.create.menu(), S.is.search() && !S.has.search() && (S.verbose("Adding search input"), z = e("<input />").addClass(T.search).prop("autocomplete", "off").insertBefore(H)), y.allowTab && S.set.tabbable();
+	          }, select: function () {
+	            var t = S.get.selectValues();S.debug("Dropdown initialized on a select", t), P.is("select") && (j = P), j.parent(q.dropdown).length > 0 ? (S.debug("UI dropdown already exists. Creating dropdown menu only"), P = j.closest(q.dropdown), S.has.menu() || S.create.menu(), B = P.children(q.menu), S.setup.menu(t)) : (S.debug("Creating entire dropdown from select"), P = e("<div />").attr("class", j.attr("class")).addClass(T.selection).addClass(T.dropdown).html(E.dropdown(t)).insertBefore(j), j.hasClass(T.multiple) && j.prop("multiple") === !1 && (S.error(V.missingMultiple), j.prop("multiple", !0)), j.is("[multiple]") && S.set.multiple(), j.prop("disabled") && (S.debug("Disabling dropdown"), P.addClass(T.disabled)), j.removeAttr("class").detach().prependTo(P)), S.refresh();
+	          }, menu: function (e) {
+	            B.html(E.menu(e, k)), W = B.find(q.item);
+	          }, reference: function () {
+	            S.debug("Dropdown behavior was called on select, replacing with closest dropdown"), P = P.parent(q.dropdown), S.refresh(), S.setup.returnedObject(), m && (G = S, S.invoke(v));
+	          }, returnedObject: function () {
+	            var e = s.slice(0, h),
+	                t = s.slice(h + 1);s = e.add(P).add(t);
+	          } }, refresh: function () {
+	          S.refreshSelectors(), S.refreshData();
+	        }, refreshSelectors: function () {
+	          S.verbose("Refreshing selector cache"), H = P.find(q.text), z = P.find(q.search), j = P.find(q.input), U = P.find(q.icon), N = P.prev().find(q.text).length > 0 ? P.prev().find(q.text) : P.prev(), B = P.children(q.menu), W = B.find(q.item);
+	        }, refreshData: function () {
+	          S.verbose("Refreshing cached metadata"), W.removeData(D.text).removeData(D.value), P.removeData(D.defaultText).removeData(D.defaultValue).removeData(D.placeholderText);
+	        }, toggle: function () {
+	          S.verbose("Toggling menu visibility"), S.is.active() ? S.hide() : S.show();
+	        }, show: function (t) {
+	          if (t = e.isFunction(t) ? t : function () {}, S.can.show() && !S.is.active()) {
+	            if (S.debug("Showing dropdown"), S.is.multiple() && !S.has.search() && S.is.allFiltered()) return !0;!S.has.message() || S.has.maxSelections() || S.has.allResultsFiltered() || S.remove.message(), y.onShow.call(Y) !== !1 && S.animate.show(function () {
+	              S.can.click() && S.bind.intent(), S.set.visible(), t.call(Y);
+	            });
+	          }
+	        }, hide: function (t) {
+	          t = e.isFunction(t) ? t : function () {}, S.is.active() && (S.debug("Hiding dropdown"), y.onHide.call(Y) !== !1 && S.animate.hide(function () {
+	            S.remove.visible(), t.call(Y);
+	          }));
+	        }, hideOthers: function () {
+	          S.verbose("Finding other dropdowns to hide"), s.not(P).has(q.menu + "." + T.visible).dropdown("hide");
+	        }, hideMenu: function () {
+	          S.verbose("Hiding menu  instantaneously"), S.remove.active(), S.remove.visible(), B.transition("hide");
+	        }, hideSubMenus: function () {
+	          var e = B.children(q.item).find(q.menu);S.verbose("Hiding sub menus", e), e.transition("hide");
+	        }, bind: { events: function () {
+	            c && S.bind.touchEvents(), S.bind.keyboardEvents(), S.bind.inputEvents(), S.bind.mouseEvents();
+	          }, touchEvents: function () {
+	            S.debug("Touch device detected binding additional touch events"), S.is.searchSelection() || S.is.single() && P.on("touchstart" + O, S.event.test.toggle), B.on("touchstart" + O, q.item, S.event.item.mouseenter);
+	          }, keyboardEvents: function () {
+	            S.verbose("Binding keyboard events"), P.on("keydown" + O, S.event.keydown), S.has.search() && P.on(S.get.inputEvent() + O, q.search, S.event.input), S.is.multiple() && r.on("keydown" + b, S.event.document.keydown);
+	          }, inputEvents: function () {
+	            S.verbose("Binding input change events"), P.on("change" + O, q.input, S.event.change);
+	          }, mouseEvents: function () {
+	            S.verbose("Binding mouse events"), S.is.multiple() && P.on("click" + O, q.label, S.event.label.click).on("click" + O, q.remove, S.event.remove.click), S.is.searchSelection() ? (P.on("mousedown" + O, q.menu, S.event.menu.mousedown).on("mouseup" + O, q.menu, S.event.menu.mouseup).on("click" + O, q.icon, S.event.icon.click).on("click" + O, q.search, S.show).on("focus" + O, q.search, S.event.search.focus).on("blur" + O, q.search, S.event.search.blur).on("click" + O, q.text, S.event.text.focus), S.is.multiple() && P.on("click" + O, S.event.click)) : ("click" == y.on ? P.on("click" + O, q.icon, S.event.icon.click).on("click" + O, S.event.test.toggle) : "hover" == y.on ? P.on("mouseenter" + O, S.delay.show).on("mouseleave" + O, S.delay.hide) : P.on(y.on + O, S.toggle), P.on("mousedown" + O, S.event.mousedown).on("mouseup" + O, S.event.mouseup).on("focus" + O, S.event.focus).on("blur" + O, S.event.blur)), B.on("mouseenter" + O, q.item, S.event.item.mouseenter).on("mouseleave" + O, q.item, S.event.item.mouseleave).on("click" + O, q.item, S.event.item.click);
+	          }, intent: function () {
+	            S.verbose("Binding hide intent event to document"), c && r.on("touchstart" + b, S.event.test.touch).on("touchmove" + b, S.event.test.touch), r.on("click" + b, S.event.test.hide);
+	          } }, unbind: { intent: function () {
+	            S.verbose("Removing hide intent event from document"), c && r.off("touchstart" + b).off("touchmove" + b), r.off("click" + b);
+	          } }, filter: function (e) {
+	          var t = e !== i ? e : S.get.query(),
+	              n = function () {
+	            S.is.multiple() && S.filterActive(), S.select.firstUnfiltered(), S.has.allResultsFiltered() ? y.onNoResults.call(Y, t) ? y.allowAdditions || (S.verbose("All items filtered, showing message", t), S.add.message(A.noResults)) : (S.verbose("All items filtered, hiding dropdown", t), S.hideMenu()) : S.remove.message(), y.allowAdditions && S.add.userSuggestion(e), S.is.searchSelection() && S.can.show() && S.is.focusedOnSearch() && S.show();
+	          };y.useLabels && S.has.maxSelections() || (y.apiSettings ? S.can.useAPI() ? S.queryRemote(t, function () {
+	            n();
+	          }) : S.error(V.noAPI) : (S.filterItems(t), n()));
+	        }, queryRemote: function (t, n) {
+	          var i = { errorDuration: !1, throttle: y.throttle, urlData: { query: t }, onError: function () {
+	              S.add.message(A.serverError), n();
+	            }, onFailure: function () {
+	              S.add.message(A.serverError), n();
+	            }, onSuccess: function (e) {
+	              S.remove.message(), S.setup.menu({ values: e[k.remoteValues] }), n();
+	            } };P.api("get request") || S.setup.api(), i = e.extend(!0, {}, i, y.apiSettings), P.api("setting", i).api("query");
+	        }, filterItems: function (t) {
+	          var n = t !== i ? t : S.get.query(),
+	              a = null,
+	              o = S.escape.regExp(n),
+	              s = new RegExp("^" + o, "igm");S.has.query() && (a = [], S.verbose("Searching for matching values", n), W.each(function () {
+	            var t,
+	                i,
+	                o = e(this);if ("both" == y.match || "text" == y.match) {
+	              if (t = String(S.get.choiceText(o, !1)), -1 !== t.search(s)) return a.push(this), !0;if (y.fullTextSearch && S.fuzzySearch(n, t)) return a.push(this), !0;
+	            }if ("both" == y.match || "value" == y.match) {
+	              if (i = String(S.get.choiceValue(o, t)), -1 !== i.search(s)) return a.push(this), !0;if (y.fullTextSearch && S.fuzzySearch(n, i)) return a.push(this), !0;
+	            }
+	          })), S.debug("Showing only matched items", n), S.remove.filteredItem(), a && W.not(a).addClass(T.filtered);
+	        }, fuzzySearch: function (e, t) {
+	          var n = t.length,
+	              i = e.length;if (e = e.toLowerCase(), t = t.toLowerCase(), i > n) return !1;if (i === n) return e === t;e: for (var a = 0, o = 0; i > a; a++) {
+	            for (var s = e.charCodeAt(a); n > o;) if (t.charCodeAt(o++) === s) continue e;return !1;
+	          }return !0;
+	        }, filterActive: function () {
+	          y.useLabels && W.filter("." + T.active).addClass(T.filtered);
+	        }, focusSearch: function () {
+	          S.is.search() && !S.is.focusedOnSearch() && z[0].focus();
+	        }, forceSelection: function () {
+	          var e = W.not(T.filtered).filter("." + T.selected).eq(0),
+	              t = W.not(T.filtered).filter("." + T.active).eq(0),
+	              n = e.length > 0 ? e : t,
+	              i = n.size() > 0;if (S.has.query()) {
+	            if (i) return S.debug("Forcing partial selection to selected item", n), void S.event.item.click.call(n);S.remove.searchTerm();
+	          }S.hide();
+	        }, event: { change: function () {
+	            Q || (S.debug("Input changed, updating selection"), S.set.selected());
+	          }, focus: function () {
+	            y.showOnFocus && !K && S.is.hidden() && !p && S.show();
+	          }, click: function (t) {
+	            var n = e(t.target);n.is(P) && !S.is.focusedOnSearch() && S.focusSearch();
+	          }, blur: function (e) {
+	            p = n.activeElement === this, K || p || (S.remove.activeLabel(), S.hide());
+	          }, mousedown: function () {
+	            K = !0;
+	          }, mouseup: function () {
+	            K = !1;
+	          }, search: { focus: function () {
+	              K = !0, S.is.multiple() && S.remove.activeLabel(), y.showOnFocus && (S.search(), S.show());
+	            }, blur: function (e) {
+	              p = n.activeElement === this, $ || p ? p && y.forceSelection && S.forceSelection() : S.is.multiple() ? (S.remove.activeLabel(), S.hide()) : y.forceSelection ? S.forceSelection() : S.hide();
+	            } }, icon: { click: function (e) {
+	              S.toggle(), e.stopPropagation();
+	            } }, text: { focus: function (e) {
+	              K = !0, S.focusSearch();
+	            } }, input: function (e) {
+	            (S.is.multiple() || S.is.searchSelection()) && S.set.filtered(), clearTimeout(S.timer), S.timer = setTimeout(S.search, y.delay.search);
+	          }, label: { click: function (t) {
+	              var n = e(this),
+	                  i = P.find(q.label),
+	                  a = i.filter("." + T.active),
+	                  o = n.nextAll("." + T.active),
+	                  s = n.prevAll("." + T.active),
+	                  r = o.length > 0 ? n.nextUntil(o).add(a).add(n) : n.prevUntil(s).add(a).add(n);t.shiftKey ? (a.removeClass(T.active), r.addClass(T.active)) : t.ctrlKey ? n.toggleClass(T.active) : (a.removeClass(T.active), n.addClass(T.active)), y.onLabelSelect.apply(this, i.filter("." + T.active));
+	            } }, remove: { click: function () {
+	              var t = e(this).parent();t.hasClass(T.active) ? S.remove.activeLabels() : S.remove.activeLabels(t);
+	            } }, test: { toggle: function (e) {
+	              var t = S.is.multiple() ? S.show : S.toggle;S.determine.eventOnElement(e, t) && e.preventDefault();
+	            }, touch: function (e) {
+	              S.determine.eventOnElement(e, function () {
+	                "touchstart" == e.type ? S.timer = setTimeout(function () {
+	                  S.hide();
+	                }, y.delay.touch) : "touchmove" == e.type && clearTimeout(S.timer);
+	              }), e.stopPropagation();
+	            }, hide: function (e) {
+	              S.determine.eventInModule(e, S.hide);
+	            } }, menu: { mousedown: function () {
+	              $ = !0;
+	            }, mouseup: function () {
+	              $ = !1;
+	            } }, item: { mouseenter: function (t) {
+	              var n = e(this).children(q.menu),
+	                  i = e(this).siblings(q.item).children(q.menu);n.length > 0 && (clearTimeout(S.itemTimer), S.itemTimer = setTimeout(function () {
+	                S.verbose("Showing sub-menu", n), e.each(i, function () {
+	                  S.animate.hide(!1, e(this));
+	                }), S.animate.show(!1, n);
+	              }, y.delay.show), t.preventDefault());
+	            }, mouseleave: function (t) {
+	              var n = e(this).children(q.menu);n.length > 0 && (clearTimeout(S.itemTimer), S.itemTimer = setTimeout(function () {
+	                S.verbose("Hiding sub-menu", n), S.animate.hide(!1, n);
+	              }, y.delay.hide));
+	            }, touchend: function () {}, click: function (t) {
+	              var n = e(this),
+	                  i = e(t ? t.target : ""),
+	                  a = n.find(q.menu),
+	                  o = S.get.choiceText(n),
+	                  s = S.get.choiceValue(n, o),
+	                  r = a.length > 0,
+	                  l = a.find(i).length > 0;l || r && !y.allowCategorySelection || (y.useLabels || (S.remove.filteredItem(), S.remove.searchTerm(), S.set.scrollPosition(n)), S.determine.selectAction.call(this, o, s));
+	            } }, document: { keydown: function (e) {
+	              var t = e.which,
+	                  n = S.is.inObject(t, L);if (n) {
+	                var i = P.find(q.label),
+	                    a = i.filter("." + T.active),
+	                    o = (a.data(D.value), i.index(a)),
+	                    s = i.length,
+	                    r = a.length > 0,
+	                    l = a.length > 1,
+	                    c = 0 === o,
+	                    u = o + 1 == s,
+	                    d = S.is.searchSelection(),
+	                    v = S.is.focusedOnSearch(),
+	                    m = S.is.focused(),
+	                    f = v && 0 === S.get.caretPosition();if (d && !r && !v) return;t == L.leftArrow ? !m && !f || r ? r && (e.shiftKey ? S.verbose("Adding previous label to selection") : (S.verbose("Selecting previous label"), i.removeClass(T.active)), c && !l ? a.addClass(T.active) : a.prev(q.siblingLabel).addClass(T.active).end(), e.preventDefault()) : (S.verbose("Selecting previous label"), i.last().addClass(T.active)) : t == L.rightArrow ? (m && !r && i.first().addClass(T.active), r && (e.shiftKey ? S.verbose("Adding next label to selection") : (S.verbose("Selecting next label"), i.removeClass(T.active)), u ? d ? v ? i.removeClass(T.active) : S.focusSearch() : l ? a.next(q.siblingLabel).addClass(T.active) : a.addClass(T.active) : a.next(q.siblingLabel).addClass(T.active), e.preventDefault())) : t == L.deleteKey || t == L.backspace ? r ? (S.verbose("Removing active labels"), u && d && !v && S.focusSearch(), a.last().next(q.siblingLabel).addClass(T.active), S.remove.activeLabels(a), e.preventDefault()) : f && !r && t == L.backspace && (S.verbose("Removing last label on input backspace"), a = i.last().addClass(T.active), S.remove.activeLabels(a)) : a.removeClass(T.active);
+	              }
+	            } }, keydown: function (e) {
+	            var t = e.which,
+	                n = S.is.inObject(t, L);if (n) {
+	              var i,
+	                  a,
+	                  o = W.not(q.unselectable).filter("." + T.selected).eq(0),
+	                  s = B.children("." + T.active).eq(0),
+	                  r = o.length > 0 ? o : s,
+	                  l = r.length > 0 ? r.siblings(":not(." + T.filtered + ")").andSelf() : B.children(":not(." + T.filtered + ")"),
+	                  c = r.children(q.menu),
+	                  u = r.closest(q.menu),
+	                  d = u.hasClass(T.visible) || u.hasClass(T.animating) || u.parent(q.menu).length > 0,
+	                  v = c.length > 0,
+	                  m = r.length > 0,
+	                  f = r.not(q.unselectable).length > 0,
+	                  h = t == L.delimiter && y.allowAdditions && S.is.multiple();if (S.is.visible()) {
+	                if ((t == L.enter || h) && (t == L.enter && m && v && !y.allowCategorySelection ? (S.verbose("Pressed enter on unselectable category, opening sub menu"), t = L.rightArrow) : f && (S.verbose("Selecting item from keyboard shortcut", r), S.event.item.click.call(r, e), S.is.searchSelection() && S.remove.searchTerm()), e.preventDefault()), t == L.leftArrow && (a = u[0] !== B[0], a && (S.verbose("Left key pressed, closing sub-menu"), S.animate.hide(!1, u), r.removeClass(T.selected), u.closest(q.item).addClass(T.selected), e.preventDefault())), t == L.rightArrow && v && (S.verbose("Right key pressed, opening sub-menu"), S.animate.show(!1, c), r.removeClass(T.selected), c.find(q.item).eq(0).addClass(T.selected), e.preventDefault()), t == L.upArrow) {
+	                  if (i = m && d ? r.prevAll(q.item + ":not(" + q.unselectable + ")").eq(0) : W.eq(0), l.index(i) < 0) return S.verbose("Up key pressed but reached top of current menu"), void e.preventDefault();S.verbose("Up key pressed, changing active item"), r.removeClass(T.selected), i.addClass(T.selected), S.set.scrollPosition(i), e.preventDefault();
+	                }if (t == L.downArrow) {
+	                  if (i = m && d ? i = r.nextAll(q.item + ":not(" + q.unselectable + ")").eq(0) : W.eq(0), 0 === i.length) return S.verbose("Down key pressed but reached bottom of current menu"), void e.preventDefault();S.verbose("Down key pressed, changing active item"), W.removeClass(T.selected), i.addClass(T.selected), S.set.scrollPosition(i), e.preventDefault();
+	                }t == L.pageUp && (S.scrollPage("up"), e.preventDefault()), t == L.pageDown && (S.scrollPage("down"), e.preventDefault()), t == L.escape && (S.verbose("Escape key pressed, closing dropdown"), S.hide());
+	              } else h && e.preventDefault(), t == L.downArrow && (S.verbose("Down key pressed, showing dropdown"), S.show(), e.preventDefault());
+	            } else S.is.selection() && !S.is.search() && S.set.selectedLetter(String.fromCharCode(t));
+	          } }, trigger: { change: function () {
+	            var e = n.createEvent("HTMLEvents"),
+	                t = j[0];t && (S.verbose("Triggering native change event"), e.initEvent("change", !0, !1), t.dispatchEvent(e));
+	          } }, determine: { selectAction: function (t, n) {
+	            S.verbose("Determining action", y.action), e.isFunction(S.action[y.action]) ? (S.verbose("Triggering preset action", y.action, t, n), S.action[y.action].call(this, t, n)) : e.isFunction(y.action) ? (S.verbose("Triggering user action", y.action, t, n), y.action.call(this, t, n)) : S.error(V.action, y.action);
+	          }, eventInModule: function (t, i) {
+	            var a = e(t.target),
+	                o = a.closest(n.documentElement).length > 0,
+	                s = a.closest(P).length > 0;return i = e.isFunction(i) ? i : function () {}, o && !s ? (S.verbose("Triggering event", i), i(), !0) : (S.verbose("Event occurred in dropdown, canceling callback"), !1);
+	          }, eventOnElement: function (t, n) {
+	            var i = e(t.target),
+	                a = i.closest(q.siblingLabel),
+	                o = 0 === P.find(a).length,
+	                s = 0 === i.closest(B).length;return n = e.isFunction(n) ? n : function () {}, o && s ? (S.verbose("Triggering event", n), n(), !0) : (S.verbose("Event occurred in dropdown menu, canceling callback"), !1);
+	          } }, action: { nothing: function () {}, activate: function (t, n) {
+	            if (n = n !== i ? n : t, S.can.activate(e(this))) {
+	              if (S.set.selected(n, e(this)), S.is.multiple() && !S.is.allFiltered()) return;S.hideAndClear();
+	            }
+	          }, select: function (e, t) {
+	            S.action.activate.call(this);
+	          }, combo: function (t, n) {
+	            n = n !== i ? n : t, S.set.selected(n, e(this)), S.hideAndClear();
+	          }, hide: function (e, t) {
+	            S.set.value(t), S.hideAndClear();
+	          } }, get: { id: function () {
+	            return w;
+	          }, defaultText: function () {
+	            return P.data(D.defaultText);
+	          }, defaultValue: function () {
+	            return P.data(D.defaultValue);
+	          }, placeholderText: function () {
+	            return P.data(D.placeholderText) || "";
+	          }, text: function () {
+	            return H.text();
+	          }, query: function () {
+	            return e.trim(z.val());
+	          }, searchWidth: function (e) {
+	            return e * y.glyphWidth + "em";
+	          }, selectionCount: function () {
+	            var t,
+	                n = S.get.values();return t = S.is.multiple() ? e.isArray(n) ? n.length : 0 : "" !== S.get.value() ? 1 : 0;
+	          }, transition: function (e) {
+	            return "auto" == y.transition ? S.is.upward(e) ? "slide up" : "slide down" : y.transition;
+	          }, userValues: function () {
+	            var t = S.get.values();return t ? (t = e.isArray(t) ? t : [t], e.grep(t, function (e) {
+	              return S.get.item(e) === !1;
+	            })) : !1;
+	          }, uniqueArray: function (t) {
+	            return e.grep(t, function (n, i) {
+	              return e.inArray(n, t) === i;
+	            });
+	          }, caretPosition: function () {
+	            var e,
+	                t,
+	                i = z.get(0);return "selectionStart" in i ? i.selectionStart : n.selection ? (i.focus(), e = n.selection.createRange(), t = e.text.length, e.moveStart("character", -i.value.length), e.text.length - t) : void 0;
+	          }, value: function () {
+	            var t = j.length > 0 ? j.val() : P.data(D.value);return e.isArray(t) && 1 === t.length && "" === t[0] ? "" : t;
+	          }, values: function () {
+	            var e = S.get.value();return "" === e ? "" : !S.has.selectInput() && S.is.multiple() ? "string" == typeof e ? e.split(y.delimiter) : "" : e;
+	          }, remoteValues: function () {
+	            var t = S.get.values(),
+	                n = !1;return t && ("string" == typeof t && (t = [t]), n = {}, e.each(t, function (e, t) {
+	              var i = S.read.remoteData(t);S.verbose("Restoring value from session data", i, t), n[t] = i ? i : t;
+	            })), n;
+	          }, choiceText: function (t, n) {
+	            return n = n !== i ? n : y.preserveHTML, t ? (t.find(q.menu).length > 0 && (S.verbose("Retreiving text of element with sub-menu"), t = t.clone(), t.find(q.menu).remove(), t.find(q.menuIcon).remove()), t.data(D.text) !== i ? t.data(D.text) : n ? e.trim(t.html()) : e.trim(t.text())) : void 0;
+	          }, choiceValue: function (t, n) {
+	            return n = n || S.get.choiceText(t), t ? t.data(D.value) !== i ? String(t.data(D.value)) : "string" == typeof n ? e.trim(n.toLowerCase()) : String(n) : !1;
+	          }, inputEvent: function () {
+	            var e = z[0];return e ? e.oninput !== i ? "input" : e.onpropertychange !== i ? "propertychange" : "keyup" : !1;
+	          }, selectValues: function () {
+	            var t = {};return t.values = [], P.find("option").each(function () {
+	              var n = e(this),
+	                  a = n.html(),
+	                  o = n.attr("disabled"),
+	                  s = n.attr("value") !== i ? n.attr("value") : a;"auto" === y.placeholder && "" === s ? t.placeholder = a : t.values.push({ name: a, value: s, disabled: o });
+	            }), y.placeholder && "auto" !== y.placeholder && (S.debug("Setting placeholder value to", y.placeholder), t.placeholder = y.placeholder), y.sortSelect ? (t.values.sort(function (e, t) {
+	              return e.name > t.name ? 1 : -1;
+	            }), S.debug("Retrieved and sorted values from select", t)) : S.debug("Retreived values from select", t), t;
+	          }, activeItem: function () {
+	            return W.filter("." + T.active);
+	          }, selectedItem: function () {
+	            var e = W.not(q.unselectable).filter("." + T.selected);return e.length > 0 ? e : W.eq(0);
+	          }, itemWithAdditions: function (e) {
+	            var t = S.get.item(e),
+	                n = S.create.userChoice(e),
+	                i = n && n.length > 0;return i && (t = t.length > 0 ? t.add(n) : n), t;
+	          }, item: function (t, n) {
+	            var a,
+	                o,
+	                s = !1;return t = t !== i ? t : S.get.values() !== i ? S.get.values() : S.get.text(), a = o ? t.length > 0 : t !== i && null !== t, o = S.is.multiple() && e.isArray(t), n = "" === t || 0 === t ? !0 : n || !1, a && W.each(function () {
+	              var a = e(this),
+	                  r = S.get.choiceText(a),
+	                  l = S.get.choiceValue(a, r);if (null !== l && l !== i) if (o) (-1 !== e.inArray(String(l), t) || -1 !== e.inArray(r, t)) && (s = s ? s.add(a) : a);else if (n) {
+	                if (S.verbose("Ambiguous dropdown value using strict type check", a, t), l === t || r === t) return s = a, !0;
+	              } else if (String(l) == String(t) || r == t) return S.verbose("Found select item by value", l, t), s = a, !0;
+	            }), s;
+	          } }, check: { maxSelections: function (e) {
+	            return y.maxSelections ? (e = e !== i ? e : S.get.selectionCount(), e >= y.maxSelections ? (S.debug("Maximum selection count reached"), y.useLabels && (W.addClass(T.filtered), S.add.message(A.maxSelections)), !0) : (S.verbose("No longer at maximum selection count"), S.remove.message(), S.remove.filteredItem(), S.is.searchSelection() && S.filterItems(), !1)) : !0;
+	          } }, restore: { defaults: function () {
+	            S.clear(), S.restore.defaultText(), S.restore.defaultValue();
+	          }, defaultText: function () {
+	            var e = S.get.defaultText(),
+	                t = S.get.placeholderText;e === t ? (S.debug("Restoring default placeholder text", e), S.set.placeholderText(e)) : (S.debug("Restoring default text", e), S.set.text(e));
+	          }, defaultValue: function () {
+	            var e = S.get.defaultValue();e !== i && (S.debug("Restoring default value", e), "" !== e ? (S.set.value(e), S.set.selected()) : (S.remove.activeItem(), S.remove.selectedItem()));
+	          }, labels: function () {
+	            y.allowAdditions && (y.useLabels || (S.error(V.labels), y.useLabels = !0), S.debug("Restoring selected values"), S.create.userLabels()), S.check.maxSelections();
+	          }, selected: function () {
+	            S.restore.values(), S.is.multiple() ? (S.debug("Restoring previously selected values and labels"), S.restore.labels()) : S.debug("Restoring previously selected values");
+	          }, values: function () {
+	            S.set.initialLoad(), y.apiSettings ? y.saveRemoteData ? S.restore.remoteValues() : S.clearValue() : S.set.selected(), S.remove.initialLoad();
+	          }, remoteValues: function () {
+	            var t = S.get.remoteValues();S.debug("Recreating selected from session data", t), t && (S.is.single() ? e.each(t, function (e, t) {
+	              S.set.text(t);
+	            }) : e.each(t, function (e, t) {
+	              S.add.label(e, t);
+	            }));
+	          } }, read: { remoteData: function (e) {
+	            var n;return t.Storage === i ? void S.error(V.noStorage) : (n = sessionStorage.getItem(e), n !== i ? n : !1);
+	          } }, save: { defaults: function () {
+	            S.save.defaultText(), S.save.placeholderText(), S.save.defaultValue();
+	          }, defaultValue: function () {
+	            var e = S.get.value();S.verbose("Saving default value as", e), P.data(D.defaultValue, e);
+	          }, defaultText: function () {
+	            var e = S.get.text();S.verbose("Saving default text as", e), P.data(D.defaultText, e);
+	          }, placeholderText: function () {
+	            var e;y.placeholder !== !1 && H.hasClass(T.placeholder) && (e = S.get.text(), S.verbose("Saving placeholder text as", e), P.data(D.placeholderText, e));
+	          }, remoteData: function (e, n) {
+	            return t.Storage === i ? void S.error(V.noStorage) : (S.verbose("Saving remote data to session storage", n, e), void sessionStorage.setItem(n, e));
+	          } }, clear: function () {
+	          S.is.multiple() ? S.remove.labels() : (S.remove.activeItem(), S.remove.selectedItem()), S.set.placeholderText(), S.clearValue();
+	        }, clearValue: function () {
+	          S.set.value("");
+	        }, scrollPage: function (e, t) {
+	          var n,
+	              i,
+	              a,
+	              o = t || S.get.selectedItem(),
+	              s = o.closest(q.menu),
+	              r = s.outerHeight(),
+	              l = s.scrollTop(),
+	              c = W.eq(0).outerHeight(),
+	              u = Math.floor(r / c),
+	              d = (s.prop("scrollHeight"), "up" == e ? l - c * u : l + c * u),
+	              v = W.not(q.unselectable);a = "up" == e ? v.index(o) - u : v.index(o) + u, n = "up" == e ? a >= 0 : a < v.length, i = n ? v.eq(a) : "up" == e ? v.first() : v.last(), i.length > 0 && (S.debug("Scrolling page", e, i), o.removeClass(T.selected), i.addClass(T.selected), s.scrollTop(d));
+	        }, set: { filtered: function () {
+	            var e = S.is.multiple(),
+	                t = S.is.searchSelection(),
+	                n = e && t,
+	                i = t ? S.get.query() : "",
+	                a = "string" == typeof i && i.length > 0,
+	                o = S.get.searchWidth(i.length),
+	                s = "" !== i;e && a && (S.verbose("Adjusting input width", o, y.glyphWidth), z.css("width", o)), a || n && s ? (S.verbose("Hiding placeholder text"), H.addClass(T.filtered)) : (!e || n && !s) && (S.verbose("Showing placeholder text"), H.removeClass(T.filtered));
+	          }, loading: function () {
+	            P.addClass(T.loading);
+	          }, placeholderText: function (e) {
+	            e = e || S.get.placeholderText(), S.debug("Setting placeholder text", e), S.set.text(e), H.addClass(T.placeholder);
+	          }, tabbable: function () {
+	            S.has.search() ? (S.debug("Added tabindex to searchable dropdown"), z.val("").attr("tabindex", 0), B.attr("tabindex", -1)) : (S.debug("Added tabindex to dropdown"), P.attr("tabindex") === i && (P.attr("tabindex", 0), B.attr("tabindex", -1)));
+	          }, initialLoad: function () {
+	            S.verbose("Setting initial load"), g = !0;
+	          }, activeItem: function (e) {
+	            y.allowAdditions && e.filter(q.addition).length > 0 ? e.addClass(T.filtered) : e.addClass(T.active);
+	          }, scrollPosition: function (e, t) {
+	            var n,
+	                a,
+	                o,
+	                s,
+	                r,
+	                l,
+	                c,
+	                u,
+	                d,
+	                v = 5;e = e || S.get.selectedItem(), n = e.closest(q.menu), a = e && e.length > 0, t = t !== i ? t : !1, e && n.length > 0 && a && (s = e.position().top, n.addClass(T.loading), l = n.scrollTop(), r = n.offset().top, s = e.offset().top, o = l - r + s, t || (c = n.height(), d = o + v > l + c, u = l > o - v), S.debug("Scrolling to active item", o), (t || u || d) && n.scrollTop(o), n.removeClass(T.loading));
+	          }, text: function (e) {
+	            "select" !== y.action && ("combo" == y.action ? (S.debug("Changing combo button text", e, N), y.preserveHTML ? N.html(e) : N.text(e)) : (e !== S.get.placeholderText() && H.removeClass(T.placeholder), S.debug("Changing text", e, H), H.removeClass(T.filtered), y.preserveHTML ? H.html(e) : H.text(e)));
+	          }, selectedLetter: function (t) {
+	            var n,
+	                i = W.filter("." + T.selected),
+	                a = i.length > 0 && S.has.firstLetter(i, t),
+	                o = !1;a && (n = i.nextAll(W).eq(0), S.has.firstLetter(n, t) && (o = n)), o || W.each(function () {
+	              return S.has.firstLetter(e(this), t) ? (o = e(this), !1) : void 0;
+	            }), o && (S.verbose("Scrolling to next value with letter", t), S.set.scrollPosition(o), i.removeClass(T.selected), o.addClass(T.selected));
+	          }, direction: function (e) {
+	            "auto" == y.direction ? S.is.onScreen(e) ? S.remove.upward(e) : S.set.upward(e) : "upward" == y.direction && S.set.upward(e);
+	          }, upward: function (e) {
+	            var t = e || P;t.addClass(T.upward);
+	          }, value: function (e, t, n) {
+	            var a = j.length > 0,
+	                o = (!S.has.value(e), S.get.values()),
+	                s = e !== i ? String(e) : e;if (a) {
+	              if (s == o && (S.verbose("Skipping value update already same value", e, o), !S.is.initialLoad())) return;S.is.single() && S.has.selectInput() && S.can.extendSelect() && (S.debug("Adding user option", e), S.add.optionValue(e)), S.debug("Updating input value", e, o), Q = !0, j.val(e), y.fireOnInit === !1 && S.is.initialLoad() ? S.debug("Input native change event ignored on initial load") : S.trigger.change(), Q = !1;
+	            } else S.verbose("Storing value in metadata", e, j), e !== o && P.data(D.value, s);y.fireOnInit === !1 && S.is.initialLoad() ? S.verbose("No callback on initial load", y.onChange) : y.onChange.call(Y, e, t, n);
+	          }, active: function () {
+	            P.addClass(T.active);
+	          }, multiple: function () {
+	            P.addClass(T.multiple);
+	          }, visible: function () {
+	            P.addClass(T.visible);
+	          }, exactly: function (e, t) {
+	            S.debug("Setting selected to exact values"), S.clear(), S.set.selected(e, t);
+	          }, selected: function (t, n) {
+	            var i = S.is.multiple();n = y.allowAdditions ? n || S.get.itemWithAdditions(t) : n || S.get.item(t), n && (S.debug("Setting selected menu item to", n), S.is.single() ? (S.remove.activeItem(), S.remove.selectedItem()) : y.useLabels && S.remove.selectedItem(), n.each(function () {
+	              var t = e(this),
+	                  a = S.get.choiceText(t),
+	                  o = S.get.choiceValue(t, a),
+	                  s = t.hasClass(T.filtered),
+	                  r = t.hasClass(T.active),
+	                  l = t.hasClass(T.addition),
+	                  c = i && 1 == n.length;i ? !r || l ? (y.apiSettings && y.saveRemoteData && S.save.remoteData(a, o), y.useLabels ? (S.add.value(o, a, t), S.add.label(o, a, c), S.set.activeItem(t), S.filterActive(), S.select.nextAvailable(n)) : (S.add.value(o, a, t), S.set.text(S.add.variables(A.count)), S.set.activeItem(t))) : s || (S.debug("Selected active value, removing label"), S.remove.selected(o)) : (y.apiSettings && y.saveRemoteData && S.save.remoteData(a, o), S.set.text(a), S.set.value(o, a, t), t.addClass(T.active).addClass(T.selected));
+	            }));
+	          } }, add: { label: function (t, n, i) {
+	            var a,
+	                o = S.is.searchSelection() ? z : H;return a = e("<a />").addClass(T.label).attr("data-value", t).html(E.label(t, n)), a = y.onLabelCreate.call(a, t, n), S.has.label(t) ? void S.debug("Label already exists, skipping", t) : (y.label.variation && a.addClass(y.label.variation), void (i === !0 ? (S.debug("Animating in label", a), a.addClass(T.hidden).insertBefore(o).transition(y.label.transition, y.label.duration)) : (S.debug("Adding selection label", a), a.insertBefore(o))));
+	          }, message: function (t) {
+	            var n = B.children(q.message),
+	                i = y.templates.message(S.add.variables(t));n.length > 0 ? n.html(i) : n = e("<div/>").html(i).addClass(T.message).appendTo(B);
+	          }, optionValue: function (t) {
+	            var n = j.find('option[value="' + t + '"]'),
+	                i = n.length > 0;i || (x && (x.disconnect(), S.verbose("Temporarily disconnecting mutation observer", t)), S.is.single() && (S.verbose("Removing previous user addition"), j.find("option." + T.addition).remove()), e("<option/>").prop("value", t).addClass(T.addition).html(t).appendTo(j), S.verbose("Adding user addition as an <option>", t), x && x.observe(j[0], { childList: !0, subtree: !0 }));
+	          }, userSuggestion: function (e) {
+	            var t,
+	                n = B.children(q.addition),
+	                i = S.get.item(e),
+	                a = i && i.not(q.addition).length,
+	                o = n.length > 0;if (!y.useLabels || !S.has.maxSelections()) {
+	              if ("" === e || a) return void n.remove();W.removeClass(T.selected), o ? (t = y.templates.addition(S.add.variables(A.addResult, e)), n.html(t).attr("data-" + D.value, e).attr("data-" + D.text, e).removeClass(T.filtered).addClass(T.selected), S.verbose("Replacing user suggestion with new value", n)) : (n = S.create.userChoice(e), n.prependTo(B).addClass(T.selected), S.verbose("Adding item choice to menu corresponding with user choice addition", n));
+	            }
+	          }, variables: function (e, t) {
+	            var n,
+	                i,
+	                a = -1 !== e.search("{count}"),
+	                o = -1 !== e.search("{maxCount}"),
+	                s = -1 !== e.search("{term}");return S.verbose("Adding templated variables to message", e), a && (n = S.get.selectionCount(), e = e.replace("{count}", n)), o && (n = S.get.selectionCount(), e = e.replace("{maxCount}", y.maxSelections)), s && (i = t || S.get.query(), e = e.replace("{term}", i)), e;
+	          }, value: function (t, n, i) {
+	            var a,
+	                o = S.get.values();return "" === t ? void S.debug("Cannot select blank values from multiselect") : (e.isArray(o) ? (a = o.concat([t]), a = S.get.uniqueArray(a)) : a = [t], S.has.selectInput() ? S.can.extendSelect() && (S.debug("Adding value to select", t, a, j), S.add.optionValue(t)) : (a = a.join(y.delimiter), S.debug("Setting hidden input to delimited value", a, j)), y.fireOnInit === !1 && S.is.initialLoad() ? S.verbose("Skipping onadd callback on initial load", y.onAdd) : y.onAdd.call(Y, t, n, i), S.set.value(a, t, n, i), void S.check.maxSelections());
+	          } }, remove: { active: function () {
+	            P.removeClass(T.active);
+	          }, activeLabel: function () {
+	            P.find(q.label).removeClass(T.active);
+	          }, loading: function () {
+	            P.removeClass(T.loading);
+	          }, initialLoad: function () {
+	            g = !1;
+	          }, upward: function (e) {
+	            var t = e || P;t.removeClass(T.upward);
+	          }, visible: function () {
+	            P.removeClass(T.visible);
+	          }, activeItem: function () {
+	            W.removeClass(T.active);
+	          }, filteredItem: function () {
+	            y.useLabels && S.has.maxSelections() || (y.useLabels && S.is.multiple() ? W.not("." + T.active).removeClass(T.filtered) : W.removeClass(T.filtered));
+	          }, optionValue: function (e) {
+	            var t = j.find('option[value="' + e + '"]'),
+	                n = t.length > 0;n && t.hasClass(T.addition) && (x && (x.disconnect(), S.verbose("Temporarily disconnecting mutation observer", e)), t.remove(), S.verbose("Removing user addition as an <option>", e), x && x.observe(j[0], { childList: !0, subtree: !0 }));
+	          }, message: function () {
+	            B.children(q.message).remove();
+	          }, searchTerm: function () {
+	            S.verbose("Cleared search term"), z.val(""), S.set.filtered();
+	          }, selected: function (t, n) {
+	            return (n = y.allowAdditions ? n || S.get.itemWithAdditions(t) : n || S.get.item(t)) ? void n.each(function () {
+	              var t = e(this),
+	                  n = S.get.choiceText(t),
+	                  i = S.get.choiceValue(t, n);S.is.multiple() ? y.useLabels ? (S.remove.value(i, n, t), S.remove.label(i)) : (S.remove.value(i, n, t), 0 === S.get.selectionCount() ? S.set.placeholderText() : S.set.text(S.add.variables(A.count))) : S.remove.value(i, n, t), t.removeClass(T.filtered).removeClass(T.active), y.useLabels && t.removeClass(T.selected);
+	            }) : !1;
+	          }, selectedItem: function () {
+	            W.removeClass(T.selected);
+	          }, value: function (e, t, n) {
+	            var i,
+	                a = S.get.values();S.has.selectInput() ? (S.verbose("Input is <select> removing selected option", e), i = S.remove.arrayValue(e, a), S.remove.optionValue(e)) : (S.verbose("Removing from delimited values", e), i = S.remove.arrayValue(e, a), i = i.join(y.delimiter)), y.fireOnInit === !1 && S.is.initialLoad() ? S.verbose("No callback on initial load", y.onRemove) : y.onRemove.call(Y, e, t, n), S.set.value(i, t, n), S.check.maxSelections();
+	          }, arrayValue: function (t, n) {
+	            return e.isArray(n) || (n = [n]), n = e.grep(n, function (e) {
+	              return t != e;
+	            }), S.verbose("Removed value from delimited string", t, n), n;
+	          }, label: function (e, t) {
+	            var n = P.find(q.label),
+	                i = n.filter('[data-value="' + e + '"]');S.verbose("Removing label", i), i.remove();
+	          }, activeLabels: function (e) {
+	            e = e || P.find(q.label).filter("." + T.active), S.verbose("Removing active label selections", e), S.remove.labels(e);
+	          }, labels: function (t) {
+	            t = t || P.find(q.label), S.verbose("Removing labels", t), t.each(function () {
+	              var t = e(this),
+	                  n = t.data(D.value),
+	                  a = n !== i ? String(n) : n,
+	                  o = S.is.userValue(a);return y.onLabelRemove.call(t, n) === !1 ? void S.debug("Label remove callback cancelled removal") : void (o ? (S.remove.value(a), S.remove.label(a)) : S.remove.selected(a));
+	            });
+	          }, tabbable: function () {
+	            S.has.search() ? (S.debug("Searchable dropdown initialized"), z.removeAttr("tabindex"), B.removeAttr("tabindex")) : (S.debug("Simple selection dropdown initialized"), P.removeAttr("tabindex"), B.removeAttr("tabindex"));
+	          } }, has: { search: function () {
+	            return z.length > 0;
+	          }, selectInput: function () {
+	            return j.is("select");
+	          }, firstLetter: function (e, t) {
+	            var n, i;return e && 0 !== e.length && "string" == typeof t ? (n = S.get.choiceText(e, !1), t = t.toLowerCase(), i = String(n).charAt(0).toLowerCase(), t == i) : !1;
+	          }, input: function () {
+	            return j.length > 0;
+	          }, items: function () {
+	            return W.length > 0;
+	          }, menu: function () {
+	            return B.length > 0;
+	          }, message: function () {
+	            return 0 !== B.children(q.message).length;
+	          }, label: function (e) {
+	            var t = P.find(q.label);return t.filter('[data-value="' + e + '"]').length > 0;
+	          }, maxSelections: function () {
+	            return y.maxSelections && S.get.selectionCount() >= y.maxSelections;
+	          }, allResultsFiltered: function () {
+	            return W.filter(q.unselectable).length === W.length;
+	          }, query: function () {
+	            return "" !== S.get.query();
+	          }, value: function (t) {
+	            var n = S.get.values(),
+	                i = e.isArray(n) ? n && -1 !== e.inArray(t, n) : n == t;return i ? !0 : !1;
+	          } }, is: { active: function () {
+	            return P.hasClass(T.active);
+	          }, alreadySetup: function () {
+	            return P.is("select") && P.parent(q.dropdown).length > 0 && 0 === P.prev().length;
+	          }, animating: function (e) {
+	            return e ? e.transition && e.transition("is animating") : B.transition && B.transition("is animating");
+	          }, disabled: function () {
+	            return P.hasClass(T.disabled);
+	          }, focused: function () {
+	            return n.activeElement === P[0];
+	          }, focusedOnSearch: function () {
+	            return n.activeElement === z[0];
+	          }, allFiltered: function () {
+	            return (S.is.multiple() || S.has.search()) && !S.has.message() && S.has.allResultsFiltered();
+	          }, hidden: function (e) {
+	            return !S.is.visible(e);
+	          }, initialLoad: function () {
+	            return g;
+	          }, onScreen: function (e) {
+	            var t,
+	                n = e || B,
+	                i = !0,
+	                a = {};return n.addClass(T.loading), t = { context: { scrollTop: M.scrollTop(), height: M.outerHeight() }, menu: { offset: n.offset(), height: n.outerHeight() } }, a = { above: t.context.scrollTop <= t.menu.offset.top - t.menu.height, below: t.context.scrollTop + t.context.height >= t.menu.offset.top + t.menu.height }, a.below ? (S.verbose("Dropdown can fit in context downward", a), i = !0) : a.below || a.above ? (S.verbose("Dropdown cannot fit below, opening upward", a), i = !1) : (S.verbose("Dropdown cannot fit in either direction, favoring downward", a), i = !0), n.removeClass(T.loading), i;
+	          }, inObject: function (t, n) {
+	            var i = !1;return e.each(n, function (e, n) {
+	              return n == t ? (i = !0, !0) : void 0;
+	            }), i;
+	          }, multiple: function () {
+	            return P.hasClass(T.multiple);
+	          }, single: function () {
+	            return !S.is.multiple();
+	          }, selectMutation: function (t) {
+	            var n = !1;return e.each(t, function (t, i) {
+	              return i.target && e(i.target).is("select") ? (n = !0, !0) : void 0;
+	            }), n;
+	          }, search: function () {
+	            return P.hasClass(T.search);
+	          }, searchSelection: function () {
+	            return S.has.search() && 1 === z.parent(q.dropdown).length;
+	          }, selection: function () {
+	            return P.hasClass(T.selection);
+	          }, userValue: function (t) {
+	            return -1 !== e.inArray(t, S.get.userValues());
+	          }, upward: function (e) {
+	            var t = e || P;return t.hasClass(T.upward);
+	          }, visible: function (e) {
+	            return e ? e.hasClass(T.visible) : B.hasClass(T.visible);
+	          } }, can: { activate: function (e) {
+	            return y.useLabels ? !0 : S.has.maxSelections() ? S.has.maxSelections() && e.hasClass(T.active) ? !0 : !1 : !0;
+	          }, click: function () {
+	            return c || "click" == y.on;
+	          }, extendSelect: function () {
+	            return y.allowAdditions || y.apiSettings;
+	          }, show: function () {
+	            return !S.is.disabled() && (S.has.items() || S.has.message());
+	          }, useAPI: function () {
+	            return e.fn.api !== i;
+	          } }, animate: { show: function (t, n) {
+	            var a,
+	                o = n || B,
+	                s = n ? function () {} : function () {
+	              S.hideSubMenus(), S.hideOthers(), S.set.active();
+	            };t = e.isFunction(t) ? t : function () {}, S.verbose("Doing menu show animation", o), S.set.direction(n), a = S.get.transition(n), S.is.selection() && S.set.scrollPosition(S.get.selectedItem(), !0), (S.is.hidden(o) || S.is.animating(o)) && ("none" == a ? (s(), o.transition("show"), t.call(Y)) : e.fn.transition !== i && P.transition("is supported") ? o.transition({ animation: a + " in", debug: y.debug, verbose: y.verbose, duration: y.duration, queue: !0, onStart: s, onComplete: function () {
+	                t.call(Y);
+	              } }) : S.error(V.noTransition, a));
+	          }, hide: function (t, n) {
+	            var a = n || B,
+	                o = (n ? .9 * y.duration : y.duration, n ? function () {} : function () {
+	              S.can.click() && S.unbind.intent(), S.remove.active();
+	            }),
+	                s = S.get.transition(n);t = e.isFunction(t) ? t : function () {}, (S.is.visible(a) || S.is.animating(a)) && (S.verbose("Doing menu hide animation", a), "none" == s ? (o(), a.transition("hide"), t.call(Y)) : e.fn.transition !== i && P.transition("is supported") ? a.transition({ animation: s + " out", duration: y.duration, debug: y.debug, verbose: y.verbose, queue: !0, onStart: o, onComplete: function () {
+	                "auto" == y.direction && S.remove.upward(n), t.call(Y);
+	              } }) : S.error(V.transition));
+	          } }, hideAndClear: function () {
+	          S.remove.searchTerm(), S.has.maxSelections() || (S.has.search() ? S.hide(function () {
+	            S.remove.filteredItem();
+	          }) : S.hide());
+	        }, delay: { show: function () {
+	            S.verbose("Delaying show event to ensure user intent"), clearTimeout(S.timer), S.timer = setTimeout(S.show, y.delay.show);
+	          }, hide: function () {
+	            S.verbose("Delaying hide event to ensure user intent"), clearTimeout(S.timer), S.timer = setTimeout(S.hide, y.delay.hide);
+	          } }, escape: { regExp: function (e) {
+	            return e = String(e), e.replace(R.escape, "\\$&");
+	          } }, setting: function (t, n) {
+	          if (S.debug("Changing setting", t, n), e.isPlainObject(t)) e.extend(!0, y, t);else {
+	            if (n === i) return y[t];y[t] = n;
+	          }
+	        }, internal: function (t, n) {
+	          if (e.isPlainObject(t)) e.extend(!0, S, t);else {
+	            if (n === i) return S[t];S[t] = n;
+	          }
+	        }, debug: function () {
+	          y.debug && (y.performance ? S.performance.log(arguments) : (S.debug = Function.prototype.bind.call(console.info, console, y.name + ":"), S.debug.apply(console, arguments)));
+	        }, verbose: function () {
+	          y.verbose && y.debug && (y.performance ? S.performance.log(arguments) : (S.verbose = Function.prototype.bind.call(console.info, console, y.name + ":"), S.verbose.apply(console, arguments)));
+	        }, error: function () {
+	          S.error = Function.prototype.bind.call(console.error, console, y.name + ":"), S.error.apply(console, arguments);
+	        }, performance: { log: function (e) {
+	            var t, n, i;y.performance && (t = new Date().getTime(), i = u || t, n = t - i, u = t, d.push({ Name: e[0], Arguments: [].slice.call(e, 1) || "", Element: Y, "Execution Time": n })), clearTimeout(S.performance.timer), S.performance.timer = setTimeout(S.performance.display, 500);
+	          }, display: function () {
+	            var t = y.name + ":",
+	                n = 0;u = !1, clearTimeout(S.performance.timer), e.each(d, function (e, t) {
+	              n += t["Execution Time"];
+	            }), t += " " + n + "ms", l && (t += " '" + l + "'"), (console.group !== i || console.table !== i) && d.length > 0 && (console.groupCollapsed(t), console.table ? console.table(d) : e.each(d, function (e, t) {
+	              console.log(t.Name + ": " + t["Execution Time"] + "ms");
+	            }), console.groupEnd()), d = [];
+	          } }, invoke: function (t, n, a) {
+	          var s,
+	              r,
+	              l,
+	              c = G;return n = n || f, a = Y || a, "string" == typeof t && c !== i && (t = t.split(/[\. ]/), s = t.length - 1, e.each(t, function (n, a) {
+	            var o = n != s ? a + t[n + 1].charAt(0).toUpperCase() + t[n + 1].slice(1) : t;if (e.isPlainObject(c[o]) && n != s) c = c[o];else {
+	              if (c[o] !== i) return r = c[o], !1;if (!e.isPlainObject(c[a]) || n == s) return c[a] !== i ? (r = c[a], !1) : (S.error(V.method, t), !1);c = c[a];
+	            }
+	          })), e.isFunction(r) ? l = r.apply(a, n) : r !== i && (l = r), e.isArray(o) ? o.push(l) : o !== i ? o = [o, l] : l !== i && (o = l), r;
+	        } }, m ? (G === i && S.initialize(), S.invoke(v)) : (G !== i && G.invoke("destroy"), S.initialize());
+	    }), o !== i ? o : s;
+	  }, e.fn.dropdown.settings = { debug: !1, verbose: !1, performance: !0, on: "click", action: "activate", apiSettings: !1, saveRemoteData: !0, throttle: 200, context: t, direction: "auto", keepOnScreen: !0, match: "both", fullTextSearch: !1, placeholder: "auto", preserveHTML: !0, sortSelect: !1, forceSelection: !0, allowAdditions: !1, maxSelections: !1, useLabels: !0, delimiter: ",", showOnFocus: !0, allowTab: !0, allowCategorySelection: !1, fireOnInit: !1, transition: "auto", duration: 200, glyphWidth: 1.0714, label: { transition: "scale", duration: 200, variation: !1 }, delay: { hide: 300, show: 200, search: 20, touch: 50 }, onChange: function (e, t, n) {}, onAdd: function (e, t, n) {}, onRemove: function (e, t, n) {}, onLabelSelect: function (e) {}, onLabelCreate: function (t, n) {
+	      return e(this);
+	    }, onLabelRemove: function (e) {
+	      return !0;
+	    }, onNoResults: function (e) {
+	      return !0;
+	    }, onShow: function () {}, onHide: function () {}, name: "Dropdown", namespace: "dropdown", message: { addResult: "Add <b>{term}</b>", count: "{count} selected", maxSelections: "Max {maxCount} selections", noResults: "No results found.", serverError: "There was an error contacting the server" }, error: { action: "You called a dropdown action that was not defined", alreadySetup: "Once a select has been initialized behaviors must be called on the created ui dropdown", labels: "Allowing user additions currently requires the use of labels.", missingMultiple: "<select> requires multiple property to be set to correctly preserve multiple values", method: "The method you called is not defined.", noAPI: "The API module is required to load resources remotely", noStorage: "Saving remote data requires session storage", noTransition: "This module requires ui transitions <https://github.com/Semantic-Org/UI-Transition>" }, regExp: { escape: /[-[\]{}()*+?.,\\^$|#\s]/g }, metadata: { defaultText: "defaultText", defaultValue: "defaultValue", placeholderText: "placeholder", text: "text", value: "value" }, fields: { remoteValues: "results", values: "values", name: "name", value: "value" }, keys: { backspace: 8, delimiter: 188, deleteKey: 46, enter: 13, escape: 27, pageUp: 33, pageDown: 34, leftArrow: 37, upArrow: 38, rightArrow: 39, downArrow: 40 }, selector: { addition: ".addition", dropdown: ".ui.dropdown", icon: "> .dropdown.icon", input: '> input[type="hidden"], > select', item: ".item", label: "> .label", remove: "> .label > .delete.icon", siblingLabel: ".label", menu: ".menu", message: ".message", menuIcon: ".dropdown.icon", search: "input.search, .menu > .search > input", text: "> .text:not(.icon)", unselectable: ".disabled, .filtered" }, className: { active: "active", addition: "addition", animating: "animating", disabled: "disabled", dropdown: "ui dropdown", filtered: "filtered", hidden: "hidden transition", item: "item", label: "ui label", loading: "loading", menu: "menu", message: "message", multiple: "multiple", placeholder: "default", search: "search", selected: "selected", selection: "selection", upward: "upward", visible: "visible" } }, e.fn.dropdown.settings.templates = { dropdown: function (t) {
+	      var n = t.placeholder || !1,
+	          i = (t.values || {}, "");return i += '<i class="dropdown icon"></i>', i += t.placeholder ? '<div class="default text">' + n + "</div>" : '<div class="text"></div>', i += '<div class="menu">', e.each(t.values, function (e, t) {
+	        i += t.disabled ? '<div class="disabled item" data-value="' + t.value + '">' + t.name + "</div>" : '<div class="item" data-value="' + t.value + '">' + t.name + "</div>";
+	      }), i += "</div>";
+	    }, menu: function (t, n) {
+	      var i = t[n.values] || {},
+	          a = "";return e.each(i, function (e, t) {
+	        a += '<div class="item" data-value="' + t[n.value] + '">' + t[n.name] + "</div>";
+	      }), a;
+	    }, label: function (e, t) {
+	      return t + '<i class="delete icon"></i>';
+	    }, message: function (e) {
+	      return e;
+	    }, addition: function (e) {
+	      return e;
+	    } };
+	}(jQuery, window, document);
+
+/***/ },
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(169);
+	var content = __webpack_require__(175);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(162)(content, {});
@@ -20045,8 +23127,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./sign_in.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./sign_in.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./imageEditor.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./imageEditor.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20056,7 +23138,7 @@
 	}
 
 /***/ },
-/* 169 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(161)();
@@ -20064,7 +23146,671 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
+	exports.push([module.id, "/* page css */\n\n#editor-wrapper {\n    margin: 70px 20px 20px 20px;\n    padding: 0;\n}\n\n/* */\n\n.image-editor {\n    border: solid 1px;\n    padding: 0;\n}\n\n\n.my-icon {\n    text-align: center;\n    display: inline-flex;\n    justify-content: center;\n    align-items: center;\n    border: solid 1px;\n    border-radius: 12.5%;\n    margin: 2px;\n}\n\n.my-icon i {\n    -webkit-transition: font-size 0.25s ease-out 0s;\n    -moz-transition: font-size 0.25s ease-out 0s;\n    transition: font-size 0.25s ease-out 0s;\n    font-size: 20px;\n    height: 25px;\n    width: 25px;\n    text-align: center;\n}\n\n.my-icon i:hover {\n    font-size: 22px;\n    color: blue;\n}\n\n.editor-menu {\n    display: flex;\n}\n\n.editor-menu .buttons {\n    flex: 1;\n}\n\n.editor-menu .button-state {\n    flex: 1.2;\n}\n\n.filter-menu {\n    border-radius: 10%;\n    margin: 2px;\n    padding: 3px;\n}\n\n#button-state {\n    padding-top: 4px;\n}\n\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(177);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(162)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js!./dropdown.min.css", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js!./dropdown.min.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(161)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "/*!\n * # Semantic UI 2.1.6 - Dropdown\n * http://github.com/semantic-org/semantic-ui/\n *\n *\n * Copyright 2015 Contributors\n * Released under the MIT license\n * http://opensource.org/licenses/MIT\n *\n */.ui.dropdown{cursor:pointer;position:relative;display:inline-block;outline:0;text-align:left;-webkit-transition:box-shadow .1s ease,width .1s ease;transition:box-shadow .1s ease,width .1s ease;-webkit-tap-highlight-color:transparent}.ui.dropdown .menu{cursor:auto;position:absolute;display:none;outline:0;top:100%;min-width:-webkit-max-content;min-width:-moz-max-content;min-width:max-content;margin:0;padding:0;background:#fff;font-size:1em;text-shadow:none;text-align:left;box-shadow:0 2px 3px 0 rgba(34,36,38,.15);border:1px solid rgba(34,36,38,.15);border-radius:.28571429rem;-webkit-transition:opacity .1s ease;transition:opacity .1s ease;z-index:11;will-change:transform,opacity}.ui.dropdown .menu>*{white-space:nowrap}.ui.dropdown>input:not(.search):first-child,.ui.dropdown>select{display:none!important}.ui.dropdown>.dropdown.icon{position:relative;font-size:.85714286em;margin:0 0 0 1em}.ui.dropdown .menu>.item .dropdown.icon{width:auto;float:right;margin:0 0 0 1em}.ui.dropdown .menu>.item .dropdown.icon+.text{margin-right:1em}.ui.dropdown>.text{display:inline-block;-webkit-transition:none;transition:none}.ui.dropdown .menu>.item{position:relative;cursor:pointer;display:block;border:none;height:auto;text-align:left;border-top:none;line-height:1em;color:rgba(0,0,0,.87);padding:.71428571rem 1.14285714rem!important;font-size:1rem;text-transform:none;font-weight:400;box-shadow:none;-webkit-touch-callout:none}.ui.dropdown .menu>.item:first-child{border-top-width:0}.ui.dropdown .menu .item>[class*=\"right floated\"],.ui.dropdown>.text>[class*=\"right floated\"]{float:right!important;margin-right:0!important;margin-left:1em!important}.ui.dropdown .menu .item>[class*=\"left floated\"],.ui.dropdown>.text>[class*=\"left floated\"]{float:left!important;margin-left:0!important;margin-right:1em!important}.ui.dropdown .menu .item>.flag.floated,.ui.dropdown .menu .item>.icon.floated,.ui.dropdown .menu .item>.image.floated,.ui.dropdown .menu .item>img.floated{margin-top:0}.ui.dropdown .menu>.header{margin:1rem 0 .75rem;padding:0 1.14285714rem;color:rgba(0,0,0,.85);font-size:.78571429em;font-weight:700;text-transform:uppercase}.ui.dropdown .menu>.divider{border-top:1px solid rgba(34,36,38,.1);height:0;margin:.5em 0}.ui.dropdown .menu>.input{width:auto;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;margin:1.14285714rem .71428571rem;min-width:10rem}.ui.dropdown .menu>.header+.input{margin-top:0}.ui.dropdown .menu>.input:not(.transparent) input{padding:.5em 1em}.ui.dropdown .menu>.input:not(.transparent) .button,.ui.dropdown .menu>.input:not(.transparent) .icon,.ui.dropdown .menu>.input:not(.transparent) .label{padding-top:.5em;padding-bottom:.5em}.ui.dropdown .menu>.item>.description,.ui.dropdown>.text>.description{float:right;margin:0 0 0 1em;color:rgba(0,0,0,.4)}.ui.dropdown .menu>.message{padding:.71428571rem 1.14285714rem;font-weight:400}.ui.dropdown .menu>.message:not(.ui){color:rgba(0,0,0,.4)}.ui.dropdown .menu .menu{top:0!important;left:100%!important;right:auto!important;margin:0 0 0 -.5em!important;border-radius:.28571429rem!important;z-index:21!important}.ui.dropdown .menu .menu:after{display:none}.ui.dropdown .menu>.item>.flag,.ui.dropdown .menu>.item>.icon,.ui.dropdown .menu>.item>.image,.ui.dropdown .menu>.item>.label,.ui.dropdown .menu>.item>img,.ui.dropdown>.text>.flag,.ui.dropdown>.text>.icon,.ui.dropdown>.text>.image,.ui.dropdown>.text>.label,.ui.dropdown>.text>img{margin-top:0;margin-left:0;float:none;margin-right:.71428571rem}.ui.dropdown .menu>.item>.image,.ui.dropdown .menu>.item>img,.ui.dropdown>.text>.image,.ui.dropdown>.text>img{display:inline-block;vertical-align:middle;width:auto;max-height:2em}.ui.dropdown .ui.menu>.item:before,.ui.menu .ui.dropdown .menu>.item:before{display:none}.ui.menu .ui.dropdown .menu .active.item{border-left:none}.ui.buttons>.ui.dropdown:last-child .menu,.ui.menu .right.dropdown.item .menu,.ui.menu .right.menu .dropdown:last-child .menu{left:auto;right:0}.ui.label.dropdown .menu{min-width:100%}.ui.dropdown.icon.button>.dropdown.icon{margin:0}.ui.button.dropdown .menu{min-width:100%}.ui.selection.dropdown{cursor:pointer;word-wrap:break-word;line-height:1em;white-space:normal;outline:0;-webkit-transform:rotateZ(0);transform:rotateZ(0);min-width:14em;min-height:2.7142em;background:#fff;display:inline-block;padding:.78571429em 2.6em .78571429em 1em;color:rgba(0,0,0,.87);box-shadow:none;border:1px solid rgba(34,36,38,.15);border-radius:.28571429rem;-webkit-transition:box-shadow .1s ease,width .1s ease;transition:box-shadow .1s ease,width .1s ease}.ui.selection.dropdown.active,.ui.selection.dropdown.visible{z-index:10}select.ui.dropdown{height:38px;padding:.5em;border:1px solid rgba(34,36,38,.15);visibility:visible}.ui.selection.dropdown>.delete.icon,.ui.selection.dropdown>.dropdown.icon,.ui.selection.dropdown>.search.icon{cursor:pointer;position:absolute;top:auto;width:auto;z-index:3;margin:-.78571429em;padding:.78571429em;right:1em;opacity:.8;-webkit-transition:opacity .1s ease;transition:opacity .1s ease}.ui.compact.selection.dropdown{min-width:0}.ui.selection.dropdown .menu{overflow-x:hidden;overflow-y:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-overflow-scrolling:touch;border-top-width:0!important;outline:0;margin:0 -1px;min-width:calc(100% + 2px);width:calc(100% + 2px);border-radius:0 0 .28571429rem .28571429rem;box-shadow:0 2px 3px 0 rgba(34,36,38,.15);-webkit-transition:opacity .1s ease;transition:opacity .1s ease}.ui.selection.dropdown .menu:after,.ui.selection.dropdown .menu:before{display:none}.ui.selection.dropdown .menu>.message{padding:.71428571rem 1.14285714rem}@media only screen and (max-width:767px){.ui.selection.dropdown .menu{max-height:7.58571429rem}}@media only screen and (min-width:768px){.ui.selection.dropdown .menu{max-height:10.11428571rem}}@media only screen and (min-width:992px){.ui.selection.dropdown .menu{max-height:15.17142857rem}}@media only screen and (min-width:1920px){.ui.selection.dropdown .menu{max-height:20.22857143rem}}.ui.selection.dropdown .menu>.item{border-top:1px solid #fafafa;padding:.71428571rem 1.14285714rem!important;white-space:normal;word-wrap:normal}.ui.selection.dropdown:hover{border-color:rgba(34,36,38,.35);box-shadow:none}.ui.selection.active.dropdown,.ui.selection.active.dropdown .menu{border-color:#96c8da;box-shadow:0 2px 3px 0 rgba(34,36,38,.15)}.ui.selection.dropdown:focus{border-color:#96c8da;box-shadow:none}.ui.selection.dropdown:focus .menu{border-color:#96c8da;box-shadow:0 2px 3px 0 rgba(34,36,38,.15)}.ui.selection.visible.dropdown>.text:not(.default){font-weight:400;color:rgba(0,0,0,.8)}.ui.selection.active.dropdown:hover,.ui.selection.active.dropdown:hover .menu{border-color:#96c8da;box-shadow:0 2px 3px 0 rgba(34,36,38,.15)}.ui.active.selection.dropdown>.dropdown.icon,.ui.visible.selection.dropdown>.dropdown.icon{opacity:1;z-index:3}.ui.active.selection.dropdown{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important}.ui.search.dropdown{min-width:''}.ui.search.dropdown>input.search{background:none!important;border:none!important;box-shadow:none!important;cursor:pointer;top:0;left:0;width:100%;outline:0;-webkit-tap-highlight-color:rgba(255,255,255,0);padding:inherit;position:absolute;z-index:2}.ui.search.dropdown>.text{cursor:text;position:relative;z-index:3}.ui.search.selection.dropdown>input.search{line-height:1.2142em;padding:.67861429em 2.6em .67861429em 1em}.ui.search.dropdown.active>input.search,.ui.search.dropdown.visible>input.search{cursor:auto}.ui.search.dropdown.active>.text,.ui.search.dropdown.visible>.text{pointer-events:none}.ui.active.search.dropdown input.search:focus+.text .flag,.ui.active.search.dropdown input.search:focus+.text .icon{opacity:.45}.ui.active.search.dropdown input.search:focus+.text{color:rgba(0,0,0,.4)!important}.ui.search.dropdown .menu{overflow-x:hidden;overflow-y:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-overflow-scrolling:touch}@media only screen and (max-width:767px){.ui.search.dropdown .menu{max-height:7.58571429rem}}@media only screen and (min-width:768px){.ui.search.dropdown .menu{max-height:10.11428571rem}}@media only screen and (min-width:992px){.ui.search.dropdown .menu{max-height:15.17142857rem}}@media only screen and (min-width:1920px){.ui.search.dropdown .menu{max-height:20.22857143rem}}.ui.multiple.dropdown{padding:.22620476em 2.6em .22620476em .28571429em}.ui.multiple.dropdown .menu{cursor:auto}.ui.multiple.search.dropdown,.ui.multiple.search.dropdown>input.search{cursor:text}.ui.multiple.dropdown>.label{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;display:inline-block;vertical-align:top;white-space:normal;font-size:1em;padding:.35714286em .71428571em;margin:.21428571em .28571429rem .21428571em 0;box-shadow:0 0 0 1px rgba(34,36,38,.15) inset}.ui.multiple.dropdown .dropdown.icon{margin:0 -.71428571em 0 0;padding:.5em}.ui.multiple.dropdown>.text{position:static;padding:0;max-width:100%;margin:.45240952em 0 .45240952em .71428571em;line-height:1.2142em}.ui.multiple.dropdown>.label~.text{display:none}.ui.multiple.search.dropdown>.text{display:inline-block;position:absolute;top:0;left:0;padding:inherit;margin:.45240952em 0 .45240952em .71428571em;line-height:1.2142em}.ui.multiple.search.dropdown>.label~.text{display:none}.ui.multiple.search.dropdown>input.search{position:static;padding:0;max-width:100%;margin:.45240952em 0 .45240952em .71428571em;width:2.2em;line-height:1.2142em}.ui.inline.dropdown{cursor:pointer;display:inline-block;color:inherit}.ui.inline.dropdown .dropdown.icon{margin:0 .5em 0 .25em;vertical-align:baseline}.ui.inline.dropdown>.text{font-weight:700}.ui.inline.dropdown .menu{cursor:auto;margin-top:.25em;border-radius:.28571429rem}.ui.dropdown .menu .active.item{background:0 0;font-weight:700;color:rgba(0,0,0,.95);box-shadow:none;z-index:12}.ui.dropdown .menu>.item:hover{background:rgba(0,0,0,.05);color:rgba(0,0,0,.95);z-index:13}.ui.loading.dropdown>i.icon:after,.ui.loading.dropdown>i.icon:before{left:30%!important}.ui.loading.dropdown>i.icon{top:50%!important}.ui.multiple.loading.dropdown>i.icon:after,.ui.multiple.loading.dropdown>i.icon:before{top:0!important;left:0!important}.ui.loading.dropdown>i.icon:before{position:absolute;content:'';top:50%;left:50%;margin:-.64285714em 0 0 -.64285714em;width:1.28571429em;height:1.28571429em;border-radius:500rem;border:.2em solid rgba(0,0,0,.1)}.ui.loading.dropdown>i.icon:after{position:absolute;content:'';top:50%;left:50%;box-shadow:0 0 0 1px transparent;margin:-.64285714em 0 0 -.64285714em;width:1.28571429em;height:1.28571429em;-webkit-animation:dropdown-spin .6s linear;animation:dropdown-spin .6s linear;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite;border-radius:500rem;border-color:#767676 transparent transparent;border-style:solid;border-width:.2em}.ui.loading.dropdown.button>i.icon:after,.ui.loading.dropdown.button>i.icon:before{display:none}@-webkit-keyframes dropdown-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes dropdown-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.ui.default.dropdown:hover>.text,.ui.default.dropdown>.text,.ui.dropdown:hover>.default.text,.ui.dropdown>.default.text{color:rgba(179,179,179,.7)}.ui.loading.dropdown>.text{-webkit-transition:none;transition:none}.ui.dropdown .loading.menu{display:block;visibility:hidden;z-index:-1}.ui.dropdown .menu .selected.item,.ui.dropdown.selected{background:rgba(0,0,0,.03);color:rgba(0,0,0,.95)}.ui.dropdown>.filtered.text{visibility:hidden}.ui.dropdown .filtered.item{display:none!important}.ui.dropdown.error,.ui.dropdown.error>.default.text,.ui.dropdown.error>.text{color:#9f3a38}.ui.selection.dropdown.error{background:#fff6f6;border-color:#e0b4b4}.ui.dropdown.error>.menu,.ui.dropdown.error>.menu .menu,.ui.selection.dropdown.error:hover{border-color:#e0b4b4}.ui.dropdown.error>.menu>.item{color:#9f3a38}.ui.multiple.selection.error.dropdown>.label{border-color:#e0b4b4}.ui.dropdown.error>.menu>.item:hover{background-color:#fff2f2}.ui.dropdown.error>.menu .active.item{background-color:#fdcfcf}.ui.disabled.dropdown,.ui.dropdown .menu>.disabled.item{cursor:default;pointer-events:none;opacity:.45}.ui.dropdown .menu{left:0}.ui.dropdown .menu .right.menu,.ui.dropdown .right.menu>.menu{left:100%!important;right:auto!important;border-radius:.28571429rem!important}.ui.dropdown .menu .left.menu,.ui.dropdown>.left.menu .menu{left:auto!important;right:100%!important;border-radius:.28571429rem!important}.ui.dropdown .item .left.dropdown.icon,.ui.dropdown .left.menu .item .dropdown.icon{width:auto;float:left;margin:0 .71428571rem 0 0}.ui.dropdown .item .left.dropdown.icon+.text,.ui.dropdown .left.menu .item .dropdown.icon+.text{margin-left:1em}.ui.upward.dropdown>.menu{top:auto;bottom:100%;box-shadow:0 0 3px 0 rgba(0,0,0,.08);border-radius:.28571429rem .28571429rem 0 0}.ui.dropdown .upward.menu{top:auto!important;bottom:0!important}.ui.simple.upward.active.dropdown,.ui.simple.upward.dropdown:hover{border-radius:.28571429rem .28571429rem 0 0!important}.ui.upward.dropdown.button:not(.pointing):not(.floating).active{border-radius:.28571429rem .28571429rem 0 0}.ui.upward.selection.dropdown .menu{border-top-width:1px!important;border-bottom-width:0!important;box-shadow:0 -2px 3px 0 rgba(0,0,0,.08)}.ui.upward.selection.dropdown:hover{box-shadow:0 0 2px 0 rgba(0,0,0,.05)}.ui.active.upward.selection.dropdown{border-radius:0 0 .28571429rem .28571429rem!important}.ui.upward.selection.dropdown.visible{box-shadow:0 0 3px 0 rgba(0,0,0,.08);border-radius:0 0 .28571429rem .28571429rem!important}.ui.upward.active.selection.dropdown:hover{box-shadow:0 0 3px 0 rgba(0,0,0,.05)}.ui.upward.active.selection.dropdown:hover .menu{box-shadow:0 -2px 3px 0 rgba(0,0,0,.08)}.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{overflow-x:hidden;overflow-y:auto}.ui.scrolling.dropdown .menu{overflow-x:hidden;overflow-y:auto;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-overflow-scrolling:touch;min-width:100%!important;width:auto!important}.ui.dropdown .scrolling.menu{position:static;overflow-y:auto;border:none;box-shadow:none!important;border-radius:0!important;margin:0!important;min-width:100%!important;width:auto!important;border-top:1px solid rgba(34,36,38,.15)}.ui.dropdown .scrolling.menu>.item.item.item,.ui.scrolling.dropdown .menu .item.item.item{border-top:none;padding-right:calc(1.14285714rem + 17px)!important}.ui.dropdown .scrolling.menu .item:first-child,.ui.scrolling.dropdown .menu .item:first-child{border-top:none}.ui.dropdown>.animating.menu .scrolling.menu,.ui.dropdown>.visible.menu .scrolling.menu{display:block}@media all and (-ms-high-contrast:none){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{min-width:calc(100% - 17px)}}@media only screen and (max-width:767px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:9.71428571rem}}@media only screen and (min-width:768px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:14.57142857rem}}@media only screen and (min-width:992px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:19.42857143rem}}@media only screen and (min-width:1920px){.ui.dropdown .scrolling.menu,.ui.scrolling.dropdown .menu{max-height:19.42857143rem}}.ui.simple.dropdown .menu:after,.ui.simple.dropdown .menu:before{display:none}.ui.simple.dropdown .menu{position:absolute;display:block;overflow:hidden;top:-9999px!important;opacity:0;width:0;height:0;-webkit-transition:opacity .1s ease;transition:opacity .1s ease}.ui.simple.active.dropdown,.ui.simple.dropdown:hover{border-bottom-left-radius:0!important;border-bottom-right-radius:0!important}.ui.simple.active.dropdown>.menu,.ui.simple.dropdown:hover>.menu{overflow:visible;width:auto;height:auto;top:100%!important;opacity:1}.ui.simple.dropdown:hover>.menu>.item:hover>.menu,.ui.simple.dropdown>.menu>.item:active>.menu{overflow:visible;width:auto;height:auto;top:0!important;left:100%!important;opacity:1}.ui.simple.disabled.dropdown:hover .menu{display:none;height:0;width:0;overflow:hidden}.ui.simple.visible.dropdown>.menu{display:block}.ui.fluid.dropdown{display:block;width:100%;min-width:0}.ui.fluid.dropdown>.dropdown.icon{float:right}.ui.floating.dropdown .menu{left:0;right:auto;box-shadow:0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08)!important;border-radius:.28571429rem!important}.ui.floating.dropdown>.menu{margin-top:.5em!important;border-radius:.28571429rem!important}.ui.pointing.dropdown>.menu{top:100%;margin-top:.71428571rem;border-radius:.28571429rem}.ui.pointing.dropdown>.menu:after{display:block;position:absolute;pointer-events:none;content:'';visibility:visible;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg);width:.5em;height:.5em;box-shadow:-1px -1px 0 1px rgba(34,36,38,.15);background:#fff;z-index:2;top:-.25em;left:50%;margin:0 0 0 -.25em}.ui.top.left.pointing.dropdown>.menu{top:100%;bottom:auto;left:0;right:auto;margin:1em 0 0}.ui.top.left.pointing.dropdown>.menu:after{top:-.25em;left:1em;right:auto;margin:0;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.ui.top.right.pointing.dropdown>.menu{top:100%;bottom:auto;right:0;left:auto;margin:1em 0 0}.ui.top.right.pointing.dropdown>.menu:after{top:-.25em;left:auto;right:1em;margin:0;-webkit-transform:rotate(45deg);-ms-transform:rotate(45deg);transform:rotate(45deg)}.ui.left.pointing.dropdown>.menu{top:0;left:100%;right:auto;margin:0 0 0 1em}.ui.left.pointing.dropdown>.menu:after{top:1em;left:-.25em;margin:0;-webkit-transform:rotate(-45deg);-ms-transform:rotate(-45deg);transform:rotate(-45deg)}.ui.right.pointing.dropdown>.menu{top:0;left:auto;right:100%;margin:0 1em 0 0}.ui.right.pointing.dropdown>.menu:after{top:1em;left:auto;right:-.25em;margin:0;-webkit-transform:rotate(135deg);-ms-transform:rotate(135deg);transform:rotate(135deg)}.ui.bottom.pointing.dropdown>.menu{top:auto;bottom:100%;left:0;right:auto;margin:0 0 1em}.ui.bottom.pointing.dropdown>.menu:after{top:auto;bottom:-.25em;right:auto;margin:0;-webkit-transform:rotate(-135deg);-ms-transform:rotate(-135deg);transform:rotate(-135deg)}.ui.bottom.pointing.dropdown>.menu .menu{top:auto!important;bottom:0!important}.ui.bottom.left.pointing.dropdown>.menu{left:0;right:auto}.ui.bottom.left.pointing.dropdown>.menu:after{left:1em;right:auto}.ui.bottom.right.pointing.dropdown>.menu{right:0;left:auto}.ui.bottom.right.pointing.dropdown>.menu:after{left:auto;right:1em}.ui.upward.pointing.dropdown>.menu,.ui.upward.top.pointing.dropdown>.menu{top:auto;bottom:100%;margin:0 0 .71428571rem;border-radius:.28571429rem}.ui.upward.pointing.dropdown>.menu:after,.ui.upward.top.pointing.dropdown>.menu:after{top:100%;bottom:auto;box-shadow:1px 1px 0 1px rgba(34,36,38,.15);margin:-.25em 0 0}@font-face{font-family:Dropdown;src:url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAALAIAAAwAwT1MvMggjB5AAAAC8AAAAYGNtYXAPfuIIAAABHAAAAExnYXNwAAAAEAAAAWgAAAAIZ2x5Zjo82LgAAAFwAAABVGhlYWQAQ88bAAACxAAAADZoaGVhAwcB6QAAAvwAAAAkaG10eAS4ABIAAAMgAAAAIGxvY2EBNgDeAAADQAAAABJtYXhwAAoAFgAAA1QAAAAgbmFtZVcZpu4AAAN0AAABRXBvc3QAAwAAAAAEvAAAACAAAwIAAZAABQAAAUwBZgAAAEcBTAFmAAAA9QAZAIQAAAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAABAAADw2gHg/+D/4AHgACAAAAABAAAAAAAAAAAAAAAgAAAAAAACAAAAAwAAABQAAwABAAAAFAAEADgAAAAKAAgAAgACAAEAIPDa//3//wAAAAAAIPDX//3//wAB/+MPLQADAAEAAAAAAAAAAAAAAAEAAf//AA8AAQAAAAAAAAAAAAIAADc5AQAAAAABAAAAAAAAAAAAAgAANzkBAAAAAAEAAAAAAAAAAAACAAA3OQEAAAAAAQAAAIABJQElABMAABM0NzY3BTYXFhUUDwEGJwYvASY1AAUGBwEACAUGBoAFCAcGgAUBEgcGBQEBAQcECQYHfwYBAQZ/BwYAAQAAAG4BJQESABMAADc0PwE2MzIfARYVFAcGIyEiJyY1AAWABgcIBYAGBgUI/wAHBgWABwaABQWABgcHBgUFBgcAAAABABIASQC3AW4AEwAANzQ/ATYXNhcWHQEUBwYnBi8BJjUSBoAFCAcFBgYFBwgFgAbbBwZ/BwEBBwQJ/wgEBwEBB38GBgAAAAABAAAASQClAW4AEwAANxE0NzYzMh8BFhUUDwEGIyInJjUABQYHCAWABgaABQgHBgVbAQAIBQYGgAUIBwWABgYFBwAAAAEAAAABAADZuaKOXw889QALAgAAAAAA0ABHWAAAAADQAEdYAAAAAAElAW4AAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAASUAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAABAAAAASUAAAElAAAAtwASALcAAAAAAAAACgAUAB4AQgBkAIgAqgAAAAEAAAAIABQAAQAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAOAK4AAQAAAAAAAQAOAAAAAQAAAAAAAgAOAEcAAQAAAAAAAwAOACQAAQAAAAAABAAOAFUAAQAAAAAABQAWAA4AAQAAAAAABgAHADIAAQAAAAAACgA0AGMAAwABBAkAAQAOAAAAAwABBAkAAgAOAEcAAwABBAkAAwAOACQAAwABBAkABAAOAFUAAwABBAkABQAWAA4AAwABBAkABgAOADkAAwABBAkACgA0AGMAaQBjAG8AbQBvAG8AbgBWAGUAcgBzAGkAbwBuACAAMQAuADAAaQBjAG8AbQBvAG8Abmljb21vb24AaQBjAG8AbQBvAG8AbgBSAGUAZwB1AGwAYQByAGkAYwBvAG0AbwBvAG4ARgBvAG4AdAAgAGcAZQBuAGUAcgBhAHQAZQBkACAAYgB5ACAASQBjAG8ATQBvAG8AbgAuAAAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=) format('truetype'),url(data:application/font-woff;charset=utf-8;base64,d09GRk9UVE8AAAVwAAoAAAAABSgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAABDRkYgAAAA9AAAAdkAAAHZLDXE/09TLzIAAALQAAAAYAAAAGAIIweQY21hcAAAAzAAAABMAAAATA9+4ghnYXNwAAADfAAAAAgAAAAIAAAAEGhlYWQAAAOEAAAANgAAADYAQ88baGhlYQAAA7wAAAAkAAAAJAMHAelobXR4AAAD4AAAACAAAAAgBLgAEm1heHAAAAQAAAAABgAAAAYACFAAbmFtZQAABAgAAAFFAAABRVcZpu5wb3N0AAAFUAAAACAAAAAgAAMAAAEABAQAAQEBCGljb21vb24AAQIAAQA6+BwC+BsD+BgEHgoAGVP/i4seCgAZU/+LiwwHi2v4lPh0BR0AAACIDx0AAACNER0AAAAJHQAAAdASAAkBAQgPERMWGyAlKmljb21vb25pY29tb29udTB1MXUyMHVGMEQ3dUYwRDh1RjBEOXVGMERBAAACAYkABgAIAgABAAQABwAKAA0AVgCfAOgBL/yUDvyUDvyUDvuUDvtvi/emFYuQjZCOjo+Pj42Qiwj3lIsFkIuQiY6Hj4iNhouGi4aJh4eHCPsU+xQFiIiGiYaLhouHjYeOCPsU9xQFiI+Jj4uQCA77b4v3FBWLkI2Pjo8I9xT3FAWPjo+NkIuQi5CJjogI9xT7FAWPh42Hi4aLhomHh4eIiIaJhosI+5SLBYaLh42HjoiPiY+LkAgO+92d928Vi5CNkI+OCPcU9xQFjo+QjZCLkIuPiY6Hj4iNhouGCIv7lAWLhomHh4iIh4eJhouGi4aNiI8I+xT3FAWHjomPi5AIDvvdi+YVi/eUBYuQjZCOjo+Pj42Qi5CLkImOhwj3FPsUBY+IjYaLhouGiYeHiAj7FPsUBYiHhomGi4aLh42Hj4iOiY+LkAgO+JQU+JQViwwKAAAAAAMCAAGQAAUAAAFMAWYAAABHAUwBZgAAAPUAGQCEAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAA8NoB4P/g/+AB4AAgAAAAAQAAAAAAAAAAAAAAIAAAAAAAAgAAAAMAAAAUAAMAAQAAABQABAA4AAAACgAIAAIAAgABACDw2v/9//8AAAAAACDw1//9//8AAf/jDy0AAwABAAAAAAAAAAAAAAABAAH//wAPAAEAAAABAAA5emozXw889QALAgAAAAAA0ABHWAAAAADQAEdYAAAAAAElAW4AAAAIAAIAAAAAAAAAAQAAAeD/4AAAAgAAAAAAASUAAQAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAABAAAAASUAAAElAAAAtwASALcAAAAAUAAACAAAAAAADgCuAAEAAAAAAAEADgAAAAEAAAAAAAIADgBHAAEAAAAAAAMADgAkAAEAAAAAAAQADgBVAAEAAAAAAAUAFgAOAAEAAAAAAAYABwAyAAEAAAAAAAoANABjAAMAAQQJAAEADgAAAAMAAQQJAAIADgBHAAMAAQQJAAMADgAkAAMAAQQJAAQADgBVAAMAAQQJAAUAFgAOAAMAAQQJAAYADgA5AAMAAQQJAAoANABjAGkAYwBvAG0AbwBvAG4AVgBlAHIAcwBpAG8AbgAgADEALgAwAGkAYwBvAG0AbwBvAG5pY29tb29uAGkAYwBvAG0AbwBvAG4AUgBlAGcAdQBsAGEAcgBpAGMAbwBtAG8AbwBuAEYAbwBuAHQAIABnAGUAbgBlAHIAYQB0AGUAZAAgAGIAeQAgAEkAYwBvAE0AbwBvAG4ALgAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format('woff');font-weight:400;font-style:normal}.ui.dropdown>.dropdown.icon{font-family:Dropdown;line-height:1;height:1em;-webkit-backface-visibility:hidden;backface-visibility:hidden;font-weight:400;font-style:normal;text-align:center;width:auto}.ui.dropdown>.dropdown.icon:before{content:'\\F0D7'}.ui.dropdown .menu .item .dropdown.icon:before{content:'\\F0DA'}.ui.dropdown .item .left.dropdown.icon:before,.ui.dropdown .left.menu .item .dropdown.icon:before{content:\"\\F0D9\"}.ui.vertical.menu .dropdown.item>.dropdown.icon:before{content:\"\\F0DA\"}", ""]);
+
+	// exports
+
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var ImageButton = React.createClass({ displayName: "ImageButton",
+
+	    render: function () {
+	        var className = 'iconfont icon-' + this.props.name;
+	        return React.createElement("div", { style: this.getButtonStyle(), className: "my-icon", onClick: this.props.handleClick }, React.createElement("i", { className: className }));
+	    },
+
+	    getButtonStyle: function () {
+	        var height = this.props.size;
+	        var width = this.props.size;
+	        return {
+	            position: 'relative',
+	            width: width,
+	            height: height
+	        };
+	    },
+
+	    getImageStyle: function () {
+	        return {
+	            position: 'relative',
+	            left: 0,
+	            top: 0,
+	            right: 0,
+	            bottom: 0,
+	            height: this.props.size,
+	            width: this.props.size
+	        };
+	    }
+
+	});
+
+	module.exports = ImageButton;
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ButtonState = __webpack_require__(180);
+	var FilterMenu = __webpack_require__(187);
+	var ImageButton = __webpack_require__(178);
+
+	var EditorMenu = React.createClass({ displayName: "EditorMenu",
+
+	    src: {
+	        pen: '/imgs/editor-icons/iconfont-pen',
+	        eraser: '/imgs/editor-icons/iconfont-eraser',
+	        text: '/imgs/editor-icons/iconfont-text',
+	        select: '/imgs/editor-icons/iconfont-select'
+	    },
+
+	    getInitialState: function () {
+	        return {
+	            src: this.src
+	        };
+	    },
+
+	    render: function () {
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { tool: this.props.tool, editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange,
+	            textColorListener: this.props.textColorListener, updatePenState: this.props.updatePenState,
+	            updateEraserState: this.props.updateEraserState }));
+	    },
+
+	    getSize: function () {
+	        return {
+	            width: this.props.width,
+	            height: this.props.height
+	        };
+	    }
+
+	});
+
+	module.exports = EditorMenu;
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ColorPicker = __webpack_require__(181);
+	var TextState = __webpack_require__(182);
+	var PenState = __webpack_require__(185);
+	var EraserState = __webpack_require__(186);
+	__webpack_require__(183);
+
+	var ButtonState = React.createClass({ displayName: "ButtonState",
+
+	    render: function () {
+	        if (this.props.tool == 'text') {
+	            return React.createElement("div", { className: "text-state button-state" }, React.createElement(TextState, { editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange,
+	                textColorListener: this.props.textColorListener }));
+	        }
+	        if (this.props.tool == 'pen') {
+	            return React.createElement("div", { className: "pen-state button-state" }, React.createElement(PenState, { updatePenState: this.props.updatePenState }));
+	        };
+	        if (this.props.tool == 'eraser') {
+	            return React.createElement("div", { className: "eraser-state button-state" }, React.createElement(EraserState, { updateEraserState: this.props.updateEraserState }));
+	        }
+	        return React.createElement("div", { className: "other" });
+	    }
+
+	});
+
+	module.exports = ButtonState;
+
+/***/ },
+/* 181 */
+/***/ function(module, exports) {
+
+	/*
+	    Author: William
+	    Description: A plug-in component for picking color
+	*/
+
+	function windowTocanvas(canvas, x, y) {
+	    var bbox = canvas.getBoundingClientRect();
+	    return {
+	        x: x - bbox.left * (canvas.width / bbox.width),
+	        y: y - bbox.top * (canvas.height / bbox.height)
+	    };
+	}
+
+	var ColorPicker = {
+	    RGB_picker: function (width, height) {
+	        this.pickerRG = document.createElement("canvas");
+	        this.pickerB = document.createElement("canvas");
+	        this.dom = document.createElement("div");
+	        this.sample = document.createElement("div");
+	        this.watcher = document.createElement("div");
+	        this.watcher.className = "color-watcher";
+	        this.sample.className = "color-sample";
+	        this.dom.className = "color-picker";
+	        this.pickerRG.className = "rg-picker";
+	        this.pickerB.className = 'b-picker';
+	        this.dom.appendChild(this.pickerRG);
+	        this.dom.appendChild(this.pickerB);
+	        this.dom.appendChild(this.sample);
+	        this.dom.appendChild(this.watcher);
+
+	        this.currentColor = '#000000';
+
+	        this.onWatch = 0;
+
+	        this.RGCanvas = this.pickerRG.getContext('2d');
+	        this.BCanvas = this.pickerB.getContext('2d');
+
+	        this.colorHex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+
+	        this.pickRGEvent = function (that) {
+	            return function (e) {
+	                var loc = windowTocanvas(that.pickerRG, e.clientX, e.clientY);
+	                var colorData = that.RGCanvas.getImageData(loc.x, loc.y, 1, 1);
+	                var hexColor = that.getColorHex(colorData.data[0], colorData.data[1], colorData.data[2]);
+
+	                that.updateBCanvas(hexColor);
+	            };
+	        }(this);
+
+	        this.moveBEvent = function (that) {
+	            return function (e) {
+	                if (that.onWatch == 0) return;
+	                var loc = windowTocanvas(that.pickerB, e.clientX, e.clientY);
+	                var colorData = that.BCanvas.getImageData(loc.x, loc.y, 1, 1);
+	                var color = that.getColorHex(colorData.data[0], colorData.data[1], colorData.data[2]);
+	                that.updateWatcher(color, e.clientX, e.clientY);
+	            };
+	        }(this);
+
+	        this.overBEvent = function (that) {
+	            return function (e) {
+	                that.onWatch = 1;
+	                that.pickerB.addEventListener('mousemove', that.moveBEvent, false);
+	                that.watcher.style.display = 'block';
+	            };
+	        }(this);
+
+	        this.outBEvent = function (that) {
+	            return function (e) {
+	                that.onWatch = 0;
+	                that.pickerB.removeEventListener('mousemove', that.moveBEvent, false);
+	                that.watcher.style.display = 'none';
+	            };
+	        }(this);
+
+	        this.pickBEvent = function (that) {
+	            return function (e) {
+	                var loc = windowTocanvas(that.pickerB, e.clientX, e.clientY);
+	                var colorData = that.BCanvas.getImageData(loc.x, loc.y, 1, 1);
+	                that.currentColor = that.getColorHex(colorData.data[0], colorData.data[1], colorData.data[2]);
+	                var index;
+	                for (index = 0; index < that.events.length; ++index) {
+	                    that.events[index](that.currentColor);
+	                }
+	                that.updateSample();
+	            };
+	        }(this);
+
+	        this.events = [];
+
+	        this.init(height, width);
+	    }
+	};
+
+	ColorPicker.RGB_picker.prototype = {
+	    addTo: function (element) {
+	        element.appendChild(this.dom);
+	    },
+	    init: function (height, width) {
+	        this.pickerRG.style.height = this.pickerB.style.height = (height || 40) + 'px';
+	        this.pickerRG.style.width = this.pickerB.style.width = (width || 100) + 'px';
+	        this.pickerRG.height = this.pickerB.height = height || 40;
+	        this.pickerRG.width = this.pickerB.width = width || 100;
+
+	        this.initCanvas();
+	        this.updateSample();
+	        this.addEvent();
+	    },
+	    addEvent: function () {
+	        this.pickerRG.addEventListener('click', this.pickRGEvent, false);
+	        this.pickerB.addEventListener('click', this.pickBEvent, false);
+	        this.pickerB.addEventListener('mouseover', this.overBEvent, false);
+	        this.pickerB.addEventListener('mouseout', this.outBEvent, false);
+	    },
+	    initCanvas: function () {
+	        var gradient = this.RGCanvas.createLinearGradient(0, 0, this.pickerRG.width, 0);
+	        gradient.addColorStop(0, '#F00');
+	        gradient.addColorStop(0.2, '#FF0');
+	        gradient.addColorStop(0.4, '#0F0');
+	        gradient.addColorStop(0.6, '#0FF');
+	        gradient.addColorStop(0.8, '#00F');
+	        gradient.addColorStop(1, '#F0F');
+	        this.RGCanvas.fillStyle = gradient;
+	        this.RGCanvas.fillRect(0, 0, this.pickerRG.width, this.pickerRG.height);
+
+	        this.updateBCanvas('#F00');
+	    },
+	    getColorHex: function (r, g, b) {
+	        return '#' + this.colorHex[parseInt(r / 16)] + this.colorHex[r % 16] + this.colorHex[parseInt(g / 16)] + this.colorHex[g % 16] + this.colorHex[parseInt(b / 16)] + this.colorHex[b % 16];
+	    },
+	    getCurrentColor: function () {
+	        return this.currentColor;
+	    },
+	    updateSample: function () {
+	        this.sample.style.backgroundColor = this.currentColor;
+	    },
+	    updateBCanvas: function (color) {
+	        var gradient = this.BCanvas.createLinearGradient(0, 0, this.pickerB.width, 0);
+	        gradient.addColorStop(0, '#FFFFFF');
+	        gradient.addColorStop(1, color);
+	        this.BCanvas.fillStyle = gradient;
+	        this.BCanvas.fillRect(0, 0, this.pickerB.width, this.pickerB.height);
+	    },
+	    updateWatcher: function (color, x, y) {
+	        this.watcher.style.backgroundColor = color;
+	        this.watcher.style.left = x + 'px';
+	        this.watcher.style.top = y - parseInt(this.watcher.height) + 'px';
+	    },
+	    listen: function (listener) {
+	        this.events.push(listener);
+	    }
+	};
+
+	module.exports = ColorPicker;
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ColorPicker = __webpack_require__(181);
+	__webpack_require__(183);
+
+	var TextState = React.createClass({ displayName: "TextState",
+
+	    getInitialState: function () {
+	        return {
+	            textValue: '',
+	            fontSize: 5,
+	            fontStyle: 'normal',
+	            fontFamily: 'sans-serif'
+	        };
+	    },
+
+	    componentDidMount: function () {
+	        var editor = this;
+	        var sizeFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontSize = value;
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this);
+
+	        var styleFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontStyle = value;
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this);
+
+	        var familyFunc = function (that) {
+	            return function (value, text) {
+	                var state = that.state;
+	                state.fontFamily = value;
+	                console.log(value);
+	                that.setState(state);
+	                that.handleTextUpdate();
+	            };
+	        }(this);
+
+	        if (true) {
+	            $("#font-size").dropdown({
+	                onChange: sizeFunc
+	            });
+	            $("#font-style").dropdown({
+	                onChange: styleFunc
+	            });
+	            $("#font-family").dropdown({
+	                onChange: familyFunc
+	            });
+	            this.colorPicker.addTo(document.getElementById('color-picker'));
+	            console.log("Add sucesss!");
+	            $("#color-picker").css("display", 'inline-block');
+	            this.colorPicker.listen(this.props.textColorListener);
+	        }
+	    },
+
+	    colorPicker: new ColorPicker.RGB_picker(50, 20),
+
+	    handleTextUpdate: function () {
+	        this.props.updateTextState(this.state.fontStyle, this.state.fontSize, this.state.fontFamily);
+	    },
+
+	    fontSize: [5, 7, 10, 14, 20, 28, 32],
+
+	    fontStyle: ['normal', 'italic', 'oblique'],
+
+	    fontFamily: ['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'],
+
+	    handleTextChange: function (e) {
+	        var state = this.state;
+	        state.textValue = e.target.value;
+	        this.setState(state);
+	        this.props.handleTextChange(this.props.editor, this.state.textValue, this);
+	    },
+
+	    clearText: function () {
+	        this.setState({
+	            textValue: ''
+	        });
+	    },
+
+	    render: function () {
+	        var that = this;
+	        var sizes = this.fontSize.map(function (size, key) {
+	            return React.createElement("div", { className: "item font-size", key: key, "data-value": size }, size + 'px');
+	        });
+	        var styles = this.fontStyle.map(function (font, key) {
+	            return React.createElement("div", { className: "item font-style", key: key, "data-value": font }, font);
+	        });
+	        var families = this.fontFamily.map(function (family, key) {
+	            return React.createElement("div", { className: "item font-family", key: key, "data-value": family }, family);
+	        });
+	        var value = this.state.textValue;
+	        return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui input", id: "text-input" }, React.createElement("input", { type: "text", placeholder: "Text content...", value: value, onChange: this.handleTextChange })), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-size" }, React.createElement("div", { className: "text" }, "Text Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-style" }, React.createElement("div", { className: "text" }, "Text Font"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, styles)), React.createElement("div", { className: "ui dropdown filter-menu", id: "font-family" }, React.createElement("div", { className: "text" }, "Text Family"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, families)), React.createElement("div", { id: "color-picker" }));
+	    }
+
+	});
+
+	module.exports = TextState;
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(184);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(162)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(161)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".color-picker {\n    position: relative;\n}\n\n.color-picker canvas {\n\tmargin-left: 5px;\n    position: relative;\n    top: 5px;\n}\n\n.color-picker canvas:hover {\n    cursor: pointer;\n}\n\n.color-picker .color-sample {\n    display: inline-block;\n    position: absolute;\n    height: 20px;\n    width: 20px;\n    margin-left: 5px;\n    top: 5px;\n}\n\n.color-picker .color-watcher {\n\tposition: fixed;\n\tborder-radius: 50%;\n\tdisplay: none;\n\tleft: 0px;\n\ttop: 0px;\n\twidth: 20px;\n\theight: 20px;\n\tz-index: 3;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 185 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ColorPicker = __webpack_require__(181);
+	__webpack_require__(183);
+
+	var PenState = React.createClass({ displayName: "PenState",
+
+	    handleSizeChange: function (value) {
+	        console.log(this);
+	        this.props.updatePenState('size', value);
+	    },
+
+	    handleColorChange: function (value) {
+	        this.props.updatePenState('color', value);
+	    },
+
+	    componentDidMount: function () {
+	        var handleSizeChange = this.handleSizeChange;
+	        $("#pen-size").dropdown({
+	            onChange: handleSizeChange
+	        });
+
+	        this.colorPicker.addTo(document.getElementById('color-picker'));
+	        this.colorPicker.listen(this.handleColorChange);
+	        $("#color-picker").css("display", "inline-block");
+	    },
+
+	    sizes: [5, 7, 10, 14, 20, 30],
+
+	    colorPicker: new ColorPicker.RGB_picker(50, 20),
+
+	    render: function () {
+	        var sizes = this.sizes.map(function (size, key) {
+	            return React.createElement("div", { className: "item pen-size", key: key, "data-value": size }, size + 'px');
+	        });
+	        return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui dropdown filter-menu", id: "pen-size" }, React.createElement("div", { className: "text" }, "Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)), React.createElement("div", { id: "color-picker" }));
+	    }
+	});
+
+	module.exports = PenState;
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var EraserState = React.createClass({ displayName: "EraserState",
+
+	    handleSizeChange: function (value) {
+	        console.log(this);
+	        this.props.updateEraserState('width', value);
+	    },
+
+	    componentDidMount: function () {
+	        var handleSizeChange = this.handleSizeChange;
+	        $("#eraser-size").dropdown({
+	            onChange: handleSizeChange
+	        });
+	    },
+
+	    sizes: [5, 7, 10, 14, 20, 30],
+
+	    render: function () {
+	        var sizes = this.sizes.map(function (size, key) {
+	            return React.createElement("div", { className: "item pen-size", key: key, "data-value": size }, size + 'px');
+	        });
+	        return React.createElement("div", { id: "button-state" }, React.createElement("div", { className: "ui dropdown filter-menu", id: "eraser-size" }, React.createElement("div", { className: "text" }, "Size"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu" }, sizes)));
+	    }
+	});
+
+	module.exports = EraserState;
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var FilterMenu = React.createClass({ displayName: "FilterMenu",
+
+	    componentDidMount: function () {
+	        $(this.refs.menu).dropdown({
+	            action: 'hide'
+	        });
+	    },
+
+	    render: function () {
+	        var that = this;
+	        var items = this.props.filterItems.map(function (item, key) {
+	            return React.createElement("div", { className: "item", key: key, onClick: that.handleClick(item.func) }, item.name);
+	        });
+
+	        return React.createElement("div", { className: "ui dropdown filter-menu", ref: "menu" }, React.createElement("div", { className: "text" }, "Filters"), React.createElement("i", { className: "dropdown icon" }), React.createElement("div", { className: "menu transition hidden" }, items));
+	    },
+
+	    handleClick: function (name) {
+	        var that = this;
+	        return function (e) {
+	            that.props.handleImageFilter(name);
+	        };
+	    }
+
+	});
+
+	module.exports = FilterMenu;
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+
+	var EditorCanvas = React.createClass({ displayName: "EditorCanvas",
+
+	    componentDidMount: function () {
+	        this.renderBackground();
+	        this.first = true;
+	        this.renderImage();
+	    },
+
+	    componentDidUpdate: function () {
+	        var image = this.props.image;
+	        this.first = false;
+	        this.renderImage();
+	    },
+
+	    renderBackground: function () {
+	        var context = this.getContext();
+	        context.save();
+	        context.fillStyle = 'black';
+	        context.fillRect(0, 0, this.props.width, this.props.height);
+	    },
+
+	    renderImage: function () {
+	        var context = this.getContext();
+	        var image = this.props.image;
+	        var that = this;
+	        image.onload = function (e) {
+	            var width = that.props.height * (image.width / image.height),
+	                height = that.props.height;
+	            var left = 0;
+	            if (width < that.props.width) left = (that.props.width - width) / 2;
+	            context.drawImage(image, left, 0, width, height);
+	            if (that.first) {
+	                that.props.imageOnload();
+	            }
+	        };
+	    },
+
+	    getContext: function () {
+	        return this.refs.canvas.getContext('2d');
+	    },
+
+	    render: function () {
+	        return React.createElement("canvas", { ref: "canvas", width: this.props.width, height: this.props.height });
+	    }
+
+	});
+
+	module.exports = EditorCanvas;
+
+/***/ },
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(190);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(162)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./artworkDetail.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./artworkDetail.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(161)();
+	// imports
+
+
+	// module
+	exports.push([module.id, "#artwork-wrapper {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n#artwork-status {\n    margin-top: 10px;\n    margin-bottom: 10px;\n    overflow: hidden;\n}\n\n#artwork-detail header{\n    color: #2185d0;\n}\n\n#artwork-info {\n    display: inline-block;\n}\n\n#artwork-process {\n    display: inline-block;\n    float: right;\n}\n\n#artwork-main {\n    min-height: 600px;\n    min-width: 900px;\n    border: solid 1px rgba(34, 36, 38, .15);\n}\n", ""]);
 
 	// exports
 
