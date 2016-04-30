@@ -4,9 +4,8 @@ extends ./layout
 
 block page-header
     script(type="text/javascript").
-        console.log('#{username}');
         var username = '#{username}';
-        var title = '#{worktitle}';
+        var artWork = '#{artWork}';
 
 block content
     .ui.middle.align.center.aligned.grid#artwork-wrapper

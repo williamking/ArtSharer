@@ -60,26 +60,26 @@
 
 	    getInitialState: function () {
 	        return {
-	            title: '',
-	            url: '#',
-	            createTime: '',
-	            lastModefied: '',
+	            title: artWork.title,
+	            url: artWork.url,
+	            createTime: artWork.createTime,
+	            lastModefied: artWork.lastModified,
 	            mode: 'normal',
-	            author: 'unknown'
+	            author: artWork.author
 	        };
 	    },
 
 	    componentDidMount: function () {
 	        var url = 'user/' + username + '/' + title;
-	        this.serverRequest = $.getJSON(url, function (data) {
-	            this.setState({
-	                title: data.workTitle,
-	                url: data.workUrl,
-	                createTime: data.workCreateTime,
-	                lastModefied: data.lastModefied,
-	                author: data.author || 'unknown'
-	            });
-	        });
+	        //this.serverRequest = $.getJSON(url, function(data) {
+	        //this.setState({
+	        //    title: data.workTitle,
+	        //    url: data.workUrl,
+	        //    createTime: data.workCreateTime,
+	        //    lastModefied: data.lastModefied,
+	        //    author: data.author || 'unknown'
+	        //});
+	        //});
 	    },
 
 	    changeToEditMode: function () {
