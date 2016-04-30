@@ -152,11 +152,13 @@ exports.showWorkPage = function(req, res) {
                 res.send("sorry, can't find this work");
             } else {
                 var artWork = artWorks[0];
-                res.render("artworkDetail", {
-                    workTitle : artWork.workTitle,
-                    author : artWork.author,
-                    username : req.session.username
-                });
+                var artWork.username = req.params.username;
+                res.render("artworkDetail", artWork);
+                // res.render("artworkDetail", {
+                //     workTitle : artWork.workTitle,
+                //     author : artWork.author,
+                //     username : req.session.username
+                // });
             }
         });
 };
