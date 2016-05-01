@@ -31,6 +31,7 @@ var ArtInfo = React.createClass({
         var form = this.refs.form;
         var formData = new FormData(form);
         console.log(username);
+        var title = this.state.workTitle;
         $.ajax({
             url: '/' + username + '/handle_artwork_create',
             type: 'POST',
@@ -39,6 +40,7 @@ var ArtInfo = React.createClass({
             contentType: false,
             success: function(data, textStatus) {
                 alert('Create success!');
+                window.location.href= '/user/' + username + '/' + title;
             },
             error: function(err) {
                 console.log(err);
