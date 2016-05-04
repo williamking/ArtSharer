@@ -12,12 +12,7 @@ var createWork = function(req, res) {
     } else {
         var tags = [];
     }
-<<<<<<< HEAD
-    // var filepath = "public/imgs/" + req.file.filename
-    var filepath = "/imgs/" + req.file.filename
-=======
     var filepath = "/imgs/" + req.file.filename    // + "." + req.file.originalname.split('.')[1];
->>>>>>> 53331350d4d54d92f7ca94ed67a41c337bc67b2d
     mongoose.model('ArtWork').find({ 
         'workTitle' : workTitle,
         'author' : author }, function(err, works) {
