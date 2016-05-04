@@ -51,7 +51,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 
-	__webpack_require__(191);
+	__webpack_require__(185);
 
 	var CurrentArtoworkList = React.createClass({ displayName: "CurrentArtoworkList",
 
@@ -20039,19 +20039,13 @@
 /* 182 */,
 /* 183 */,
 /* 184 */,
-/* 185 */,
-/* 186 */,
-/* 187 */,
-/* 188 */,
-/* 189 */,
-/* 190 */,
-/* 191 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(192);
+	var content = __webpack_require__(186);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20071,7 +20065,7 @@
 	}
 
 /***/ },
-/* 192 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();
@@ -20079,7 +20073,7 @@
 
 
 	// module
-	exports.push([module.id, "#index-wrapper {\n    height: 100%;\n    margin-top: 50px;\n    margin-bottom: 30px;\n}\n\n#current-artworks header {\n    overflow: hidden;\n}\n\n#current-artworks h3 {\n    display: inline-block;\n}\n\n#current-artworks button {\n    float: right;\n}\n\n#current-artworks button a {\n    color: white;\n}\n\n#user-info-detail img {\n    min-height: 80px;\n    min-width: 50px;\n}\n\n.info-item p {\n    display: inline-block;\n    margin-left: 30px;\n    margin-bottom: 10px;\n}\n\n#hot-artists header {\n    over-flow: hidden;\n}\n\n#hot-artists h3 {\n    display: inline-block;\n}\n\n#user-search {\n    display: inline-block;\n    float: right;\n}\n\n#artists-row {\n}\n\n#index-wrapper {\n    width: 80%;\n    margin-left: auto;\n    margin-right: auto;\n    border-left: solid 1px #00B5AD;\n    border-right: solid 1px #00B5AD;\n    background-color: #fff;\n}\n\nbody {\n    background-color: #eeeeee;\n}\n", ""]);
+	exports.push([module.id, "#index-wrapper {\r\n    height: 100%;\r\n    margin-top: 50px;\r\n    margin-bottom: 30px;\r\n}\r\n\r\n#current-artworks header {\r\n    overflow: hidden;\r\n}\r\n\r\n#current-artworks h3 {\r\n    display: inline-block;\r\n}\r\n\r\n#current-artworks button {\r\n    float: right;\r\n}\r\n\r\n#current-artworks button a {\r\n    color: white;\r\n}\r\n\r\n#user-info-detail img {\r\n    min-height: 80px;\r\n    min-width: 50px;\r\n}\r\n\r\n.info-item p {\r\n    display: inline-block;\r\n    margin-left: 30px;\r\n    margin-bottom: 10px;\r\n}\r\n\r\n#hot-artists header {\r\n    over-flow: hidden;\r\n}\r\n\r\n#hot-artists h3 {\r\n    display: inline-block;\r\n}\r\n\r\n#user-search {\r\n    display: inline-block;\r\n    float: right;\r\n}\r\n\r\n#artists-row {\r\n}\r\n\r\n#index-wrapper {\r\n    width: 80%;\r\n    margin-left: auto;\r\n    margin-right: auto;\r\n    border-left: solid 1px #00B5AD;\r\n    border-right: solid 1px #00B5AD;\r\n    background-color: #fff;\r\n}\r\n\r\nbody {\r\n    background-color: #eeeeee;\r\n}\r\n", ""]);
 
 	// exports
 

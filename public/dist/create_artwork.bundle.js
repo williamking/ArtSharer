@@ -20074,7 +20074,7 @@
 
 
 	// module
-	exports.push([module.id, "#art-form {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n.art-form-header {\n    color: #2185d0 !important;\n}\n\n.art-form-submit {\n    display: table-cell;\n    text-align: center;\n}\n\n", ""]);
+	exports.push([module.id, "#art-form {\r\n    margin-top: 70px;\r\n    margin-bottom: 70px;\r\n}\r\n\r\n.art-form-header {\r\n    color: #2185d0 !important;\r\n}\r\n\r\n.art-form-submit {\r\n    display: table-cell;\r\n    text-align: center;\r\n}\r\n\r\n", ""]);
 
 	// exports
 

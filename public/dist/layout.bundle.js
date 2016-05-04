@@ -48,7 +48,7 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	__webpack_require__(185);
+	__webpack_require__(187);
 
 	var Header = React.createClass({ displayName: "Header",
 		render: function () {
@@ -20005,13 +20005,15 @@
 /* 182 */,
 /* 183 */,
 /* 184 */,
-/* 185 */
+/* 185 */,
+/* 186 */,
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(186);
+	var content = __webpack_require__(188);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20031,7 +20033,7 @@
 	}
 
 /***/ },
-/* 186 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();
@@ -20039,7 +20041,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n#header .menu {\n    height: 50px;\n    background: #eeeeee;\n}\n\n#footer {\n    /*width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;*/\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
+	exports.push([module.id, "body {\r\n    height: 100%;\r\n    width: 100%;\r\n    position: relative;\r\n}\r\n#header .menu {\r\n    height: 50px;\r\n    background: #eeeeee;\r\n}\r\n\r\n#footer {\r\n    /*width: 100%;\r\n    position: fixed;\r\n    bottom: 0;\r\n    left: 0;\r\n    right: 0;*/\r\n}\r\n#footer div.segment {\r\n    background: #eeeeee;\r\n}\r\n#footer a {\r\n    margin: 0 20px;\r\n}\r\n#footer a span {\r\n    text-decoration: underline;\r\n}\r\n#footer div.segment {\r\n    border-top: solid 1px #dddddd;\r\n}", ""]);
 
 	// exports
 

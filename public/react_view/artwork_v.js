@@ -13,26 +13,38 @@ var Artwork = React.createClass({
 
     getInitialState: function() {
         return {
-            title: title,
-            url: url,
-            createTime: createTime,
-            lastModefied: lastModified,
-            mode: 'normal',
-            author: author
+            title: '',
+            url: '',
+            createTime: '',
+            lastModified: '',
+            mode: '',
+            author: ''
         }
     },
     
     componentDidMount: function() {
-        //var url = 'user/' + username + '/' + title;
-        //this.serverRequest = $.getJSON(url, function(data) {
-            //this.setState({
-            //    title: data.workTitle,
-            //    url: data.workUrl,
-            //    createTime: data.workCreateTime,
-            //    lastModefied: data.lastModefied,
-            //    author: data.author || 'unknown'
-            //});
-        //});
+        var url = '/handle_artwork_query';
+        var queryForm = new FormData();
+        queryForm.append("author", author);
+        queryForm.append("workTitle", title);
+        this.serverRequest = $.ajax({
+            url: url,
+            type: 'POST',
+            cache: false,
+            data: queryForm,
+            contentType: false,
+            processData: false
+        })
+        .done((function(data) {
+            console.log(data[0].workUrl);
+            this.setState({
+               title: data[0].workTitle,
+               url: data[0].url,
+               createTime: data[0].workCreateTime,
+               lastModified: data[0].lastModified,
+               author: data[0].author || 'unknown'
+            });
+        }).bind(this));
     },
 
     changeToEditMode: function() {
@@ -55,7 +67,7 @@ var Artwork = React.createClass({
                 </header>
                 <div id="artwork-status">
                     <div id="artwork-info">
-                        <p>Last edited at <span>{this.state.createTime}</span></p>
+                        <p>Last edited at <span>{this.state.lastModified}</span></p>
                     </div>
                     <div id="artwork-process">
                         <div className="ui labeled button">

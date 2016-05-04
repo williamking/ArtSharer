@@ -48,7 +48,7 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	__webpack_require__(189);
+	__webpack_require__(191);
 
 	var LogoHeader = React.createClass({ displayName: "LogoHeader",
 	    render: function () {
@@ -20184,13 +20184,15 @@
 /* 186 */,
 /* 187 */,
 /* 188 */,
-/* 189 */
+/* 189 */,
+/* 190 */,
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(190);
+	var content = __webpack_require__(192);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20210,7 +20212,7 @@
 	}
 
 /***/ },
-/* 190 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();
@@ -20218,7 +20220,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
+	exports.push([module.id, "body {\r\n  background-color: #EAEAEA;\r\n}\r\nbody > .grid {\r\n  height: 100%;\r\n}\r\n.image {\r\n\tmargin-top: -100px;\r\n}\r\n.column {\r\n  max-width: 450px;\r\n}", ""]);
 
 	// exports
 
