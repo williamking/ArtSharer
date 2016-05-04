@@ -48,6 +48,7 @@ var CurrentArtoworkList = React.createClass({
 
 var UserInfo = React.createClass({
     render: function() {
+        var createLink = '/user/' + username + '/artwork_create';
         return (
             <div id="user-info">
                 <div id="user-info-detail">
@@ -66,7 +67,7 @@ var UserInfo = React.createClass({
                     </div>
                 </div>
                 <div id="user-link">
-                    <button className="ui button purple">Personal Center</button>
+                    <button className="ui button red"><a href={createLink}>Create Artwork</a></button>
                     <button className="ui button orange">My Artworks</button>
                 </div>
             </div>

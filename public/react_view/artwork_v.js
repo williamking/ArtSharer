@@ -13,26 +13,29 @@ var Artwork = React.createClass({
 
     getInitialState: function() {
         return {
-            title: title,
-            url: url,
-            createTime: createTime,
-            lastModefied: lastModified,
+            title: '',
+            url: '',
+            createTime: '',
+            lastModefied: '',
             mode: 'normal',
-            author: author
+            author: ''
         }
     },
     
     componentDidMount: function() {
-        //var url = 'user/' + username + '/' + title;
-        //this.serverRequest = $.getJSON(url, function(data) {
-            //this.setState({
-            //    title: data.workTitle,
-            //    url: data.workUrl,
-            //    createTime: data.workCreateTime,
-            //    lastModefied: data.lastModefied,
-            //    author: data.author || 'unknown'
-            //});
-        //});
+        var url = 'handle_artwork_query';
+        this.serverRequest = $.ajax({
+            url: url,
+
+        }, function(data) {
+            this.setState({
+                title: data.workTitle,
+                url: data.workUrl,
+                createTime: data.workCreateTime,
+                lastModefied: data.lastModefied,
+                author: data.author || 'unknown'
+            });
+        });
     },
 
     changeToEditMode: function() {

@@ -51,7 +51,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 
-	__webpack_require__(191);
+	__webpack_require__(185);
 
 	var CurrentArtoworkList = React.createClass({ displayName: "CurrentArtoworkList",
 
@@ -71,7 +71,8 @@
 
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
-	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("img", { src: "", alt: "user-avatar" }), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button purple" }, "Personal Center"), React.createElement("button", { className: "ui button orange" }, "My Artworks")));
+	        var createLink = '/user/' + username + '/artwork_create';
+	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("img", { src: "", alt: "user-avatar" }), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button red" }, React.createElement("a", { href: createLink }, "Create Artwork")), React.createElement("button", { className: "ui button orange" }, "My Artworks")));
 	    }
 	});
 
@@ -20039,19 +20040,13 @@
 /* 182 */,
 /* 183 */,
 /* 184 */,
-/* 185 */,
-/* 186 */,
-/* 187 */,
-/* 188 */,
-/* 189 */,
-/* 190 */,
-/* 191 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(192);
+	var content = __webpack_require__(186);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20071,7 +20066,7 @@
 	}
 
 /***/ },
-/* 192 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();

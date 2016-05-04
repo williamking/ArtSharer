@@ -3,6 +3,7 @@ html
     head
         include ./include/head
         block page-head
+        block page-header
     body
         #header
         block content
@@ -10,4 +11,3 @@ html
         include ./include/script
         script(src="/dist/layout.bundle.js")
         block page-script
-        block page-header
