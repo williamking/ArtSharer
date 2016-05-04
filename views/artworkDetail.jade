@@ -1,3 +1,4 @@
+
 //
     Create by william
 extends ./layout
@@ -5,13 +6,8 @@ extends ./layout
 block page-header
     script(type="text/javascript").
         var username = '#{username}';
-        var title = '#{title}';
+        var title = '#{workTitle}';
         var author = '#{author}';
-        var isFork = '#{isFork}';
-        var url = '#{url}';
-        var createTime = '#{createTime}';
-        var lastModified = '#{lastModified}';
-        console.log(lastModified);
 
 block content
     .ui.middle.align.center.aligned.grid#artwork-wrapper
