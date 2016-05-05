@@ -105,23 +105,25 @@
 	    },
 
 	    handleSubmit: function () {
-	        var data = this.refs.editor.getData();
-	        var form = new FormData();
-	        form.append("workTitle", this.state.title);
-	        form.append("tag", this.state.tag);
-	        form.append("file", data, this.state.title + '_' + username);
-	        console.log(form);
-	        var url = '/' + username + '/handle_artwork_update';
-	        $.ajax({
-	            url: url,
-	            type: 'POST',
-	            data: form,
-	            cache: false,
-	            contentType: false,
-	            processData: false
-	        }).done(function (msg) {
-	            alert(msg);
-	        });
+	        var callback = function (data) {
+	            var form = new FormData();
+	            form.append("workTitle", this.state.title);
+	            form.append("tag", this.state.tag);
+	            form.append("img", data, this.state.title + '_' + username);
+	            var url = '/' + username + '/handle_artwork_update';
+	            $.ajax({
+	                url: url,
+	                type: 'POST',
+	                data: form,
+	                cache: false,
+	                contentType: false,
+	                processData: false
+	            }).done(function (msg) {
+	                alert(msg);
+	                this.resetToNormal();
+	            }.bind(this));
+	        }.bind(this);
+	        this.refs.editor.getData(callback);
 	    },
 
 	    render: function () {
@@ -19789,8 +19791,9 @@
 	        this.listenToMouse();
 	    },
 
-	    getData: function () {
-	        return this.refs.canvas.getData();
+	    getData: function (callback) {
+	        var func = this.refs.canvas.getData;
+	        this.refs.canvas.getData(callback);
 	    },
 
 	    render: function () {
@@ -23766,8 +23769,16 @@
 	        this.renderImage();
 	    },
 
-	    getData: function () {
-	        return this.state.data;
+	    getData: function (callback) {
+	        var canvas = this.refs.canvas;
+	        var data = canvas.toDataURL('image/jpeg');
+	        var arr = data.split(','),
+	            bin = atob(arr[1]);
+	        var buffer = new Uint8Array(bin.length);
+	        for (var i = 0; i < bin.length; ++i) {
+	            buffer[i] = bin.charCodeAt(i);
+	        }
+	        callback(new Blob([buffer.buffer], { type: 'image/jpeg' }));
 	    },
 
 	    componentDidUpdate: function () {
@@ -23779,7 +23790,7 @@
 	    renderBackground: function () {
 	        var context = this.getContext();
 	        context.save();
-	        context.fillStyle = 'black';
+	        context.fillStyle = '#FFF';
 	        context.fillRect(0, 0, this.props.width, this.props.height);
 	    },
 
@@ -23796,11 +23807,6 @@
 	            context.rect(left, 0, width, height);
 	            context.clip();
 	            context.save();
-	            that.refs.canvas.toBlob(function (blob) {
-	                this.setState({
-	                    data: blob
-	                });
-	            }.bind(that), 'image/jpeg', 1);
 	            if (that.first) {
 	                that.props.imageOnload();
 	            }

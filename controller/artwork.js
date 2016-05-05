@@ -104,6 +104,7 @@ var updateWork = function(req, res) {
                 }
                 if (req.file) {
                     // var filepath = "public/imgs/" + req.file.filename;
+                    console.log(req.file.filename);
                     workModify.url = "/imgs/" + req.file.filename;
                     var filepath = "public" + works[0].url;
                     fs.unlink(filepath, function() {});

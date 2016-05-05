@@ -91,8 +91,9 @@
 	        this.listenToMouse();
 	    },
 
-	    getData: function () {
-	        return this.refs.canvas.getData();
+	    getData: function (callback) {
+	        var func = this.refs.canvas.getData;
+	        this.refs.canvas.getData(callback);
 	    },
 
 	    render: function () {
@@ -23673,8 +23674,16 @@
 	        this.renderImage();
 	    },
 
-	    getData: function () {
-	        return this.state.data;
+	    getData: function (callback) {
+	        var canvas = this.refs.canvas;
+	        var data = canvas.toDataURL('image/jpeg');
+	        var arr = data.split(','),
+	            bin = atob(arr[1]);
+	        var buffer = new Uint8Array(bin.length);
+	        for (var i = 0; i < bin.length; ++i) {
+	            buffer[i] = bin.charCodeAt(i);
+	        }
+	        callback(new Blob([buffer.buffer], { type: 'image/jpeg' }));
 	    },
 
 	    componentDidUpdate: function () {
@@ -23686,7 +23695,7 @@
 	    renderBackground: function () {
 	        var context = this.getContext();
 	        context.save();
-	        context.fillStyle = 'black';
+	        context.fillStyle = '#FFF';
 	        context.fillRect(0, 0, this.props.width, this.props.height);
 	    },
 
@@ -23703,11 +23712,6 @@
 	            context.rect(left, 0, width, height);
 	            context.clip();
 	            context.save();
-	            that.refs.canvas.toBlob(function (blob) {
-	                this.setState({
-	                    data: blob
-	                });
-	            }.bind(that), 'image/jpeg', 1);
 	            if (that.first) {
 	                that.props.imageOnload();
 	            }

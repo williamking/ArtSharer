@@ -59,23 +59,25 @@ var Artwork = React.createClass({
     },
 
     handleSubmit: function() {
-        var data = this.refs.editor.getData();
-        var form = new FormData();
-        form.append("workTitle", this.state.title);
-        form.append("tag", this.state.tag);
-        form.append("file", data, this.state.title + '_' + username);
-        console.log(form);
-        var url = '/' + username + '/handle_artwork_update';
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: form,
-            cache: false,
-            contentType: false,
-            processData: false
-        }).done(function(msg) {
-            alert(msg);
-        });
+        var callback = (function(data) {
+            var form = new FormData();
+            form.append("workTitle", this.state.title);
+            form.append("tag", this.state.tag);
+            form.append("img", data, this.state.title + '_' + username);
+            var url = '/' + username + '/handle_artwork_update';
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: form,
+                cache: false,
+                contentType: false,
+                processData: false
+            }).done((function(msg) {
+                alert(msg);
+                this.resetToNormal(); 
+            }).bind(this));
+        }).bind(this);
+        this.refs.editor.getData(callback);
     },
 
     render: function() {

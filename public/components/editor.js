@@ -46,8 +46,9 @@ var ImageEditor = React.createClass({
         this.listenToMouse();
     },
 
-    getData: function() {
-        return this.refs.canvas.getData();
+    getData: function(callback) {
+        var func = this.refs.canvas.getData;
+        this.refs.canvas.getData(callback);
     },
 
     render: function() {
