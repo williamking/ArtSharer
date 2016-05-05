@@ -26,4 +26,11 @@
     min-height: 600px;
     min-width: 900px;
     border: solid 1px rgba(34, 36, 38, .15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#artwork-image-wrapper {
+    text-align: center;
 }

@@ -46,6 +46,10 @@ var ImageEditor = React.createClass({
         this.listenToMouse();
     },
 
+    getData: function() {
+        return this.refs.canvas.getData();
+    },
+
     render: function() {
         var surfaceWidth = this.props.width;
         var surfaceHeight = this.props.height;

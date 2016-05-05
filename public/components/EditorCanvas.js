@@ -2,10 +2,20 @@ var React = require("react");
 
 var EditorCanvas = React.createClass({
 
+    getInitialState: function() {
+        return {
+            data: ''
+        }
+    },
+
     componentDidMount: function() {
         this.renderBackground();
         this.first = true;
         this.renderImage();
+    },
+
+    getData: function() {
+        return this.state.data;
     },
 
     componentDidUpdate: function() {
@@ -30,6 +40,14 @@ var EditorCanvas = React.createClass({
             var left = 0;
             if (width < that.props.width) left = (that.props.width - width) / 2;
             context.drawImage(image, left, 0, width, height);
+            context.rect(left, 0, width, height);
+            context.clip();
+            context.save();
+            that.refs.canvas.toBlob((function(blob) {
+                this.setState({
+                    data: blob
+                });
+            }).bind(that), 'image/jpeg', 1);
             if (that.first) {
                 that.props.imageOnload();
             }

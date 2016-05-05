@@ -70,19 +70,26 @@
 	    },
 
 	    componentDidMount: function () {
-	        var url = 'handle_artwork_query';
+	        var url = '/handle_artwork_query';
+	        var queryForm = new FormData();
+	        queryForm.append("author", author);
+	        queryForm.append("workTitle", title);
 	        this.serverRequest = $.ajax({
-	            url: url
-
-	        }, function (data) {
+	            url: url,
+	            type: 'POST',
+	            cache: false,
+	            data: queryForm,
+	            contentType: false,
+	            processData: false
+	        }).done(function (data) {
 	            this.setState({
-	                title: data.workTitle,
-	                url: data.workUrl,
-	                createTime: data.workCreateTime,
-	                lastModefied: data.lastModefied,
-	                author: data.author || 'unknown'
+	                title: data[0].workTitle,
+	                url: data[0].url,
+	                createTime: data[0].workCreateTime,
+	                lastModified: data[0].lastModified,
+	                author: data[0].author || 'unknown'
 	            });
-	        });
+	        }.bind(this));
 	    },
 
 	    changeToEditMode: function () {
@@ -97,8 +104,28 @@
 	        });
 	    },
 
+	    handleSubmit: function () {
+	        var data = this.refs.editor.getData();
+	        var form = new FormData();
+	        form.append("workTitle", this.state.title);
+	        form.append("tag", this.state.tag);
+	        form.append("file", data, this.state.title + '_' + username);
+	        console.log(form);
+	        var url = '/' + username + '/handle_artwork_update';
+	        $.ajax({
+	            url: url,
+	            type: 'POST',
+	            data: form,
+	            cache: false,
+	            contentType: false,
+	            processData: false
+	        }).done(function (msg) {
+	            alert(msg);
+	        });
+	    },
+
 	    render: function () {
-	        return React.createElement("div", { id: "artwork-detail" }, React.createElement("header", { className: "ui dividing header" }, React.createElement("h1", null, this.state.author, "/Artworks/", this.state.title)), React.createElement("div", { id: "artwork-status" }, React.createElement("div", { id: "artwork-info" }, React.createElement("p", null, "Last edited at ", React.createElement("span", null, this.state.createTime))), React.createElement("div", { id: "artwork-process" }, React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic blue button" }, React.createElement("i", { className: "fork icon" }), "Forks"), React.createElement("a", { className: "ui basic left pointing blue label" }, "0")), React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic red button" }, React.createElement("i", { className: "fork icon" }), "Star"), React.createElement("a", { className: "ui basic left pointing red label" }, "0")), this.state.mode == 'normal' ? React.createElement("button", { onClick: this.changeToEditMode, className: "ui button green" }, "Edit") : React.createElement("button", { onClick: this.resetToNormal, className: "ui blue button" }, "View"))), React.createElement("div", { id: "artwork-main" }, this.state.mode == 'editor' ? React.createElement(ImageEditor, { width: 1200, height: 800, src: this.state.url, filterItems: filters }) : React.createElement("div", { id: "image-artwork-image-wrapper" }, React.createElement("img", { src: this.state.url, alt: "This is an image" }))));
+	        return React.createElement("div", { id: "artwork-detail" }, React.createElement("header", { className: "ui dividing header" }, React.createElement("h1", null, this.state.author, "/Artworks/", this.state.title)), React.createElement("div", { id: "artwork-status" }, React.createElement("div", { id: "artwork-info" }, React.createElement("p", null, "Last edited at ", React.createElement("span", null, this.state.lastModified))), React.createElement("div", { id: "artwork-process" }, React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic blue button" }, React.createElement("i", { className: "fork icon" }), "Forks"), React.createElement("a", { className: "ui basic left pointing blue label" }, "0")), React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic red button" }, React.createElement("i", { className: "fork icon" }), "Star"), React.createElement("a", { className: "ui basic left pointing red label" }, "0")), this.state.mode == 'normal' ? React.createElement("button", { onClick: this.changeToEditMode, className: "ui button green" }, "Edit") : React.createElement("button", { onClick: this.resetToNormal, className: "ui blue button" }, "View"), this.state.mode == 'editor' ? React.createElement("button", { onClick: this.handleSubmit, className: "ui button green" }, "Save") : React.createElement("div", null))), React.createElement("div", { id: "artwork-main" }, this.state.mode == 'editor' ? React.createElement(ImageEditor, { width: 1200, height: 800, src: this.state.url, filterItems: filters, ref: "editor" }) : React.createElement("div", { id: "artwork-image-wrapper" }, React.createElement("img", { src: this.state.url, alt: "This is an image" }))));
 	    }
 	});
 
@@ -19762,6 +19789,10 @@
 	        this.listenToMouse();
 	    },
 
+	    getData: function () {
+	        return this.refs.canvas.getData();
+	    },
+
 	    render: function () {
 	        var surfaceWidth = this.props.width;
 	        var surfaceHeight = this.props.height;
@@ -23723,10 +23754,20 @@
 
 	var EditorCanvas = React.createClass({ displayName: "EditorCanvas",
 
+	    getInitialState: function () {
+	        return {
+	            data: ''
+	        };
+	    },
+
 	    componentDidMount: function () {
 	        this.renderBackground();
 	        this.first = true;
 	        this.renderImage();
+	    },
+
+	    getData: function () {
+	        return this.state.data;
 	    },
 
 	    componentDidUpdate: function () {
@@ -23752,6 +23793,14 @@
 	            var left = 0;
 	            if (width < that.props.width) left = (that.props.width - width) / 2;
 	            context.drawImage(image, left, 0, width, height);
+	            context.rect(left, 0, width, height);
+	            context.clip();
+	            context.save();
+	            that.refs.canvas.toBlob(function (blob) {
+	                this.setState({
+	                    data: blob
+	                });
+	            }.bind(that), 'image/jpeg', 1);
 	            if (that.first) {
 	                that.props.imageOnload();
 	            }
@@ -23805,7 +23854,7 @@
 
 
 	// module
-	exports.push([module.id, "#artwork-wrapper {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n#artwork-status {\n    margin-top: 10px;\n    margin-bottom: 10px;\n    overflow: hidden;\n}\n\n#artwork-detail header{\n    color: #2185d0;\n}\n\n#artwork-info {\n    display: inline-block;\n}\n\n#artwork-process {\n    display: inline-block;\n    float: right;\n}\n\n#artwork-main {\n    min-height: 600px;\n    min-width: 900px;\n    border: solid 1px rgba(34, 36, 38, .15);\n}\n", ""]);
+	exports.push([module.id, "#artwork-wrapper {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n#artwork-status {\n    margin-top: 10px;\n    margin-bottom: 10px;\n    overflow: hidden;\n}\n\n#artwork-detail header{\n    color: #2185d0;\n}\n\n#artwork-info {\n    display: inline-block;\n}\n\n#artwork-process {\n    display: inline-block;\n    float: right;\n}\n\n#artwork-main {\n    min-height: 600px;\n    min-width: 900px;\n    border: solid 1px rgba(34, 36, 38, .15);\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n#artwork-image-wrapper {\n    text-align: center;\n}\n", ""]);
 
 	// exports
 
