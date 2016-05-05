@@ -7,6 +7,6 @@ exports.showIndex = function(req, res) {
 			username : req.session.username
 		});
 	} else {
-		res.send("please login first");
+		res.redirect('/login');
 	}
 };

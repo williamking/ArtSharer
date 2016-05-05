@@ -62,7 +62,7 @@ var deleteWork = function(req, res) {
                 if (!works.length) {
                     res.send("img not found!");
                 } else {
-                    var filepath = works[0].url;
+                    var filepath = "public" + works[0].url;
                     works[0].remove(function(err) {
                         if (err) {
                             console.log(err);
@@ -82,7 +82,6 @@ var deleteWork = function(req, res) {
 var updateWork = function(req, res) {
     var workTitle = req.body.workTitle;
     var author = req.params.username;
-    var tags = req.body.tag.split(',');
     // var filepath = "public/imgs/" + req.file.filename;
     mongoose.model('ArtWork').find({
         'workTitle' : workTitle,
@@ -97,13 +96,17 @@ var updateWork = function(req, res) {
                 });
             } else {
                 var workModify = {
-                    'tags' : tags,
                     'lastModified' : new Date()
                 }
+                if (req.body.tag) {
+                    var tags = req.body.tag.split(',');
+                    workModify.tags = tags;
+                }
                 if (req.file) {
-                    var filepath = "public/imgs/" + req.file.filename;
-                    fs.unlink(works[0].url, function() {});
-                    workModify.url = filepath;
+                    // var filepath = "public/imgs/" + req.file.filename;
+                    workModify.url = "/imgs/" + req.file.filename;
+                    var filepath = "public" + works[0].url;
+                    fs.unlink(filepath, function() {});
                 }
                 works[0].update({
                     $set : workModify
@@ -201,10 +204,10 @@ exports.handleUpdate = function(req, res) {
     }
 };
 
-exports.handleQuery = function(req, res) {    //需要确认一下具体的返回形式
+exports.handleQuery = function(req, res) {
     queryWorks(req, res);
 };
 
 exports.showEditPage = function(req, res) {
-	res.render("createArtwork");
+    res.render("createArtwork");
 };
