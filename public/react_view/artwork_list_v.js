@@ -15,11 +15,11 @@ var ArtworkList = React.createClass({
     },
 
     getPage: function() {
-        var url = 'handle_artwork_query_with_username';
+        var url = '/handle_artwork_query_with_username';
         var queryForm = new FormData();
         queryForm.append('author', username);
-        queryForm.append('startFrom', (currentPage - 1) * 10 + 1);
-        queryForm.append('endAt', currentPage * 10);
+        queryForm.append('startFrom', 1);
+        queryForm.append('endAt', 5);
         this.serverRequest = $.ajax({
             url: url,
             method: 'POST',
@@ -28,6 +28,7 @@ var ArtworkList = React.createClass({
             processData: false
         })
         .done((function(list) {
+            console.log(list);
             this.setState ({
                 list: list
             });
@@ -39,7 +40,13 @@ var ArtworkList = React.createClass({
     },
 
     componentDidUpdate: function() {
-        this.getPage();
+        //this.getPage();
+    },
+
+    changePage: function(num) {
+        this.setState({
+            currentPage: num
+        });
     },
 
     render: function() {
@@ -49,7 +56,7 @@ var ArtworkList = React.createClass({
                     <h1>{username}/Artworks</h1>
                 </header>
                 <ArtworkPage list={this.state.list} />
-                <PageNav num={this.state.pages} active={this.state.currentPage} />
+                <PageNav num={this.state.pages} active={this.state.currentPage} handleChange={this.changePage} />
             </div>
         );
     }
@@ -58,7 +65,7 @@ var ArtworkList = React.createClass({
 var ArtworkPage = React.createClass({
 
     render: function() {
-        var items = this.state.list.map(function(item, key) {
+        var items = this.props.list.map(function(item, key) {
             return (
                 <div className="item" key={key}>
                     <div className="content">
@@ -79,15 +86,18 @@ var ArtworkPage = React.createClass({
 var PageNav = React.createClass({
 
     produce: function(number, active) {
+        var callback = (function() {
+            this.props.handleChange(number);
+        }).bind(this);
         if (active) {
             return (
-                <a className="active item">
+                <a className="active item" key={number}>
                 {number}
                 </a>
             );
         } else {
             return (
-                <a className="item">
+                <a className="item" onClick={callback} key={number}>
                 {number}
                 </a>
             );
@@ -96,20 +106,20 @@ var PageNav = React.createClass({
 
     render: function() {
         var items = [];
-        for (int i = 1; i <= this.props.num; ++i) {
+        for (var i = 1; i <= this.props.num; ++i) {
             var active = false;
             if (i == this.props.active) active = true;
-            item.push(produce(i, active));
+            items.push(this.produce(i, active));
         }
         return (
-            <div class="ui pagination menu">
+            <div className="ui pagination menu">
                 {items}
             </div>
         );
     }
 });
 
-ReactDom.render(<ArtworkList />, $("#artwork-list")[0], null);
+ReactDOM.render(<ArtworkList />, $("#artwork-list")[0], null);
 
 
 

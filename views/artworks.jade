@@ -3,8 +3,8 @@
 extends ./layout
 
 block page-header
-    script(type="text/javascript")
-        vae username = '#{username};
+    script(type="text/javascript").
+        var username = '#{username}';
 
 block content
     .ui.middle.align.center.aligned.grid#artwork-list

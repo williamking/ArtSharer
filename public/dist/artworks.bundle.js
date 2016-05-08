@@ -51,17 +51,16 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 
-	__webpack_require__(187);
-
-	var CurrentArtoworkList = React.createClass({ displayName: "CurrentArtoworkList",
-
+	var ArtworkList = React.createClass({ displayName: "ArtworkList",
 	    getInitialState: function () {
 	        return {
-	            currentList: [{ title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }, { title: 'work-1', created: '2016-12-13' }]
+	            currentPage: 1,
+	            list: [],
+	            pages: 1
 	        };
 	    },
 
-	    componentDidMount: function () {
+	    getPage: function () {
 	        var url = '/handle_artwork_query_with_username';
 	        var queryForm = new FormData();
 	        queryForm.append('author', username);
@@ -76,54 +75,65 @@
 	        }).done(function (list) {
 	            console.log(list);
 	            this.setState({
-	                currentList: list
+	                list: list
 	            });
 	        }.bind(this));
 	    },
 
-	    render: function () {
-	        var items = this.state.currentList.map(function (item, key) {
-	            var href = '/user/' + username + '/' + item.workTitle;
-	            return React.createElement("div", { className: "item", key: key }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header", href: href }, item.workTitle), React.createElement("div", { className: "description" }, "Created at ", item.createTime)));
+	    componentDidMount: function () {
+	        this.getPage();
+	    },
+
+	    componentDidUpdate: function () {
+	        //this.getPage();
+	    },
+
+	    changePage: function (num) {
+	        this.setState({
+	            currentPage: num
 	        });
-	        var url = '/user/' + username + '/worklist';
-	        return React.createElement("div", { id: "current-artworks" }, React.createElement("header", null, React.createElement("h3", { className: "ui h3" }, "Current Artworks"), React.createElement("button", { className: "ui green button" }, React.createElement("a", { href: url }, "More..."))), React.createElement("div", { id: "current-artworks-list", className: "ui relaxed divided list" }, items));
-	    }
-	});
-
-	var UserInfo = React.createClass({ displayName: "UserInfo",
-	    render: function () {
-	        var createLink = '/user/' + username + '/artwork_create';
-	        var url = '/user/' + username + '/worklist';
-	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button red" }, React.createElement("a", { href: createLink }, "Create Artwork")), React.createElement("button", { className: "ui button orange" }, React.createElement("a", { href: url }, "My Artworks"))));
-	    }
-	});
-
-	var Artists = React.createClass({ displayName: "Artists",
-
-	    getInitialState: function () {
-	        return {
-	            userList: [{ name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }, { name: 'william', artworks: 100 }]
-	        };
 	    },
 
 	    render: function () {
-	        users = this.state.userList.map(function (item, key) {
-	            var url = '/user/' + item.name;
-	            return React.createElement("div", { className: "item", key: key }, React.createElement("i", { className: "large user middle aligned icon" }), React.createElement("div", { className: "content" }, React.createElement("a", { className: "header", href: url }, "item.name"), React.createElement("div", { className: "description" }, "Has ", React.createElement("span", null, item.artworks), " artworks")));
-	        });
-
-	        return React.createElement("div", { id: "hot-artists" }, React.createElement("header", null, React.createElement("h3", { className: "ui h3" }, "Current Hot Artists(constrcting....)"), React.createElement("div", { className: "ui search", id: "user-search" }, React.createElement("input", { className: "prompt", type: "text", placeholder: "Search Artists..." }), React.createElement("i", { className: "search icon", onClick: this.searchUser })), React.createElement("div", { className: "ui relaxed divided list" }, users)));
+	        return React.createElement("div", { id: "artwork-list-page" }, React.createElement("header", { className: "uio dividing header" }, React.createElement("h1", null, username, "/Artworks")), React.createElement(ArtworkPage, { list: this.state.list }), React.createElement(PageNav, { num: this.state.pages, active: this.state.currentPage, handleChange: this.changePage }));
 	    }
 	});
 
-	var Index = React.createClass({ displayName: "Index",
+	var ArtworkPage = React.createClass({ displayName: "ArtworkPage",
+
 	    render: function () {
-	        return React.createElement("div", { id: "index-main", className: "ui internally celled grid" }, React.createElement("div", { className: "row" }, React.createElement("div", { className: "eight wide column" }, React.createElement(CurrentArtoworkList, null)), React.createElement("div", { className: "eight wide column" }, React.createElement(UserInfo, null))), React.createElement("div", { className: "row", id: "artists-row" }, React.createElement("div", { className: "sixteen wide column" }, React.createElement(Artists, null))));
+	        var items = this.props.list.map(function (item, key) {
+	            return React.createElement("div", { className: "item", key: key }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, item.title), React.createElement("div", { className: "description" }, "Created at ", item.created)));
+	        });
+	        return React.createElement("div", { className: "artwork-page" }, items);
 	    }
 	});
 
-	ReactDOM.render(React.createElement(Index, null), $('#index-wrapper')[0], null);
+	var PageNav = React.createClass({ displayName: "PageNav",
+
+	    produce: function (number, active) {
+	        var callback = function () {
+	            this.props.handleChange(number);
+	        }.bind(this);
+	        if (active) {
+	            return React.createElement("a", { className: "active item", key: number }, number);
+	        } else {
+	            return React.createElement("a", { className: "item", onClick: callback, key: number }, number);
+	        }
+	    },
+
+	    render: function () {
+	        var items = [];
+	        for (var i = 1; i <= this.props.num; ++i) {
+	            var active = false;
+	            if (i == this.props.active) active = true;
+	            items.push(this.produce(i, active));
+	        }
+	        return React.createElement("div", { className: "ui pagination menu" }, items);
+	    }
+	});
+
+	ReactDOM.render(React.createElement(ArtworkList, null), $("#artwork-list")[0], null);
 
 /***/ },
 /* 1 */
@@ -19728,380 +19738,6 @@
 	'use strict';
 
 	module.exports = __webpack_require__(3);
-
-
-/***/ },
-/* 159 */,
-/* 160 */,
-/* 161 */,
-/* 162 */,
-/* 163 */,
-/* 164 */,
-/* 165 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 166 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
-
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-
-	function createLinkElement(options) {
-		var linkElement = document.createElement("link");
-		linkElement.rel = "stylesheet";
-		insertStyleElement(options, linkElement);
-		return linkElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement(options);
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var sourceMap = obj.sourceMap;
-
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		var blob = new Blob([css], { type: "text/css" });
-
-		var oldSrc = linkElement.href;
-
-		linkElement.href = URL.createObjectURL(blob);
-
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
-
-/***/ },
-/* 167 */,
-/* 168 */,
-/* 169 */,
-/* 170 */,
-/* 171 */,
-/* 172 */,
-/* 173 */,
-/* 174 */,
-/* 175 */,
-/* 176 */,
-/* 177 */,
-/* 178 */,
-/* 179 */,
-/* 180 */,
-/* 181 */,
-/* 182 */,
-/* 183 */,
-/* 184 */,
-/* 185 */,
-/* 186 */,
-/* 187 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(188);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(166)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./index.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./index.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 188 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(165)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "#index-wrapper {\n    height: 100%;\n    margin-top: 50px;\n    margin-bottom: 30px;\n}\n\n#current-artworks header {\n    overflow: hidden;\n}\n\n#current-artworks h3 {\n    display: inline-block;\n}\n\n#current-artworks button {\n    float: right;\n}\n\n#current-artworks button a {\n    color: white;\n}\n\n#user-info-detail img {\n    min-height: 80px;\n    min-width: 50px;\n}\n\n.info-item p {\n    display: inline-block;\n    margin-left: 30px;\n    margin-bottom: 10px;\n}\n\n#hot-artists header {\n    over-flow: hidden;\n}\n\n#hot-artists h3 {\n    display: inline-block;\n}\n\n#user-search {\n    display: inline-block;\n    float: right;\n}\n\n#artists-row {\n}\n\n#index-wrapper {\n    width: 80%;\n    margin-left: auto;\n    margin-right: auto;\n    border-left: solid 1px #00B5AD;\n    border-right: solid 1px #00B5AD;\n    background-color: #fff;\n}\n\nbody {\n    background-color: #eeeeee;\n}\n\n#user-link a {\n    color: white;\n}\n", ""]);
-
-	// exports
 
 
 /***/ }

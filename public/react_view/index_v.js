@@ -22,7 +22,7 @@ var CurrentArtoworkList = React.createClass({
     },
 
     componentDidMount: function() {
-        var url = 'handle_artwork_query_with_username';
+        var url = '/handle_artwork_query_with_username';
         var queryForm = new FormData();
         queryForm.append('author', username);
         queryForm.append('startFrom', 1);
@@ -54,11 +54,12 @@ var CurrentArtoworkList = React.createClass({
                 </div>
             );
         });
+        var url = '/user/' + username + '/worklist';
         return (
             <div id="current-artworks">
                 <header>
                     <h3 className="ui h3">Current Artworks</h3>
-                    <button className="ui green button"><a href="#">More...</a></button>
+                    <button className="ui green button"><a href={url}>More...</a></button>
                 </header>
                 <div id="current-artworks-list" className="ui relaxed divided list">
                     {items}       
@@ -71,6 +72,7 @@ var CurrentArtoworkList = React.createClass({
 var UserInfo = React.createClass({
     render: function() {
         var createLink = '/user/' + username + '/artwork_create';
+        var url = '/user/' + username + '/worklist';
         return (
             <div id="user-info">
                 <div id="user-info-detail">
@@ -89,7 +91,7 @@ var UserInfo = React.createClass({
                 </div>
                 <div id="user-link">
                     <button className="ui button red"><a href={createLink}>Create Artwork</a></button>
-                    <button className="ui button orange">My Artworks</button>
+                    <button className="ui button orange"><a href={url}>My Artworks</a></button>
                 </div>
             </div>
         );
@@ -127,7 +129,7 @@ var Artists = React.createClass({
         return (
             <div id="hot-artists">
                 <header>
-                    <h3 className="ui h3">Current Hot Artists</h3>
+                    <h3 className="ui h3">Current Hot Artists(constrcting....)</h3>
                     <div className="ui search" id="user-search">
                         <input className="prompt" type="text" placeholder="Search Artists..."></input>
                         <i className="search icon" onClick={this.searchUser}></i>
