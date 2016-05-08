@@ -61,9 +61,30 @@
 	        };
 	    },
 
+	    componentDidMount: function () {
+	        var url = 'handle_artwork_query_with_username';
+	        var queryForm = new FormData();
+	        queryForm.append('author', username);
+	        queryForm.append('startFrom', 1);
+	        queryForm.append('endAt', 5);
+	        this.serverRequest = $.ajax({
+	            url: url,
+	            method: 'POST',
+	            data: queryForm,
+	            contentType: false,
+	            processData: false
+	        }).done(function (list) {
+	            console.log(list);
+	            this.setState({
+	                currentList: list
+	            });
+	        }.bind(this));
+	    },
+
 	    render: function () {
 	        var items = this.state.currentList.map(function (item, key) {
-	            return React.createElement("div", { className: "item", key: key }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, item.title), React.createElement("div", { className: "description" }, "Created at ", item.created)));
+	            var href = '/user/' + username + '/' + item.workTitle;
+	            return React.createElement("div", { className: "item", key: key }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header", href: href }, item.workTitle), React.createElement("div", { className: "description" }, "Created at ", item.createTime)));
 	        });
 	        return React.createElement("div", { id: "current-artworks" }, React.createElement("header", null, React.createElement("h3", { className: "ui h3" }, "Current Artworks"), React.createElement("button", { className: "ui green button" }, React.createElement("a", { href: "#" }, "More..."))), React.createElement("div", { id: "current-artworks-list", className: "ui relaxed divided list" }, items));
 	    }
@@ -72,7 +93,7 @@
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
 	        var createLink = '/user/' + username + '/artwork_create';
-	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("img", { src: "", alt: "user-avatar" }), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button red" }, React.createElement("a", { href: createLink }, "Create Artwork")), React.createElement("button", { className: "ui button orange" }, "My Artworks")));
+	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button red" }, React.createElement("a", { href: createLink }, "Create Artwork")), React.createElement("button", { className: "ui button orange" }, "My Artworks")));
 	    }
 	});
 
@@ -20076,7 +20097,7 @@
 
 
 	// module
-	exports.push([module.id, "#index-wrapper {\n    height: 100%;\n    margin-top: 50px;\n    margin-bottom: 30px;\n}\n\n#current-artworks header {\n    overflow: hidden;\n}\n\n#current-artworks h3 {\n    display: inline-block;\n}\n\n#current-artworks button {\n    float: right;\n}\n\n#current-artworks button a {\n    color: white;\n}\n\n#user-info-detail img {\n    min-height: 80px;\n    min-width: 50px;\n}\n\n.info-item p {\n    display: inline-block;\n    margin-left: 30px;\n    margin-bottom: 10px;\n}\n\n#hot-artists header {\n    over-flow: hidden;\n}\n\n#hot-artists h3 {\n    display: inline-block;\n}\n\n#user-search {\n    display: inline-block;\n    float: right;\n}\n\n#artists-row {\n}\n\n#index-wrapper {\n    width: 80%;\n    margin-left: auto;\n    margin-right: auto;\n    border-left: solid 1px #00B5AD;\n    border-right: solid 1px #00B5AD;\n    background-color: #fff;\n}\n\nbody {\n    background-color: #eeeeee;\n}\n", ""]);
+	exports.push([module.id, "#index-wrapper {\n    height: 100%;\n    margin-top: 50px;\n    margin-bottom: 30px;\n}\n\n#current-artworks header {\n    overflow: hidden;\n}\n\n#current-artworks h3 {\n    display: inline-block;\n}\n\n#current-artworks button {\n    float: right;\n}\n\n#current-artworks button a {\n    color: white;\n}\n\n#user-info-detail img {\n    min-height: 80px;\n    min-width: 50px;\n}\n\n.info-item p {\n    display: inline-block;\n    margin-left: 30px;\n    margin-bottom: 10px;\n}\n\n#hot-artists header {\n    over-flow: hidden;\n}\n\n#hot-artists h3 {\n    display: inline-block;\n}\n\n#user-search {\n    display: inline-block;\n    float: right;\n}\n\n#artists-row {\n}\n\n#index-wrapper {\n    width: 80%;\n    margin-left: auto;\n    margin-right: auto;\n    border-left: solid 1px #00B5AD;\n    border-right: solid 1px #00B5AD;\n    background-color: #fff;\n}\n\nbody {\n    background-color: #eeeeee;\n}\n\n#user-link a {\n    color: white;\n}\n", ""]);
 
 	// exports
 

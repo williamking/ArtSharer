@@ -20,14 +20,36 @@ var CurrentArtoworkList = React.createClass({
             ]
         }
     },
+
+    componentDidMount: function() {
+        var url = 'handle_artwork_query_with_username';
+        var queryForm = new FormData();
+        queryForm.append('author', username);
+        queryForm.append('startFrom', 1);
+        queryForm.append('endAt', 5);
+        this.serverRequest = $.ajax({
+            url: url,
+            method: 'POST',
+            data: queryForm,
+            contentType: false,
+            processData: false
+        })
+        .done((function(list) {
+            console.log(list);
+            this.setState ({
+                currentList: list
+            });
+        }).bind(this));
+    },
     
     render: function() {
         var items = this.state.currentList.map(function(item, key) {
+            var href = '/user/' + username + '/' + item.workTitle;
             return (
                 <div className="item" key={key}>
                     <div className="content">
-                        <a className="header">{item.title}</a>
-                        <div className="description">Created at {item.created}</div>
+                        <a className="header" href={href}>{item.workTitle}</a>
+                        <div className="description">Created at {item.createTime}</div>
                     </div>
                 </div>
             );
@@ -52,7 +74,6 @@ var UserInfo = React.createClass({
         return (
             <div id="user-info">
                 <div id="user-info-detail">
-                    <img src="" alt="user-avatar"></img>
                     <div className="info-item">
                         <a className="io tag label">Name</a>
                         <p>William</p>

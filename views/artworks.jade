@@ -1,0 +1,14 @@
+//
+    Created by william
+extends ./layout
+
+block page-header
+    script(type="text/javascript")
+        vae username = '#{username};
+
+block content
+    .ui.middle.align.center.aligned.grid#artwork-list
+
+block page-script
+    script(src="/dist/icon.bundle.js")
+    script(src="/dist/artworks.bundle.js")

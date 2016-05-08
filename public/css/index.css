@@ -59,3 +59,7 @@
 body {
     background-color: #eeeeee;
 }
+
+#user-link a {
+    color: white;
+}
