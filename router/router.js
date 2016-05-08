@@ -31,4 +31,5 @@ module.exports = function(app) {
 	app.post("/:username/handle_artwork_update", ArtWork.handleUpdate);
 	app.post("/:username/handle_artwork_delete", ArtWork.handleDelete);
 	app.post("/handle_artwork_query", ArtWork.handleQuery);
+    app.post("/handle_artwork_query_with_username", ArtWork.handleQueryByAuthor);
 };

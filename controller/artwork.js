@@ -104,7 +104,6 @@ var updateWork = function(req, res) {
                 }
                 if (req.file) {
                     // var filepath = "public/imgs/" + req.file.filename;
-                    console.log(req.file.filename);
                     workModify.url = "/imgs/" + req.file.filename;
                     var filepath = "public" + works[0].url;
                     fs.unlink(filepath, function() {});
@@ -115,7 +114,9 @@ var updateWork = function(req, res) {
                     if (err) {
                         console.log(err);
                     } else {
-                        res.send("update succeed!");
+                        res.json({
+                            url : workModify.url
+                        });
                     }
                 });
             }
@@ -142,6 +143,28 @@ var queryWorks = function(req, res) {
                 res.send('img not found!');
             } else {
                 res.json(works);
+            }
+        }
+    });
+};
+
+var queryWorksByAuthor = function(req, res) {
+    var author = req.body.author;
+    var startFrom = req.body.startFrom;
+    var endAt = req.body.endAt;
+    mongoose.model('ArtWork').find({
+        'author' : author
+    }, function(err, artWorks) {
+        if (!artWorks.length) {
+            res.send("sorry, can't find works of this user");
+        } else {
+            if (endAt > artWorks.length) {
+                res.json([]);
+            } else {
+                artWorks.sort(function(x, y) {
+                    return x.createTime < y.createTime;
+                });
+                res.json(artWorks.slice(startFrom-1, endAt));
             }
         }
     });
@@ -207,6 +230,10 @@ exports.handleUpdate = function(req, res) {
 
 exports.handleQuery = function(req, res) {
     queryWorks(req, res);
+};
+
+exports.handleQueryByAuthor = function(req, res) {
+    queryWorksByAuthor(req, res);
 };
 
 exports.showEditPage = function(req, res) {
