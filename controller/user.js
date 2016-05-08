@@ -227,6 +227,23 @@ exports.showUserPage = function(req, res) {
     });
 };
 
+exports.showWorkListPage = function(req, res) {
+    var username = req.params.username;
+    mongoose.model('User').find({ 'username' : username }, function(err, users) {
+        if (err) {
+            console.log(err);
+        } else {
+            if (!users.length) {
+                res.send("sorry, user isn't exist");
+            } else {
+                res.render("artworks", {
+                    'username' : username
+                });
+            }
+        }
+    });
+}
+
 
 
 // 尝试使用http的delete方法，后来觉得没必要，直接用post就好
