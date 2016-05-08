@@ -18,7 +18,9 @@ var Artwork = React.createClass({
             createTime: '',
             lastModefied: '',
             mode: 'normal',
-            author: ''
+            author: '',
+            height: 0,
+            width: 0
         }
     },
     
@@ -47,12 +49,16 @@ var Artwork = React.createClass({
     },
 
     changeToEditMode: function() {
+        var img = this.refs.img;
         this.setState({
-            mode: 'editor'
+            mode: 'editor',
+            height: img.height,
+            width: img.width
         });
     },
 
     resetToNormal: function() {
+        if (this.state.mode == 'normal') return;
         this.setState({
             mode: 'normal'
         });
@@ -72,8 +78,12 @@ var Artwork = React.createClass({
                 cache: false,
                 contentType: false,
                 processData: false
-            }).done((function(msg) {
-                alert(msg);
+            }).done((function(obj) {
+                alert('Update success!');
+                console.log(obj);
+                this.setState({
+                    url: obj.url
+                });
                 this.resetToNormal(); 
             }).bind(this));
         }).bind(this);
@@ -120,7 +130,7 @@ var Artwork = React.createClass({
                     {this.state.mode == 'editor' ?
                     <ImageEditor width={1200} height={800} src={this.state.url} filterItems={filters} ref='editor' /> :
                     <div id="artwork-image-wrapper">
-                        <img src={this.state.url} alt='This is an image' ></img>
+                        <img src={this.state.url} alt='This is an image' ref='img'></img>
                     </div>
                     }
                 </div>

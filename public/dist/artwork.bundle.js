@@ -54,7 +54,7 @@
 	var ImageEditor = ed.editor,
 	    filters = ed.filters;
 
-	__webpack_require__(180);
+	__webpack_require__(182);
 
 	var Artwork = React.createClass({ displayName: "Artwork",
 
@@ -65,7 +65,9 @@
 	            createTime: '',
 	            lastModefied: '',
 	            mode: 'normal',
-	            author: ''
+	            author: '',
+	            height: 0,
+	            width: 0
 	        };
 	    },
 
@@ -93,12 +95,16 @@
 	    },
 
 	    changeToEditMode: function () {
+	        var img = this.refs.img;
 	        this.setState({
-	            mode: 'editor'
+	            mode: 'editor',
+	            height: img.height,
+	            width: img.width
 	        });
 	    },
 
 	    resetToNormal: function () {
+	        if (this.state.mode == 'normal') return;
 	        this.setState({
 	            mode: 'normal'
 	        });
@@ -118,8 +124,12 @@
 	                cache: false,
 	                contentType: false,
 	                processData: false
-	            }).done(function (msg) {
-	                alert(msg);
+	            }).done(function (obj) {
+	                alert('Update success!');
+	                console.log(obj);
+	                this.setState({
+	                    url: obj.url
+	                });
 	                this.resetToNormal();
 	            }.bind(this));
 	        }.bind(this);
@@ -127,7 +137,7 @@
 	    },
 
 	    render: function () {
-	        return React.createElement("div", { id: "artwork-detail" }, React.createElement("header", { className: "ui dividing header" }, React.createElement("h1", null, this.state.author, "/Artworks/", this.state.title)), React.createElement("div", { id: "artwork-status" }, React.createElement("div", { id: "artwork-info" }, React.createElement("p", null, "Last edited at ", React.createElement("span", null, this.state.lastModified))), React.createElement("div", { id: "artwork-process" }, React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic blue button" }, React.createElement("i", { className: "fork icon" }), "Forks"), React.createElement("a", { className: "ui basic left pointing blue label" }, "0")), React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic red button" }, React.createElement("i", { className: "fork icon" }), "Star"), React.createElement("a", { className: "ui basic left pointing red label" }, "0")), this.state.mode == 'normal' ? React.createElement("button", { onClick: this.changeToEditMode, className: "ui button green" }, "Edit") : React.createElement("button", { onClick: this.resetToNormal, className: "ui blue button" }, "View"), this.state.mode == 'editor' ? React.createElement("button", { onClick: this.handleSubmit, className: "ui button green" }, "Save") : React.createElement("div", null))), React.createElement("div", { id: "artwork-main" }, this.state.mode == 'editor' ? React.createElement(ImageEditor, { width: 1200, height: 800, src: this.state.url, filterItems: filters, ref: "editor" }) : React.createElement("div", { id: "artwork-image-wrapper" }, React.createElement("img", { src: this.state.url, alt: "This is an image" }))));
+	        return React.createElement("div", { id: "artwork-detail" }, React.createElement("header", { className: "ui dividing header" }, React.createElement("h1", null, this.state.author, "/Artworks/", this.state.title)), React.createElement("div", { id: "artwork-status" }, React.createElement("div", { id: "artwork-info" }, React.createElement("p", null, "Last edited at ", React.createElement("span", null, this.state.lastModified))), React.createElement("div", { id: "artwork-process" }, React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic blue button" }, React.createElement("i", { className: "fork icon" }), "Forks"), React.createElement("a", { className: "ui basic left pointing blue label" }, "0")), React.createElement("div", { className: "ui labeled button" }, React.createElement("div", { className: "ui basic red button" }, React.createElement("i", { className: "fork icon" }), "Star"), React.createElement("a", { className: "ui basic left pointing red label" }, "0")), this.state.mode == 'normal' ? React.createElement("button", { onClick: this.changeToEditMode, className: "ui button green" }, "Edit") : React.createElement("button", { onClick: this.resetToNormal, className: "ui blue button" }, "View"), this.state.mode == 'editor' ? React.createElement("button", { onClick: this.handleSubmit, className: "ui button green" }, "Save") : React.createElement("div", null))), React.createElement("div", { id: "artwork-main" }, this.state.mode == 'editor' ? React.createElement(ImageEditor, { width: 1200, height: 800, src: this.state.url, filterItems: filters, ref: "editor" }) : React.createElement("div", { id: "artwork-image-wrapper" }, React.createElement("img", { src: this.state.url, alt: "This is an image", ref: "img" }))));
 	    }
 	});
 
@@ -19792,7 +19802,6 @@
 	    },
 
 	    getData: function (callback) {
-	        var func = this.refs.canvas.getData;
 	        this.refs.canvas.getData(callback);
 	    },
 
@@ -23755,11 +23764,15 @@
 
 	var React = __webpack_require__(1);
 
+	__webpack_require__(180);
+
 	var EditorCanvas = React.createClass({ displayName: "EditorCanvas",
 
 	    getInitialState: function () {
 	        return {
-	            data: ''
+	            data: '',
+	            height: this.props.height,
+	            width: this.props.width
 	        };
 	    },
 
@@ -23770,8 +23783,19 @@
 	    },
 
 	    getData: function (callback) {
-	        var canvas = this.refs.canvas;
-	        var data = canvas.toDataURL('image/jpeg');
+	        var canvas = this.refs.canvas,
+	            context = canvas.getContext('2d');
+
+	        var w = this.props.image.width,
+	            h = this.props.image.height;
+
+	        var imgData = context.getImageData(this.left, this.top, w, h);
+	        var retCanvas = document.createElement('canvas');
+	        retCanvas.width = w;
+	        retCanvas.height = h;
+	        retCanvas.getContext('2d').putImageData(imgData, 0, 0);
+
+	        var data = retCanvas.toDataURL('image/jpeg');
 	        var arr = data.split(','),
 	            bin = atob(arr[1]);
 	        var buffer = new Uint8Array(bin.length);
@@ -23790,8 +23814,8 @@
 	    renderBackground: function () {
 	        var context = this.getContext();
 	        context.save();
-	        context.fillStyle = '#FFF';
-	        context.fillRect(0, 0, this.props.width, this.props.height);
+	        context.fillStyle = 'white';
+	        context.fillRect(0, 0, this.state.width, this.state.height);
 	    },
 
 	    renderImage: function () {
@@ -23799,12 +23823,24 @@
 	        var image = this.props.image;
 	        var that = this;
 	        image.onload = function (e) {
-	            var width = that.props.height * (image.width / image.height),
-	                height = that.props.height;
-	            var left = 0;
-	            if (width < that.props.width) left = (that.props.width - width) / 2;
-	            context.drawImage(image, left, 0, width, height);
-	            context.rect(left, 0, width, height);
+	            var w = image.width,
+	                h = image.height;
+	            if (h > that.state.height) {
+	                that.setState({
+	                    height: h
+	                });
+	            }
+	            if (w > that.state.width) {
+	                that.setState({
+	                    width: w
+	                });
+	            }
+	            var left = (that.state.width - w) / 2,
+	                top = (that.state.height - h) / 2;
+	            that.left = left;
+	            that.top = top;
+	            context.drawImage(image, left, top, w, h);
+	            context.rect(left, top, w, h);
 	            context.clip();
 	            context.save();
 	            if (that.first) {
@@ -23818,7 +23854,7 @@
 	    },
 
 	    render: function () {
-	        return React.createElement("canvas", { ref: "canvas", width: this.props.width, height: this.props.height });
+	        return React.createElement("canvas", { className: "editor-canvas", ref: "canvas", width: this.state.width, height: this.state.height });
 	    }
 
 	});
@@ -23841,6 +23877,46 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./editor_canvas.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./editor_canvas.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(165)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".editor-canvas {\n    border-top: solid 1px #000;\n    border-bottom: solid 1px #000;\n}\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(183);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(166)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
 			module.hot.accept("!!./../../node_modules/css-loader/index.js!./artworkDetail.css", function() {
 				var newContent = require("!!./../../node_modules/css-loader/index.js!./artworkDetail.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
@@ -23852,7 +23928,7 @@
 	}
 
 /***/ },
-/* 181 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();

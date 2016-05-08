@@ -47,7 +47,6 @@ var ImageEditor = React.createClass({
     },
 
     getData: function(callback) {
-        var func = this.refs.canvas.getData;
         this.refs.canvas.getData(callback);
     },
 
