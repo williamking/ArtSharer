@@ -115,7 +115,7 @@ var updateWork = function(req, res) {
                         console.log(err);
                     } else {
                         res.json({
-                            url : workModify.url
+                            'url' : works[0].url
                         });
                     }
                 });
