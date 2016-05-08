@@ -98,6 +98,7 @@ var updateWork = function(req, res) {
                 var workModify = {
                     'lastModified' : new Date()
                 }
+                var new_url = works[0].url;
                 if (req.body.tag) {
                     var tags = req.body.tag.split(',');
                     workModify.tags = tags;
@@ -105,6 +106,7 @@ var updateWork = function(req, res) {
                 if (req.file) {
                     // var filepath = "public/imgs/" + req.file.filename;
                     workModify.url = "/imgs/" + req.file.filename;
+                    new_url = "/imgs/" + req.file.filename;
                     var filepath = "public" + works[0].url;
                     fs.unlink(filepath, function() {});
                 }
@@ -115,7 +117,7 @@ var updateWork = function(req, res) {
                         console.log(err);
                     } else {
                         res.json({
-                            'url' : works[0].url
+                            'url' : new_url
                         });
                     }
                 });
