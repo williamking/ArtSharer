@@ -51,7 +51,7 @@
 	var React = __webpack_require__(1);
 	var ReactDom = __webpack_require__(158);
 
-	__webpack_require__(184);
+	__webpack_require__(186);
 
 	var ArtInfo = React.createClass({ displayName: "ArtInfo",
 
@@ -20042,13 +20042,15 @@
 /* 181 */,
 /* 182 */,
 /* 183 */,
-/* 184 */
+/* 184 */,
+/* 185 */,
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(185);
+	var content = __webpack_require__(187);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20068,7 +20070,7 @@
 	}
 
 /***/ },
-/* 185 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();

@@ -118,7 +118,13 @@
 	                return function () {
 	                    that.restoreState();
 	                };
-	            }(that)
+	            }(that),
+	            'arrow-rotate-left': function () {
+	                this.rotateLeft();
+	            }.bind(this),
+	            'arrow-rotate-right': function () {
+	                this.rotateRight();
+	            }.bind(this)
 	        };
 
 	        return React.createElement("div", { className: "image-editor", style: divStyle }, React.createElement(EditorMenu, { width: surfaceWidth, height: surfaceHeight * 0.05, events: this.editEvents, setInput: this.setInput,
@@ -646,6 +652,14 @@
 	        context.beginPath();
 	        context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
 	        context.restore();
+	    },
+
+	    rotateLeft: function () {
+	        var context = this.canvas.getContext('2d');
+	        this.saveState();
+	        var w = this.state.image.width,
+	            h = this.state.image.height;
+	        var data = context.getImageData(this.left, this.top, w, h);
 	    },
 
 	    updateRubberBand: function (loc, dash, stretch) {
@@ -23178,7 +23192,9 @@
 	        pen: '/imgs/editor-icons/iconfont-pen',
 	        eraser: '/imgs/editor-icons/iconfont-eraser',
 	        text: '/imgs/editor-icons/iconfont-text',
-	        select: '/imgs/editor-icons/iconfont-select'
+	        select: '/imgs/editor-icons/iconfont-select',
+	        rotateLeft: '/imgs/editor-icons/arrow-rotate-left',
+	        rotateRight: '/imgs/editor-icons/arrow-rotate-right'
 	    },
 
 	    getInitialState: function () {
@@ -23188,7 +23204,7 @@
 	    },
 
 	    render: function () {
-	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { tool: this.props.tool, editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange,
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(ImageButton, { size: this.props.height, name: "arrow-rotate-left" }), React.createElement(ImageButton, { size: this.props.height, name: "arrow-ratate-right" }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { tool: this.props.tool, editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange,
 	            textColorListener: this.props.textColorListener, updatePenState: this.props.updatePenState,
 	            updateEraserState: this.props.updateEraserState }));
 	    },

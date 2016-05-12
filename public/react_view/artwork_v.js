@@ -5,6 +5,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ed = require('../components/editor.js');
+var moment = require('moment');
 var ImageEditor = ed.editor, filters = ed.filters;
 
 require('../css/artworkDetail.css');
@@ -42,7 +43,7 @@ var Artwork = React.createClass({
                title: data[0].workTitle,
                url: data[0].url,
                createTime: data[0].workCreateTime,
-               lastModified: data[0].lastModified,
+               lastModified: moment(data[0].lastModified).format('YYYY-MM-DD h:mm:ss'),
                author: data[0].author || 'unknown'
             });
         }).bind(this));
@@ -91,14 +92,19 @@ var Artwork = React.createClass({
     },
 
     render: function() {
+        var listUrl = '/user/' + this.state.author + '/worklist';
         return(
             <div id="artwork-detail">
-                <header className="ui dividing header">
-                    <h1>{this.state.author}/Artworks/{this.state.title}</h1>
+                <header className="ui header breadcrumb">
+                    <a className="section" href="#">{username}</a>
+                    <div className="divider"> / </div>
+                    <a className="section" href={listUrl}>Artworks</a>
+                    <div className="divider"> / </div>
+                    <a className="section">{this.state.title}</a>
                 </header>
                 <div id="artwork-status">
                     <div id="artwork-info">
-                        <p>Last edited at <span>{this.state.lastModified}</span></p>
+                        <p>Last edited at <strong>{this.state.lastModified}</strong></p>
                     </div>
                     <div id="artwork-process">
                         <div className="ui labeled button">

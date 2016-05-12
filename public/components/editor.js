@@ -73,7 +73,13 @@ var ImageEditor = React.createClass({
                 return function() {
                     that.restoreState();
                 }
-            }(that)
+            }(that),
+            'arrow-rotate-left': (function() {
+                this.rotateLeft();
+            }).bind(this),
+            'arrow-rotate-right': (function() {
+                this.rotateRight();
+            }).bind(this)
         };
 
         return (
@@ -617,6 +623,13 @@ var ImageEditor = React.createClass({
         context.beginPath();
         context.strokeRect(rubberBand.left, rubberBand.top, rubberBand.width, rubberBand.height);
         context.restore();
+    },
+
+    rotateLeft: function() {
+        var context = this.canvas.getContext('2d');
+        this.saveState();
+        var w = this.state.image.width, h = this.state.image.height;
+        var data = context.getImageData(this.left, this.top, w, h);
     },
 
     updateRubberBand: function(loc, dash, stretch) {

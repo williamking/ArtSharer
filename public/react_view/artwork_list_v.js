@@ -5,6 +5,8 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
+require('../css/artwork_list.css');
+
 var ArtworkList = React.createClass({
     getInitialState: function() {
         return {
@@ -18,8 +20,8 @@ var ArtworkList = React.createClass({
         var url = '/handle_artwork_query_with_username';
         var queryForm = new FormData();
         queryForm.append('author', username);
-        queryForm.append('startFrom', 1);
-        queryForm.append('endAt', 5);
+        queryForm.append('startFrom', (this.state.page - 1) * 10 + 1);
+        queryForm.append('endAt', (this.state.page - 1) * 10 + 10);
         this.serverRequest = $.ajax({
             url: url,
             method: 'POST',
@@ -28,7 +30,6 @@ var ArtworkList = React.createClass({
             processData: false
         })
         .done((function(list) {
-            console.log(list);
             this.setState ({
                 list: list
             });
@@ -47,13 +48,17 @@ var ArtworkList = React.createClass({
         this.setState({
             currentPage: num
         });
+        this.getPage();
     },
 
     render: function() {
+        var listUrl = '/user/' + username + '/worklist';
         return (
             <div id="artwork-list-page">
-                <header className="uio dividing header">
-                    <h1>{username}/Artworks</h1>
+                <header className="ui header breadcrumb">
+                    <a className="section" href="#">{username}</a>
+                    <div className="divider"> / </div>
+                    <a className="section" href={listUrl}>Artworks</a>
                 </header>
                 <ArtworkPage list={this.state.list} />
                 <PageNav num={this.state.pages} active={this.state.currentPage} handleChange={this.changePage} />
@@ -63,20 +68,20 @@ var ArtworkList = React.createClass({
 });
             
 var ArtworkPage = React.createClass({
-
     render: function() {
         var items = this.props.list.map(function(item, key) {
+            var url = '/user/' + username + '/' + item.workTitle;
             return (
                 <div className="item" key={key}>
                     <div className="content">
-                        <a className="header">{item.title}</a>
-                        <div className="description">Created at {item.created}</div>
+                        <a className="header" href={url} >{item.workTitle}</a>
+                        <div className="description">Created at {item.creatTime}</div>
                     </div>
                 </div>
             );
         });
         return (
-            <div className="artwork-page">
+            <div className="artwork-page ui relaxed divided list">
                 {items}
             </div>
         );
@@ -91,13 +96,13 @@ var PageNav = React.createClass({
         }).bind(this);
         if (active) {
             return (
-                <a className="active item" key={number}>
+                <a className="disable item" key={number}>
                 {number}
                 </a>
             );
         } else {
             return (
-                <a className="item" onClick={callback} key={number}>
+                <a className="item page-item" onClick={callback} key={number}>
                 {number}
                 </a>
             );
@@ -112,8 +117,10 @@ var PageNav = React.createClass({
             items.push(this.produce(i, active));
         }
         return (
-            <div className="ui pagination menu">
-                {items}
+            <div id="pagination-wrapper">
+                <div className="ui pagination menu center aligned middle grid" id="page-nav">
+                    {items}
+                </div>
             </div>
         );
     }
