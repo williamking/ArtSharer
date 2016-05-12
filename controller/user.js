@@ -227,6 +227,7 @@ exports.showUserPage = function(req, res) {
     });
 };
 
+//渲染个人作品列表页
 exports.showWorkListPage = function(req, res) {
     var username = req.params.username;
     mongoose.model('User').find({ 'username' : username }, function(err, users) {
@@ -236,8 +237,16 @@ exports.showWorkListPage = function(req, res) {
             if (!users.length) {
                 res.send("sorry, user isn't exist");
             } else {
-                res.render("artworks", {
-                    'username' : username
+                mongoose.model('ArtWork').find({ 'author' : username }, function(err, works) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        var count = works.length;
+                        res.render("artworks", {
+                            'username' : username,
+                            'workCount' : count
+                        });
+                    }
                 });
             }
         }
