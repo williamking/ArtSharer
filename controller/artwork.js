@@ -150,6 +150,7 @@ var queryWorks = function(req, res) {
     });
 };
 
+//根据作者名和区间，返回作品数组，通过创建时间由近到远排列
 var queryWorksByAuthor = function(req, res) {
     var author = req.body.author;
     var startFrom = req.body.startFrom;
@@ -160,12 +161,18 @@ var queryWorksByAuthor = function(req, res) {
         if (!artWorks.length) {
             res.send("sorry, can't find works of this user");
         } else {
-            if (endAt > artWorks.length) {
+            if (startFrom >= artWorks.length || endAt < 0) {
                 res.json([]);
             } else {
                 artWorks.sort(function(x, y) {
                     return x.createTime < y.createTime;
                 });
+                if (endAt >= artWorks.length) {
+                    endAt = artWorks.length;
+                }
+                if (startFrom <= 0) {
+                    startFrom = 1;
+                }
                 res.json(artWorks.slice(startFrom-1, endAt));
             }
         }
