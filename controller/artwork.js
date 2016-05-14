@@ -161,7 +161,7 @@ var queryWorksByAuthor = function(req, res) {
         if (!artWorks.length) {
             res.send("sorry, can't find works of this user");
         } else {
-            if (startFrom >= artWorks.length || endAt < 0) {
+            if (startFrom > artWorks.length || endAt < 0) {
                 res.json([]);
             } else {
                 artWorks.sort(function(x, y) {

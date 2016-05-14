@@ -419,6 +419,7 @@ var ImageEditor = React.createClass({
 
     setPenState: function(name, value) {
         this.drawingState[name] = value;
+        console.log(name + ' update');
     },
 
     drawPen: function(loc) {
@@ -537,6 +538,7 @@ var ImageEditor = React.createClass({
         var context = that.canvas.getContext('2d');
         context.save();
         context.fillStyle = that.textState.textColor;
+        console.log(that.textState.textColor);
         context.textBaseline = 'hanging';
         context.fillText(text, that.textState.pos.x, that.textState.pos.y);
         context.restore();
@@ -640,45 +642,25 @@ var ImageEditor = React.createClass({
                 resultData.data[index + 3] = 255;
             }
         }
+        //for (var i = 0; i < 3; ++i) {
+        //    resultData.data[i] = data.data[i];
+       // }
+        //for (var i = 0; i < data.data.length - 4; i += 4) {
+        //    resultData.data[i] = data.data[i];
+        //    resultData.data[i + 1] = data.data[i + 1];
+        //    resultData.data[i + 2] = data.data[i + 2];
+        //    resultData.data[i + 3] = 255;
+        //}
 
         var resultImage = new Image(), retCanvas = document.createElement('canvas');
         retCanvas.width = h;
         retCanvas.height = w;
         retCanvas.getContext('2d').putImageData(resultData, 0, 0);
+        //context.putImageData(data, 0, 0);
         resultImage.src = retCanvas.toDataURL();
         this.setState({
             image: resultImage
         });
-        this.saveState();
-    },
-
-    rotateRight: function() {
-        var context = this.canvas.getContext('2d');
-        this.saveState();
-        var w = this.state.image.width, h = this.state.image.height;
-        var left = this.refs.canvas.left, top = this.refs.canvas.top;
-        var data = context.getImageData(left, top, w, h);
-        var resultData = context.createImageData(data.height, data.width);
-        for (var i = 0; i < data.width; ++i) {
-            for (var j = 0; j < data.height; ++j) {
-                var x = i, y = data.height - 1 - j, index = (i * data.height + j) * 4;
-                var index2 = (y * data.width + x) * 4; 
-                resultData.data[index] = data.data[index2];
-                resultData.data[index + 1] = data.data[index2 + 1];
-                resultData.data[index + 2] = data.data[index2 + 2];
-                resultData.data[index + 3] = 255;
-            }
-        }
-
-        var resultImage = new Image(), retCanvas = document.createElement('canvas');
-        retCanvas.width = h;
-        retCanvas.height = w;
-        retCanvas.getContext('2d').putImageData(resultData, 0, 0);
-        resultImage.src = retCanvas.toDataURL();
-        this.setState({
-            image: resultImage
-        });
-        this.saveState();
     },
 
     updateRubberBand: function(loc, dash, stretch) {

@@ -96,11 +96,13 @@ var Artwork = React.createClass({
         return(
             <div id="artwork-detail">
                 <header className="ui header breadcrumb">
+                    <h1>
                     <a className="section" href="#">{username}</a>
                     <div className="divider"> / </div>
                     <a className="section" href={listUrl}>Artworks</a>
                     <div className="divider"> / </div>
                     <a className="section">{this.state.title}</a>
+                    </h1>
                 </header>
                 <div id="artwork-status">
                     <div id="artwork-info">

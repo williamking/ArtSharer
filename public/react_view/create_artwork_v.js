@@ -22,8 +22,6 @@ var ArtInfo = React.createClass({
         var st = {};
         st[name] = e.target.value;
         this.setState(st);
-        console.log(this.state);
-        console.log('change');
     },
 
     handleSubmit: function(e) {

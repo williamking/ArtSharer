@@ -450,7 +450,6 @@
 
 	    setPenState: function (name, value) {
 	        this.drawingState[name] = value;
-	        console.log(name + ' update');
 	    },
 
 	    drawPen: function (loc) {
@@ -569,7 +568,6 @@
 	        var context = that.canvas.getContext('2d');
 	        context.save();
 	        context.fillStyle = that.textState.textColor;
-	        console.log(that.textState.textColor);
 	        context.textBaseline = 'hanging';
 	        context.fillText(text, that.textState.pos.x, that.textState.pos.y);
 	        context.restore();
@@ -659,7 +657,67 @@
 	        this.saveState();
 	        var w = this.state.image.width,
 	            h = this.state.image.height;
-	        var data = context.getImageData(this.left, this.top, w, h);
+	        var left = this.refs.canvas.left,
+	            top = this.refs.canvas.top;
+	        var data = context.getImageData(left, top, w, h);
+	        var resultData = context.createImageData(data.height, data.width);
+	        for (var i = 0; i < data.width; ++i) {
+	            for (var j = 0; j < data.height; ++j) {
+	                var x = data.width - i - 1,
+	                    y = j,
+	                    index = (i * data.height + j) * 4;
+	                var index2 = (y * data.width + x) * 4;
+	                resultData.data[index] = data.data[index2];
+	                resultData.data[index + 1] = data.data[index2 + 1];
+	                resultData.data[index + 2] = data.data[index2 + 2];
+	                resultData.data[index + 3] = 255;
+	            }
+	        }
+
+	        var resultImage = new Image(),
+	            retCanvas = document.createElement('canvas');
+	        retCanvas.width = h;
+	        retCanvas.height = w;
+	        retCanvas.getContext('2d').putImageData(resultData, 0, 0);
+	        resultImage.src = retCanvas.toDataURL();
+	        this.setState({
+	            image: resultImage
+	        });
+	        this.saveState();
+	    },
+
+	    rotateRight: function () {
+	        var context = this.canvas.getContext('2d');
+	        this.saveState();
+	        var w = this.state.image.width,
+	            h = this.state.image.height;
+	        var left = this.refs.canvas.left,
+	            top = this.refs.canvas.top;
+	        var data = context.getImageData(left, top, w, h);
+	        var resultData = context.createImageData(data.height, data.width);
+	        for (var i = 0; i < data.width; ++i) {
+	            for (var j = 0; j < data.height; ++j) {
+	                var x = i,
+	                    y = data.height - 1 - j,
+	                    index = (i * data.height + j) * 4;
+	                var index2 = (y * data.width + x) * 4;
+	                resultData.data[index] = data.data[index2];
+	                resultData.data[index + 1] = data.data[index2 + 1];
+	                resultData.data[index + 2] = data.data[index2 + 2];
+	                resultData.data[index + 3] = 255;
+	            }
+	        }
+
+	        var resultImage = new Image(),
+	            retCanvas = document.createElement('canvas');
+	        retCanvas.width = h;
+	        retCanvas.height = w;
+	        retCanvas.getContext('2d').putImageData(resultData, 0, 0);
+	        resultImage.src = retCanvas.toDataURL();
+	        this.setState({
+	            image: resultImage
+	        });
+	        this.saveState();
 	    },
 
 	    updateRubberBand: function (loc, dash, stretch) {
@@ -23204,7 +23262,7 @@
 	    },
 
 	    render: function () {
-	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(ImageButton, { size: this.props.height, name: "arrow-rotate-left" }), React.createElement(ImageButton, { size: this.props.height, name: "arrow-ratate-right" }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { tool: this.props.tool, editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange,
+	        return React.createElement("div", { width: this.props.width, height: this.props.height, left: 0, top: 0, className: "editor-menu" }, React.createElement("div", { className: "buttons" }, React.createElement(ImageButton, { size: this.props.height, name: "pen", handleClick: this.props.handleClick['pen'] }), React.createElement(ImageButton, { size: this.props.height, name: "eraser", handleClick: this.props.handleClick['eraser'] }), React.createElement(ImageButton, { size: this.props.height, name: "text", handleClick: this.props.handleClick['text'] }), React.createElement(ImageButton, { size: this.props.height, name: "jietu", handleClick: this.props.handleClick['select'] }), React.createElement(ImageButton, { size: this.props.height, name: "huitui", handleClick: this.props.handleClick['turnback'] }), React.createElement(ImageButton, { size: this.props.height, name: "arrow-rotate-left", handleClick: this.props.handleClick['arrow-rotate-left'] }), React.createElement(ImageButton, { size: this.props.height, name: "arrow-ratate-right", handleClick: this.props.handleClick['arrow-rotate-right'] }), React.createElement(FilterMenu, { filterItems: this.props.filterItems, handleImageFilter: this.props.handleImageFilter })), React.createElement(ButtonState, { tool: this.props.tool, editor: this.props.editor, updateTextState: this.props.updateTextState, handleTextChange: this.props.handleTextChange,
 	            textColorListener: this.props.textColorListener, updatePenState: this.props.updatePenState,
 	            updateEraserState: this.props.updateEraserState }));
 	    },
@@ -23687,6 +23745,11 @@
 	        };
 	    },
 
+	    clearAll: function () {
+	        var canvas = this.refs.canvas;
+	        this.getContext().clearRect(0, 0, canvas.width, canvas.height);
+	    },
+
 	    componentDidMount: function () {
 	        this.renderBackground();
 	        this.first = true;
@@ -23719,6 +23782,7 @@
 	    componentDidUpdate: function () {
 	        var image = this.props.image;
 	        this.first = false;
+	        this.clearAll();
 	        this.renderImage();
 	    },
 

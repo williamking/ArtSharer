@@ -29,8 +29,8 @@ var EditorMenu = React.createClass({
                     <ImageButton size={this.props.height} name='text' handleClick={this.props.handleClick['text']} />
                     <ImageButton size={this.props.height} name='jietu' handleClick={this.props.handleClick['select']} />
                     <ImageButton size={this.props.height} name='huitui' handleClick={this.props.handleClick['turnback']}/>
-                    <ImageButton size={this.props.height} name='arrow-rotate-left' />
-                    <ImageButton size={this.props.height} name='arrow-ratate-right' />
+                    <ImageButton size={this.props.height} name='arrow-rotate-left' handleClick={this.props.handleClick['arrow-rotate-left']}/>
+                    <ImageButton size={this.props.height} name='arrow-ratate-right' handleClick={this.props.handleClick['arrow-rotate-right']}/>
                     <FilterMenu filterItems={this.props.filterItems} handleImageFilter={this.props.handleImageFilter} />
                 </div>
                 <ButtonState tool={this.props.tool} editor={this.props.editor} updateTextState={this.props.updateTextState} handleTextChange={this.props.handleTextChange}
