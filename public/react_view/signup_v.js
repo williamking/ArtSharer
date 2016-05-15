@@ -114,6 +114,20 @@ var DescriptionField = React.createClass({
     }
 });
 
+var Modal = React.createClass({
+    render: function() {
+        return (
+            <div id={this.props.id} className="ui small modal">
+                <i className="close icon"/>
+                <div className="header">{this.props.title}</div>
+                <div className="actions">
+                    <div className="ui positive button">OK</div>
+                </div>
+            </div>
+        );
+    }
+});
+
 var SignUpView = React.createClass({
     getInitialState: function() {
         return {
@@ -171,7 +185,7 @@ var SignUpView = React.createClass({
         });
     },
     handleSubmit: function(event) {
-        console.log(event);
+        //console.log(event);
         event.preventDefault();
         if (!event.isDefaultPrevented()) {
             event.preventDefault();
@@ -212,17 +226,20 @@ var SignUpView = React.createClass({
                     email: email,
                     description: description
                 },
-                success: function(data) {
-                    if (data == "OK") {
+                success: function(html, success, xhr) {
+                    //console.log(arguments);
+                    if (xhr.status == 200 && xhr.readyState == 4) {
                         console.log("Sign Up Success!");
+                        $("#success-modal").modal("show");
                         $(".ui.blue.button").removeClass("disabled loading");
                     } else {
                         console.log("Error");
                     }
                 },
                 error: function(xhr) {
-                    console.log(xhr);
-                    alert(xhr.status + ": " + xhr.responseText);
+                    // console.log(xhr);
+                    // alert(xhr.status + ": " + xhr.responseText);
+                    $("#fail-modal").modal("show");
                     $(".ui.blue.button").removeClass("disabled loading");
                 }
             });
@@ -247,6 +264,10 @@ var SignUpView = React.createClass({
                         </ul>
                     </div>
                 </form>
+
+                <Modal id="success-modal" title="Sign Up Success!" />
+
+                <Modal id="fail-modal" title="User Already Exist!" />
             </div>
         );
     }

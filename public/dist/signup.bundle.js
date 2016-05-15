@@ -128,6 +128,12 @@
 	    }
 	});
 
+	var Modal = React.createClass({ displayName: "Modal",
+	    render: function () {
+	        return React.createElement("div", { id: this.props.id, className: "ui small modal" }, React.createElement("i", { className: "close icon" }), React.createElement("div", { className: "header" }, this.props.title), React.createElement("div", { className: "actions" }, React.createElement("div", { className: "ui positive button" }, "OK")));
+	    }
+	});
+
 	var SignUpView = React.createClass({ displayName: "SignUpView",
 	    getInitialState: function () {
 	        return {
@@ -175,7 +181,7 @@
 	        });
 	    },
 	    handleSubmit: function (event) {
-	        console.log(event);
+	        //console.log(event);
 	        event.preventDefault();
 	        if (!event.isDefaultPrevented()) {
 	            event.preventDefault();
@@ -216,24 +222,27 @@
 	                    email: email,
 	                    description: description
 	                },
-	                success: function (data) {
-	                    if (data == "OK") {
+	                success: function (html, success, xhr) {
+	                    //console.log(arguments);
+	                    if (xhr.status == 200 && xhr.readyState == 4) {
 	                        console.log("Sign Up Success!");
+	                        $("#success-modal").modal("show");
 	                        $(".ui.blue.button").removeClass("disabled loading");
 	                    } else {
 	                        console.log("Error");
 	                    }
 	                },
 	                error: function (xhr) {
-	                    console.log(xhr);
-	                    alert(xhr.status + ": " + xhr.responseText);
+	                    // console.log(xhr);
+	                    // alert(xhr.status + ": " + xhr.responseText);
+	                    $("#fail-modal").modal("show");
 	                    $(".ui.blue.button").removeClass("disabled loading");
 	                }
 	            });
 	        }
 	    },
 	    render: function () {
-	        return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Create Your Account" }), React.createElement("form", { id: "form", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(EmailField, null), React.createElement(UsernameField, null), React.createElement(PasswordField, null), React.createElement(DescriptionField, null), React.createElement("div", { className: "ui fluid large blue button" + this.state.btnState, onClick: this.handleSubmit }, "Sign Up")), React.createElement("div", { className: "" }, React.createElement("ul", { className: "list" }))));
+	        return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Create Your Account" }), React.createElement("form", { id: "form", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(EmailField, null), React.createElement(UsernameField, null), React.createElement(PasswordField, null), React.createElement(DescriptionField, null), React.createElement("div", { className: "ui fluid large blue button" + this.state.btnState, onClick: this.handleSubmit }, "Sign Up")), React.createElement("div", { className: "" }, React.createElement("ul", { className: "list" }))), React.createElement(Modal, { id: "success-modal", title: "Sign Up Success!" }), React.createElement(Modal, { id: "fail-modal", title: "User Already Exist!" }));
 	    }
 	});
 
@@ -20327,7 +20336,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
+	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n  margin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
 
 	// exports
 

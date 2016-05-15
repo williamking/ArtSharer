@@ -3,3 +3,34 @@
     margin-bottom: 40px;
     padding: 10px;
 }
+
+#extra_content {
+    margin: 0;
+    padding: 10px;
+    position: relative;
+}
+
+#star_btn:hover {
+    cursor: pointer;
+    background: #d5c325;
+    color: #ffffff;
+}
+
+#fork_btn:hover {
+    cursor: pointer;
+    background: #0087ba;
+    color: #ffffff;
+}
+
+#sff_list {
+    border-radius: 10px;
+    border: solid 2px #dddddd;
+    padding: 10px;
+}
+#sff_list .item {
+    cursor: pointer;
+}
+
+#sff_list .item:hover {
+    background: #dddddd;
+}

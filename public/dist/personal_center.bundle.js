@@ -47,7 +47,6 @@
 	/**
 	 * Created by zhoujihao on 16-3-21.
 	 */
-	"use strict";
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
@@ -56,13 +55,13 @@
 
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
-	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("h2", { className: "ui header" }, React.createElement("div", { className: "content" }, username)), React.createElement("hr", null), React.createElement("div", { className: "ui relaxed ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "user_name@qq.com"))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { className: "ui two column grid" }, React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "20 Followers")), React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "34 Following"))));
+	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("h2", { className: "ui header" }, React.createElement("div", { className: "content" }, username)), React.createElement("hr", null), React.createElement("div", { className: "ui relaxed ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", { href: "mailto:" + email }, email))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { id: "sff_list", className: "ui middle aligned animated relaxed divided list" }, React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#mystars", className: "header" }, "My Stars"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollower", className: "header" }, "My Follower"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollowing", className: "header" }, "My Following")))));
 	    }
 	});
 
 	var ArtworkItem = React.createClass({ displayName: "ArtworkItem",
 	    render: function () {
-	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "image" }, React.createElement("img", { className: "ui bordered rounded centered image", src: "/imgs/avatar.gif" })), React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, "My Artwork"), React.createElement("div", { className: "description" }, "Artwork Description Here")), React.createElement("div", { className: "extra content" }, React.createElement("span", { className: "left floated" }, React.createElement("span", { className: "ui label" }, "20"), React.createElement("i", { className: "star icon" }), React.createElement("a", null, "Star")), React.createElement("span", { className: "right floated" }, React.createElement("span", { className: "ui label" }, "15"), React.createElement("i", { className: "fork icon" }), React.createElement("a", null, "Fork"))));
+	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, "My Artwork"), React.createElement("div", { className: "description" }, "Artwork Description Here")), React.createElement("div", { id: "extra_content", className: "extra content" }, React.createElement("div", { className: "left floated" }, React.createElement("div", { className: "ui label" }, React.createElement("i", { className: "star icon" }), "20"), React.createElement("div", { id: "star_btn", className: "ui basic label" }, "Star")), React.createElement("div", { className: "right floated" }, React.createElement("span", { className: "ui label" }, React.createElement("i", { className: "fork icon" }), "15"), React.createElement("div", { id: "fork_btn", className: "sf_btn ui basic label" }, "Fork"))));
 	    }
 	});
 
@@ -72,9 +71,31 @@
 	    }
 	});
 
+	var MyStarsPanel = React.createClass({ displayName: "MyStarsPanel",
+	    render: function () {
+	        return React.createElement("div", { id: "mystars", className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Stars"), React.createElement("table", { className: "ui celled table" }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Artwork Name"), React.createElement("th", null, "Author"), React.createElement("th", null, "Public Time"), React.createElement("th", null, "Category"), React.createElement("th", null, "And so on"))), React.createElement("tbody", null, React.createElement("tr", null), React.createElement("tr", null), React.createElement("tr", null))));
+	    }
+	});
+
+	var MyFollowerPanel = React.createClass({ displayName: "MyFollowerPanel",
+	    render: function () {
+	        return React.createElement("div", { id: "myfollower", className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Follower"));
+	    }
+	});
+
+	var MyFollowingPanel = React.createClass({ displayName: "MyFollowingPanel",
+	    render: function () {
+	        return React.createElement("div", { id: "myfollowing", className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Following"));
+	    }
+	});
+
+	var PersonalCenter = React.createClass({ displayName: "PersonalCenter",
+	    render: function () {
+	        return React.createElement("div", { className: "ui grid" }, React.createElement("div", { className: "four wide column" }, React.createElement(UserInfo, null)), React.createElement("div", { className: "twelve wide column" }, React.createElement(ArtworkPanel, null), React.createElement(MyStarsPanel, null), React.createElement(MyFollowerPanel, null), React.createElement(MyFollowingPanel, null)));
+	    }
+	});
 	$(function () {
-	    ReactDOM.render(React.createElement(UserInfo, null), $("#left-side")[0], null);
-	    ReactDOM.render(React.createElement(ArtworkPanel, null), $("#right-side")[0], null);
+	    ReactDOM.render(React.createElement(PersonalCenter, null), $("#wrapper")[0], null);
 	});
 
 /***/ },
@@ -20160,7 +20181,7 @@
 
 
 	// module
-	exports.push([module.id, "#wrapper {\n    margin-top: 70px;\n    margin-bottom: 40px;\n    padding: 10px;\n}", ""]);
+	exports.push([module.id, "#wrapper {\n    margin-top: 70px;\n    margin-bottom: 40px;\n    padding: 10px;\n}\n\n#extra_content {\n    margin: 0;\n    padding: 10px;\n    position: relative;\n}\n\n#star_btn:hover {\n    cursor: pointer;\n    background: #d5c325;\n    color: #ffffff;\n}\n\n#fork_btn:hover {\n    cursor: pointer;\n    background: #0087ba;\n    color: #ffffff;\n}\n\n#sff_list {\n    border-radius: 10px;\n    border: solid 2px #dddddd;\n    padding: 10px;\n}\n#sff_list .item {\n    cursor: pointer;\n}\n\n#sff_list .item:hover {\n    background: #dddddd;\n}", ""]);
 
 	// exports
 

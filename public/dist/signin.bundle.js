@@ -68,6 +68,12 @@
 		}
 	});
 
+	var Modal = React.createClass({ displayName: "Modal",
+		render: function () {
+			return React.createElement("div", { id: this.props.id, className: "ui small modal" }, React.createElement("i", { className: "close icon" }), React.createElement("div", { className: "header" }, this.props.title), React.createElement("div", { className: "actions" }, React.createElement("div", { className: "ui positive button" }, "OK")));
+		}
+	});
+
 	var SignInView = React.createClass({ displayName: "SignInView",
 		getInitialState: function () {
 			return {
@@ -75,6 +81,9 @@
 			};
 		},
 		componentDidMount: function () {
+			if (res_text == "LogIn Failed!") {
+				$("#page-modal").modal("show");
+			}
 			$('#form').form({
 				fields: {
 					username: {
@@ -101,7 +110,7 @@
 			}
 		},
 		render: function () {
-			return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Sign In To Your Account" }), React.createElement("form", { id: "form", method: "POST", action: "/handle_login", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(UserNameField, null), React.createElement(PasswordField, null), React.createElement("div", { className: "ui fluid large blue submit button" + this.state.btnState, onClick: this.handleSubmit }, "Sign In")), React.createElement("div", { className: "ui error message" }, React.createElement("ul", { className: "list" }))), React.createElement("div", { className: "ui message" }, "New to us? ", React.createElement("a", { href: "/signup" }, "Sign Up")));
+			return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Sign In To Your Account" }), React.createElement("form", { id: "form", method: "POST", action: "/handle_login", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(UserNameField, null), React.createElement(PasswordField, null), React.createElement("div", { className: "ui fluid large blue submit button" + this.state.btnState, onClick: this.handleSubmit }, "Sign In")), React.createElement("div", { className: "ui error message" }, React.createElement("ul", { className: "list" }))), React.createElement("div", { className: "ui message" }, "New to us? ", React.createElement("a", { href: "/signup" }, "Sign Up")), React.createElement(Modal, { id: "page-modal", title: "Log In Failed!" }));
 		}
 	});
 
@@ -20194,7 +20203,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
+	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n  margin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
 
 	// exports
 
