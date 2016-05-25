@@ -10,14 +10,16 @@ require("../css/personal_center.css");
 var UserInfo = React.createClass({
     render:function() {
         return (
-            <div className="ui piled segment">
-
-                <img className="ui bordered fluid rounded centered image" src="/imgs/avatar.gif" alt="user avatar"/>
-                <h2 className="ui header">
-                    <div className="content">{username}</div>
-                </h2>
+            <div className="ui segment" id="user-info">
+                <div id="first-part">
+                    <h2 className="ui header">
+                        <img id="avatar" src="/imgs/avatar.gif" alt="user avatar"/>
+                        <div className="content">{username}</div>
+                        <div id="description">{'\"' + descript + '\"'}</div>
+                    </h2>
+                </div>
                 <hr/>
-                <div className="ui relaxed ul list">
+                <div className="ui horizontal list">
                     <div className="item">
                         <i className="marker icon"/>
                         <div className="content">GuangZhou China</div>
@@ -32,20 +34,21 @@ var UserInfo = React.createClass({
                     </div>
                 </div>
                 <hr/>
-                <div id="sff_list" className="ui middle aligned animated relaxed divided list">
+                <div id="sff-list" className="ui horizontal list">
+
                     <div className="item">
                         <div className="content">
-                            <a href="#mystars" className="header">My Stars</a>
+                            <a href="#mystars">My Stars</a>
                         </div>
                     </div>
                     <div className="item">
                         <div className="content">
-                            <a href="#myfollower" className="header">My Follower</a>
+                            <a href="#myfollower">My Follower</a>
                         </div>
                     </div>
                     <div className="item">
                         <div className="content">
-                            <a href="#myfollowing" className="header">My Following</a>
+                            <a href="#myfollowing">My Following</a>
                         </div>
                     </div>
                 </div>
@@ -59,8 +62,11 @@ var ArtworkItem = React.createClass({
         return (
             <div className="card">
                 <div className="content">
-                    <a className="header">My Artwork</a>
-                    <div className="description">Artwork Description Here</div>
+                    <a className="header">{this.props.title}</a>
+                    <div className="description">
+                        <p>Artwork Description Here</p>
+                        <p className="author">Created By <span>{this.props.author}</span></p>
+                    </div>
                 </div>
                 <div id="extra_content" className="extra content">
                     <div className="left floated">
@@ -69,7 +75,7 @@ var ArtworkItem = React.createClass({
                             Star
                         </div>
                     </div>
-                    <div className="right floated">
+                    <div className="left floated">
                         <span className="ui label"><i className="fork icon"/>15</span>
                         <div id="fork_btn" className="sf_btn ui basic label">
                             Fork
@@ -82,16 +88,41 @@ var ArtworkItem = React.createClass({
 });
 
 var ArtworkPanel = React.createClass({
+    getInitialState: function() {
+        return {
+            currentList: []
+        }
+    },
+    componentDidMount: function() {
+        var url = "/handle_artwork_query_with_username";
+        var queryForm = new FormData();
+        queryForm.append('author', username);
+        queryForm.append('startFrom', 1);
+        queryForm.append('endAt', 9999);
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: queryForm,
+            contentType: false,
+            processData: false
+        }).done(function(list) {
+            console.log(list);
+            this.setState({
+                currentList: list
+            });
+        }.bind(this));
+    },
     render: function() {
+        var artworkItems = this.state.currentList.map(function(item, key) {
+            return (
+                <ArtworkItem title={item.workTitle} author={item.author} key={key}/>
+            );
+        });
         return (
-            <div className="ui stacked segment">
+            <div className="ui segment">
                 <h2 className="ui header">My Artwork List</h2>
                 <div className="ui three stackable cards">
-                    <ArtworkItem />
-                    <ArtworkItem />
-                    <ArtworkItem />
-                    <ArtworkItem />
-                    <ArtworkItem />
+                    {artworkItems}
                 </div>
             </div>
         );
@@ -101,7 +132,7 @@ var ArtworkPanel = React.createClass({
 var MyStarsPanel = React.createClass({
     render: function() {
         return (
-            <div id="mystars" className="ui stacked segment">
+            <div id="mystars" className="ui segment">
                 <h2 className="ui header">My Stars</h2>
                 <table className="ui celled table">
                     <thead>
@@ -143,16 +174,14 @@ var MyFollowingPanel = React.createClass({
 var PersonalCenter = React.createClass({
     render: function() {
         return (
-            <div className="ui grid">
-                <div className="four wide column">
+            <div className="ui grid" id="personal-center">
+                <div className="row">
                     <UserInfo />
                 </div>
-                <div className="twelve wide column">
-                    <ArtworkPanel />
-                    <MyStarsPanel />
-                    <MyFollowerPanel />
-                    <MyFollowingPanel />
-                </div>
+                <div className="row"><ArtworkPanel /></div>
+                <div className="row"><MyStarsPanel /></div>
+                <div className="row"><MyFollowerPanel /></div>
+                <div className="row"><MyFollowingPanel /></div>
             </div>
         );
     }

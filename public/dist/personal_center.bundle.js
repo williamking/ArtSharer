@@ -55,25 +55,52 @@
 
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
-	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("h2", { className: "ui header" }, React.createElement("div", { className: "content" }, username)), React.createElement("hr", null), React.createElement("div", { className: "ui relaxed ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", { href: "mailto:" + email }, email))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { id: "sff_list", className: "ui middle aligned animated relaxed divided list" }, React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#mystars", className: "header" }, "My Stars"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollower", className: "header" }, "My Follower"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollowing", className: "header" }, "My Following")))));
+	        return React.createElement("div", { className: "ui segment", id: "user-info" }, React.createElement("div", { id: "first-part" }, React.createElement("h2", { className: "ui header" }, React.createElement("img", { id: "avatar", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("div", { className: "content" }, username), React.createElement("div", { id: "description" }, '\"' + descript + '\"'))), React.createElement("hr", null), React.createElement("div", { className: "ui horizontal list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", { href: "mailto:" + email }, email))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { id: "sff-list", className: "ui horizontal list" }, React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#mystars" }, "My Stars"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollower" }, "My Follower"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollowing" }, "My Following")))));
 	    }
 	});
 
 	var ArtworkItem = React.createClass({ displayName: "ArtworkItem",
 	    render: function () {
-	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, "My Artwork"), React.createElement("div", { className: "description" }, "Artwork Description Here")), React.createElement("div", { id: "extra_content", className: "extra content" }, React.createElement("div", { className: "left floated" }, React.createElement("div", { className: "ui label" }, React.createElement("i", { className: "star icon" }), "20"), React.createElement("div", { id: "star_btn", className: "ui basic label" }, "Star")), React.createElement("div", { className: "right floated" }, React.createElement("span", { className: "ui label" }, React.createElement("i", { className: "fork icon" }), "15"), React.createElement("div", { id: "fork_btn", className: "sf_btn ui basic label" }, "Fork"))));
+	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, this.props.title), React.createElement("div", { className: "description" }, React.createElement("p", null, "Artwork Description Here"), React.createElement("p", { className: "author" }, "Created By ", React.createElement("span", null, this.props.author)))), React.createElement("div", { id: "extra_content", className: "extra content" }, React.createElement("div", { className: "left floated" }, React.createElement("div", { className: "ui label" }, React.createElement("i", { className: "star icon" }), "20"), React.createElement("div", { id: "star_btn", className: "ui basic label" }, "Star")), React.createElement("div", { className: "left floated" }, React.createElement("span", { className: "ui label" }, React.createElement("i", { className: "fork icon" }), "15"), React.createElement("div", { id: "fork_btn", className: "sf_btn ui basic label" }, "Fork"))));
 	    }
 	});
 
 	var ArtworkPanel = React.createClass({ displayName: "ArtworkPanel",
+	    getInitialState: function () {
+	        return {
+	            currentList: []
+	        };
+	    },
+	    componentDidMount: function () {
+	        var url = "/handle_artwork_query_with_username";
+	        var queryForm = new FormData();
+	        queryForm.append('author', username);
+	        queryForm.append('startFrom', 1);
+	        queryForm.append('endAt', 9999);
+	        $.ajax({
+	            url: url,
+	            method: 'POST',
+	            data: queryForm,
+	            contentType: false,
+	            processData: false
+	        }).done(function (list) {
+	            console.log(list);
+	            this.setState({
+	                currentList: list
+	            });
+	        }.bind(this));
+	    },
 	    render: function () {
-	        return React.createElement("div", { className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Artwork List"), React.createElement("div", { className: "ui three stackable cards" }, React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null)));
+	        var artworkItems = this.state.currentList.map(function (item, key) {
+	            return React.createElement(ArtworkItem, { title: item.workTitle, author: item.author, key: key });
+	        });
+	        return React.createElement("div", { className: "ui segment" }, React.createElement("h2", { className: "ui header" }, "My Artwork List"), React.createElement("div", { className: "ui three stackable cards" }, artworkItems));
 	    }
 	});
 
 	var MyStarsPanel = React.createClass({ displayName: "MyStarsPanel",
 	    render: function () {
-	        return React.createElement("div", { id: "mystars", className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Stars"), React.createElement("table", { className: "ui celled table" }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Artwork Name"), React.createElement("th", null, "Author"), React.createElement("th", null, "Public Time"), React.createElement("th", null, "Category"), React.createElement("th", null, "And so on"))), React.createElement("tbody", null, React.createElement("tr", null), React.createElement("tr", null), React.createElement("tr", null))));
+	        return React.createElement("div", { id: "mystars", className: "ui segment" }, React.createElement("h2", { className: "ui header" }, "My Stars"), React.createElement("table", { className: "ui celled table" }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Artwork Name"), React.createElement("th", null, "Author"), React.createElement("th", null, "Public Time"), React.createElement("th", null, "Category"), React.createElement("th", null, "And so on"))), React.createElement("tbody", null, React.createElement("tr", null), React.createElement("tr", null), React.createElement("tr", null))));
 	    }
 	});
 
@@ -91,7 +118,7 @@
 
 	var PersonalCenter = React.createClass({ displayName: "PersonalCenter",
 	    render: function () {
-	        return React.createElement("div", { className: "ui grid" }, React.createElement("div", { className: "four wide column" }, React.createElement(UserInfo, null)), React.createElement("div", { className: "twelve wide column" }, React.createElement(ArtworkPanel, null), React.createElement(MyStarsPanel, null), React.createElement(MyFollowerPanel, null), React.createElement(MyFollowingPanel, null)));
+	        return React.createElement("div", { className: "ui grid", id: "personal-center" }, React.createElement("div", { className: "row" }, React.createElement(UserInfo, null)), React.createElement("div", { className: "row" }, React.createElement(ArtworkPanel, null)), React.createElement("div", { className: "row" }, React.createElement(MyStarsPanel, null)), React.createElement("div", { className: "row" }, React.createElement(MyFollowerPanel, null)), React.createElement("div", { className: "row" }, React.createElement(MyFollowingPanel, null)));
 	    }
 	});
 	$(function () {
@@ -20181,7 +20208,7 @@
 
 
 	// module
-	exports.push([module.id, "#wrapper {\n    margin-top: 70px;\n    margin-bottom: 40px;\n    padding: 10px;\n}\n\n#extra_content {\n    margin: 0;\n    padding: 10px;\n    position: relative;\n}\n\n#star_btn:hover {\n    cursor: pointer;\n    background: #d5c325;\n    color: #ffffff;\n}\n\n#fork_btn:hover {\n    cursor: pointer;\n    background: #0087ba;\n    color: #ffffff;\n}\n\n#sff_list {\n    border-radius: 10px;\n    border: solid 2px #dddddd;\n    padding: 10px;\n}\n#sff_list .item {\n    cursor: pointer;\n}\n\n#sff_list .item:hover {\n    background: #dddddd;\n}", ""]);
+	exports.push([module.id, "html, body {\n    background-color: #f5f5f5;\n}\na:hover {\n    text-decoration: underline;\n}\n#wrapper {\n    margin-top: 10px;\n    margin-bottom: 50px;\n    padding: 0 20px 0 20px;\n}\n\n#personal-center {\n    width: 100%;\n    height: 100%;\n    margin: 0;\n    padding: 0;\n}\n#personal-center .row .segment {\n    width: 100%;\n}\n\n#first-part {\n    position: relative;\n    padding: 0;\n    margin: 0;\n}\n#first-part h2 {\n    padding: 0;\n    margin: 0;\n    font-weight: normal;\n    display: block;\n}\n\n#user-info #avatar {\n    width: 50px;\n    height: 50px;\n    -webkit-border-radius: 50%;\n    -moz-border-radius: 50%;\n    border-radius: 50%;\n    border: solid 1px gray;\n}\n\n#user-info #description {\n    position: absolute;\n    right: 5%;\n    top: 50%;\n    -webkit-transform: translateY(-50%);\n    -moz-transform: translateY(-50%);\n    -ms-transform: translateY(-50%);\n    -o-transform: translateY(-50%);\n    transform: translateY(-50%);\n    font-style: italic;\n    font-size: medium;\n}\n\n#sff-list {\n    width: 100%;\n    height: 100%;\n    padding: 0;\n    margin: 0;\n}\n\n#sff-list .item a {\n    display: block;\n    background-color: #0087ba;\n    margin: 0;\n    padding: 7px;\n    -webkit-border-radius: 2px;\n    -moz-border-radius: 2px;\n    border-radius: 2px;\n    text-align: center;\n    color: #fefefe;\n}\n\n#sff-list .item a:hover {\n    background: #0099d4;\n    text-decoration: none;\n}\n\n#extra_content {\n    margin: 0;\n    padding: 10px;\n    position: relative;\n    text-align: center;\n}\n\n#extra_content div.left.floated {\n    margin: 0 10px 0 10px;\n}\n\n#star_btn:hover {\n    cursor: pointer;\n    background: #ddc507;\n    color: #ffffff;\n}\n\n#fork_btn:hover {\n    cursor: pointer;\n    background: #0087ba;\n    color: #ffffff;\n}\n\n.author {\n    color: #3355cc;\n}\n", ""]);
 
 	// exports
 

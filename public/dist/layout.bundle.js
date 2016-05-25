@@ -68,7 +68,7 @@
 			}
 		},
 		render: function () {
-			return React.createElement("div", { className: "ui top fixed menu" }, React.createElement("a", { className: "item", href: "/" }, React.createElement("img", { src: "/imgs/favicon.png" })), React.createElement("a", { className: "item", href: "/" }, React.createElement("i", { className: "home icon" }), "Home"), React.createElement("a", { id: "header_pc", className: "item", href: "/user/" + username }, React.createElement("i", { className: "user icon" }), "Personal Center"), React.createElement("div", { className: "right menu" }, React.createElement("a", { id: "header_sign_in", className: "ui item", href: "/login" }, React.createElement("i", { className: "sign in icon" }), "Sign In"), React.createElement("a", { id: "header_user", className: "ui item", href: "/user/" + username }, React.createElement("i", { className: "user icon" }), username), React.createElement("a", { id: "header_sign_out", className: "ui item", href: "/logout" }, React.createElement("i", { className: "sign out icon" }), "Sign Out")));
+			return React.createElement("div", { className: "ui blue inverted menu", id: "app-nav" }, React.createElement("a", { className: "item", href: "/" }, React.createElement("img", { src: "/imgs/favicon.png" })), React.createElement("a", { className: "item", href: "/" }, React.createElement("i", { className: "home icon" }), "Home"), React.createElement("a", { id: "header_pc", className: "item", href: "/user/" + username }, React.createElement("i", { className: "user icon" }), "Personal Center"), React.createElement("div", { className: "right menu" }, React.createElement("a", { id: "header_sign_in", className: "ui item", href: "/login" }, React.createElement("i", { className: "sign in icon" }), "Sign In"), React.createElement("a", { id: "header_user", className: "ui item", href: "/user/" + username }, React.createElement("i", { className: "user icon" }), username), React.createElement("a", { id: "header_sign_out", className: "ui item", href: "/logout" }, React.createElement("i", { className: "sign out icon" }), "Sign Out")));
 		}
 	});
 
@@ -20164,7 +20164,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n#header .menu {\n    height: 50px;\n    background: #eeeeee;\n}\n\n#footer {\n    width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
+	exports.push([module.id, "body, html {\n    margin: 0;\n    padding: 0;\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n\n#app-nav {\n    height: 45px;\n    border: none;\n    box-shadow: none;\n    border-radius: 0;\n}\n\n/*.ui.menu .item {\n    color: rgba(255, 255, 255, 0.7);\n}\n\n.ui.menu a.item:hover {\n    color: rgba(255, 255, 255, 1.0);\n}*/\n\n#footer {\n    width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
 
 	// exports
 
