@@ -22824,8 +22824,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./imageEditor.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./imageEditor.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./imageEditor.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./imageEditor.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -23172,8 +23172,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../node_modules/css-loader/index.js!./dropdown.min.css", function() {
-				var newContent = require("!!./../../../../node_modules/css-loader/index.js!./dropdown.min.css");
+			module.hot.accept("!!./../../../../../node_modules/css-loader/index.js!./dropdown.min.css", function() {
+				var newContent = require("!!./../../../../../node_modules/css-loader/index.js!./dropdown.min.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -23594,8 +23594,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css");
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js!./ColorPicker.css", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js!./ColorPicker.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -23852,8 +23852,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./editor_canvas.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./editor_canvas.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./editor_canvas.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./editor_canvas.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});

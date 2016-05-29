@@ -20,19 +20,20 @@ a:hover {
     width: 100%;
 }
 
-#first-part {
+#user-info #simple-info {
     position: relative;
     padding: 0;
     margin: 0;
 }
-#first-part h2 {
+#user-info #simple-info h2 {
     padding: 0;
     margin: 0;
     font-weight: normal;
     display: block;
+    position: relative;
 }
 
-#user-info #avatar {
+#user-info #simple-info #avatar {
     width: 50px;
     height: 50px;
     -webkit-border-radius: 50%;
@@ -41,29 +42,23 @@ a:hover {
     border: solid 1px gray;
 }
 
-#user-info #description {
-    position: absolute;
-    right: 5%;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    -moz-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    -o-transform: translateY(-50%);
-    transform: translateY(-50%);
+#user-info #simple-info #description {
+    position: relative;
+    left: 10px;
     font-style: italic;
-    font-size: medium;
+    font-size: 13px;
 }
 
-#sff-list {
+#user-info #sff-list {
     width: 100%;
     height: 100%;
     padding: 0;
     margin: 0;
 }
 
-#sff-list .item a {
+#user-info #sff-list .item a {
     display: block;
-    background-color: #0087ba;
+    background-color: #6495ed;
     margin: 0;
     padding: 7px;
     -webkit-border-radius: 2px;
@@ -73,34 +68,41 @@ a:hover {
     color: #fefefe;
 }
 
-#sff-list .item a:hover {
+#user-info #sff-list .item a:hover {
     background: #0099d4;
     text-decoration: none;
 }
 
-#extra_content {
-    margin: 0;
-    padding: 10px;
-    position: relative;
-    text-align: center;
+.card .header a {
+    color: #000;
+}
+.card .header a:hover {
+    text-decoration: none;
+    color: #6495ed;
 }
 
-#extra_content div.left.floated {
+.card .description {
+    margin-bottom: 7px;
+    font-size: 18px;
+    font-style: italic;
+}
+
+.card .meta p {
+    color: gray;
+}
+
+.card .extra.content div.left.floated {
     margin: 0 10px 0 10px;
 }
 
-#star_btn:hover {
+.card .star_btn:hover {
     cursor: pointer;
-    background: #ddc507;
+    background: #eadf30;
     color: #ffffff;
 }
 
-#fork_btn:hover {
+.card .fork_btn:hover {
     cursor: pointer;
-    background: #0087ba;
+    background: #6495ed;
     color: #ffffff;
-}
-
-.author {
-    color: #3355cc;
 }

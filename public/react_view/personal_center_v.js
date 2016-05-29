@@ -11,11 +11,13 @@ var UserInfo = React.createClass({
     render:function() {
         return (
             <div className="ui segment" id="user-info">
-                <div id="first-part">
+                <div id="simple-info">
                     <h2 className="ui header">
-                        <img id="avatar" src="/imgs/avatar.gif" alt="user avatar"/>
-                        <div className="content">{username}</div>
-                        <div id="description">{'\"' + descript + '\"'}</div>
+                        <img id="avatar" src="/imgs/avatar.jpg" alt="user avatar"/>
+                        <div className="content">
+                            {username}
+                            <div id="description">{'\"' + descript + '\"'}</div>
+                        </div>
                     </h2>
                 </div>
                 <hr/>
@@ -30,12 +32,18 @@ var UserInfo = React.createClass({
                     </div>
                     <div className="item">
                         <i className="linkify icon"/>
-                        <div className="content"><a>https://github.com</a></div>
+                        <div className="content">
+                            <a> My Homepage </a>
+                        </div>
                     </div>
                 </div>
                 <hr/>
                 <div id="sff-list" className="ui horizontal list">
-
+                    <div className="item">
+                        <div className="content">
+                            <a href="#myartworks">My Artworks</a>
+                        </div>
+                    </div>
                     <div className="item">
                         <div className="content">
                             <a href="#mystars">My Stars</a>
@@ -62,22 +70,30 @@ var ArtworkItem = React.createClass({
         return (
             <div className="card">
                 <div className="content">
-                    <a className="header">{this.props.title}</a>
+                    <div className="header">
+                        <i className="camera retro icon"/>&nbsp;
+                        <a href={this.props.href}>{this.props.item.workTitle}</a>
+                    </div>
                     <div className="description">
                         <p>Artwork Description Here</p>
-                        <p className="author">Created By <span>{this.props.author}</span></p>
+                    </div>
+                    <div className="meta">
+                        <p className="">Created By <span>{this.props.item.author}</span></p>
+                        <p className="">Create Time: <span>{this.props.item.createTime}</span></p>
+                        <p className="">Last Modified: <span>{this.props.item.lastModified}</span></p>
+
                     </div>
                 </div>
-                <div id="extra_content" className="extra content">
+                <div className="extra content">
                     <div className="left floated">
                         <div className="ui label"><i className="star icon"/>20</div>
-                        <div id="star_btn" className="ui basic label">
+                        <div id="" className="ui basic label star_btn">
                             Star
                         </div>
                     </div>
                     <div className="left floated">
                         <span className="ui label"><i className="fork icon"/>15</span>
-                        <div id="fork_btn" className="sf_btn ui basic label">
+                        <div id="" className="sf_btn ui basic label fork_btn">
                             Fork
                         </div>
                     </div>
@@ -114,13 +130,14 @@ var ArtworkPanel = React.createClass({
     },
     render: function() {
         var artworkItems = this.state.currentList.map(function(item, key) {
+            var href = '/user/' + username + '/' + item.workTitle;
             return (
-                <ArtworkItem title={item.workTitle} author={item.author} key={key}/>
+                <ArtworkItem key={key} item={item} href={href}/>
             );
         });
         return (
-            <div className="ui segment">
-                <h2 className="ui header">My Artwork List</h2>
+            <div id="myartworks" className="ui segment">
+                <h2 className="ui header">My Artworks</h2>
                 <div className="ui three stackable cards">
                     {artworkItems}
                 </div>
@@ -175,9 +192,7 @@ var PersonalCenter = React.createClass({
     render: function() {
         return (
             <div className="ui grid" id="personal-center">
-                <div className="row">
-                    <UserInfo />
-                </div>
+                <div className="row"><UserInfo /></div>
                 <div className="row"><ArtworkPanel /></div>
                 <div className="row"><MyStarsPanel /></div>
                 <div className="row"><MyFollowerPanel /></div>

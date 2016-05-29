@@ -57,8 +57,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./iconfont.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./iconfont.css");
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js!./iconfont.css", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js!./iconfont.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
