@@ -12,6 +12,11 @@ var createWork = function(req, res) {
     } else {
         var tags = [];
     }
+    if (req.body.descript) {
+        var descript = req.body.descript;
+    } else {
+        var descript = "";
+    }
     var filepath = "/imgs/" + req.file.filename    // + "." + req.file.originalname.split('.')[1];
     mongoose.model('ArtWork').find({ 
         'workTitle' : workTitle,
@@ -27,6 +32,7 @@ var createWork = function(req, res) {
                 mongoose.model('ArtWork').create({
                     'workTitle' : workTitle,
                     'author' : author,
+                    'descript' : descript,
                     'isFork' : false,
                     'forkFrom' : null,
                     'url' : filepath,
@@ -103,6 +109,9 @@ var updateWork = function(req, res) {
                     var tags = req.body.tag.split(',');
                     workModify.tags = tags;
                 }
+                if (req.body.descript) {
+                    workModify.descript = req.body.descript;
+                }
                 if (req.file) {
                     // var filepath = "public/imgs/" + req.file.filename;
                     workModify.url = "/imgs/" + req.file.filename;
@@ -161,7 +170,7 @@ var queryWorksByAuthor = function(req, res) {
         if (!artWorks.length) {
             res.send("sorry, can't find works of this user");
         } else {
-            if (startFrom > artWorks.length || endAt < 0) {
+            if (startFrom >= artWorks.length || endAt < 0) {
                 res.json([]);
             } else {
                 artWorks.sort(function(x, y) {
@@ -178,6 +187,32 @@ var queryWorksByAuthor = function(req, res) {
         }
     });
 };
+
+//根据区间返回作品数组，通过创建时间由近到远排列
+var queryWorksByInterval = function(req, res) {
+    var startFrom = req.body.startFrom;
+    var endAt = req.body.endAt;
+    mongoose.model('ArtWork').find({}, function(err, artWorks) {
+        if (!artWorks.length) {
+            res.send("sorry, can't find works of this user");
+        } else {
+            if (startFrom >= artWorks.length || endAt < 0) {
+                res.json([]);
+            } else {
+                artWorks.sort(function(x, y) {
+                    return x.createTime < y.createTime;
+                });
+                if (endAt >= artWorks.length) {
+                    endAt = artWorks.length;
+                }
+                if (startFrom <= 0) {
+                    startFrom = 1;
+                }
+                res.json(artWorks.slice(startFrom-1, endAt));
+            }
+        }
+    });   
+}
 
 //渲染作品详情页
 exports.showWorkPage = function(req, res) {
@@ -244,6 +279,10 @@ exports.handleQuery = function(req, res) {
 exports.handleQueryByAuthor = function(req, res) {
     queryWorksByAuthor(req, res);
 };
+
+exports.handleQueryByInterval = function(req, res) {
+    queryWorksByInterval(req, res);
+}
 
 exports.showEditPage = function(req, res) {
     res.render("createArtwork");

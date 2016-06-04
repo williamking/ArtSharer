@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var artWorkSchema = mongoose.Schema({
 	'workTitle' : String,
 	'author' : String,
+	'descript' : String,
 	'isFork' : Boolean,
 	'forkFrom' : String,
 	'url' : String,
