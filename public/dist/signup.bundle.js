@@ -48,7 +48,7 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	__webpack_require__(193);
+	__webpack_require__(298);
 
 	var LogoHeader = React.createClass({ displayName: "LogoHeader",
 	    render: function () {
@@ -128,6 +128,12 @@
 	    }
 	});
 
+	var Modal = React.createClass({ displayName: "Modal",
+	    render: function () {
+	        return React.createElement("div", { id: this.props.id, className: "ui small modal" }, React.createElement("i", { className: "close icon" }), React.createElement("div", { className: "header" }, this.props.title), React.createElement("div", { className: "actions" }, React.createElement("div", { className: "ui positive button" }, "OK")));
+	    }
+	});
+
 	var SignUpView = React.createClass({ displayName: "SignUpView",
 	    getInitialState: function () {
 	        return {
@@ -175,7 +181,7 @@
 	        });
 	    },
 	    handleSubmit: function (event) {
-	        console.log(event);
+	        //console.log(event);
 	        event.preventDefault();
 	        if (!event.isDefaultPrevented()) {
 	            event.preventDefault();
@@ -216,24 +222,27 @@
 	                    email: email,
 	                    description: description
 	                },
-	                success: function (data) {
-	                    if (data == "OK") {
+	                success: function (html, success, xhr) {
+	                    //console.log(arguments);
+	                    if (xhr.status == 200 && xhr.readyState == 4) {
 	                        console.log("Sign Up Success!");
+	                        $("#success-modal").modal("show");
 	                        $(".ui.blue.button").removeClass("disabled loading");
 	                    } else {
 	                        console.log("Error");
 	                    }
 	                },
 	                error: function (xhr) {
-	                    console.log(xhr);
-	                    alert(xhr.status + ": " + xhr.responseText);
+	                    // console.log(xhr);
+	                    // alert(xhr.status + ": " + xhr.responseText);
+	                    $("#fail-modal").modal("show");
 	                    $(".ui.blue.button").removeClass("disabled loading");
 	                }
 	            });
 	        }
 	    },
 	    render: function () {
-	        return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Create Your Account" }), React.createElement("form", { id: "form", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(EmailField, null), React.createElement(UsernameField, null), React.createElement(PasswordField, null), React.createElement(DescriptionField, null), React.createElement("div", { className: "ui fluid large blue button" + this.state.btnState, onClick: this.handleSubmit }, "Sign Up")), React.createElement("div", { className: "" }, React.createElement("ul", { className: "list" }))));
+	        return React.createElement("div", { className: "column" }, React.createElement(LogoHeader, { src: "/imgs/favicon.png", alt: "logo", content: "Create Your Account" }), React.createElement("form", { id: "form", className: "ui large form" }, React.createElement("div", { className: "ui stacked segment" }, React.createElement(EmailField, null), React.createElement(UsernameField, null), React.createElement(PasswordField, null), React.createElement(DescriptionField, null), React.createElement("div", { className: "ui fluid large blue button" + this.state.btnState, onClick: this.handleSubmit }, "Sign Up")), React.createElement("div", { className: "" }, React.createElement("ul", { className: "list" }))), React.createElement(Modal, { id: "success-modal", title: "Sign Up Success!" }), React.createElement(Modal, { id: "fail-modal", title: "User Already Exist!" }));
 	    }
 	});
 
@@ -20188,13 +20197,118 @@
 /* 190 */,
 /* 191 */,
 /* 192 */,
-/* 193 */
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */,
+/* 276 */,
+/* 277 */,
+/* 278 */,
+/* 279 */,
+/* 280 */,
+/* 281 */,
+/* 282 */,
+/* 283 */,
+/* 284 */,
+/* 285 */,
+/* 286 */,
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */,
+/* 297 */,
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(194);
+	var content = __webpack_require__(299);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20203,8 +20317,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./sign_in.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./sign_in.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./sign_in.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./sign_in.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20214,7 +20328,7 @@
 	}
 
 /***/ },
-/* 194 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();
@@ -20222,7 +20336,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n\tmargin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
+	exports.push([module.id, "body {\n  background-color: #EAEAEA;\n}\nbody > .grid {\n  height: 100%;\n}\n.image {\n  margin-top: -100px;\n}\n.column {\n  max-width: 450px;\n}", ""]);
 
 	// exports
 

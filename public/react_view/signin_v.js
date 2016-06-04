@@ -42,6 +42,20 @@ var LogoHeader = React.createClass({
 	}
 });
 
+var Modal = React.createClass({
+	render: function() {
+		return (
+			<div id={this.props.id} className="ui small modal">
+				<i className="close icon"/>
+				<div className="header">{this.props.title}</div>
+				<div className="actions">
+					<div className="ui positive button">OK</div>
+				</div>
+			</div>
+		);
+	}
+});
+
 var SignInView = React.createClass({
 	getInitialState: function() {
 		return {
@@ -49,6 +63,9 @@ var SignInView = React.createClass({
 		}
 	},
 	componentDidMount: function() {
+		if (res_text == "LogIn Failed!") {
+			$("#page-modal").modal("show");
+		}
 		$('#form').form({
 			fields: {
 				username: {
@@ -87,18 +104,20 @@ var SignInView = React.createClass({
 						<UserNameField />
 						<PasswordField />
 						<div className={"ui fluid large blue submit button" + this.state.btnState} onClick={this.handleSubmit}>
-						Sign In
+							Sign In
 						</div>
 					</div>
 					<div className="ui error message">
 						<ul className="list">
 						</ul>
-					</div>		
+					</div>
 				</form>
 				<div className="ui message">
 					New to us?&nbsp;
 					<a href="/signup">Sign Up</a>
 				</div>
+
+				<Modal id="page-modal" title="Log In Failed!" />
 			</div>
 		);
 	}

@@ -1,12 +1,12 @@
 //
    Created by zhoujihao on 16-3-21.
 extends ./layout
-
 block page-head
-   script(type="text/javascript").
-      var username = "#{username}";
-
+    script(type="text/javascript").
+        var username = "#{username}";
+        var email = "#{email}";
+        var descript = "#{descript}";
 block content
-    #create-artwork-wrapper
+    #wrapper
 block page-script
-   script(src="/dist/create_artwork.bundle.js")
+    script(src="/dist/personal_center.bundle.js")

@@ -48,11 +48,27 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	__webpack_require__(189);
+	__webpack_require__(294);
 
 	var Header = React.createClass({ displayName: "Header",
+		getInitialState: function () {
+			return null;
+		},
+		componentDidMount: function () {
+			if (username != "") {
+				$("#header_sign_in").hide();
+				$("#header_sign_out").show();
+				$("#header_user").show();
+				$("#header_pc").show();
+			} else {
+				$("#header_sign_in").show();
+				$("#header_sign_out").hide();
+				$("#header_user").hide();
+				$("#header_pc").hide();
+			}
+		},
 		render: function () {
-			return React.createElement("div", { className: "ui top fixed menu" }, React.createElement("a", { className: "item", href: "/" }, React.createElement("img", { src: "imgs/favicon.png" })), React.createElement("a", { className: "item", href: "/" }, React.createElement("i", { className: "home icon" }), "Home"), React.createElement("a", { className: "item", href: "/personal_center" }, React.createElement("i", { className: "user icon" }), "Personal Center"), React.createElement("div", { className: "right menu" }, React.createElement("a", { className: "ui item", href: "/login" }, React.createElement("i", { className: "sign in icon" }), "Sign In")));
+			return React.createElement("div", { className: "ui blue inverted menu", id: "app-nav" }, React.createElement("a", { className: "item", href: "/" }, React.createElement("img", { src: "/imgs/favicon.png" })), React.createElement("a", { className: "item", href: "/" }, React.createElement("i", { className: "home icon" }), "Home"), React.createElement("a", { id: "header_pc", className: "item", href: "/user/" + username }, React.createElement("i", { className: "user icon" }), "Personal Center"), React.createElement("div", { className: "right menu" }, React.createElement("a", { id: "header_sign_in", className: "ui item", href: "/login" }, React.createElement("i", { className: "sign in icon" }), "Sign In"), React.createElement("a", { id: "header_user", className: "ui item", href: "/user/" + username }, React.createElement("i", { className: "user icon" }), username), React.createElement("a", { id: "header_sign_out", className: "ui item", href: "/logout" }, React.createElement("i", { className: "sign out icon" }), "Sign Out")));
 		}
 	});
 
@@ -20009,13 +20025,118 @@
 /* 186 */,
 /* 187 */,
 /* 188 */,
-/* 189 */
+/* 189 */,
+/* 190 */,
+/* 191 */,
+/* 192 */,
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */,
+/* 276 */,
+/* 277 */,
+/* 278 */,
+/* 279 */,
+/* 280 */,
+/* 281 */,
+/* 282 */,
+/* 283 */,
+/* 284 */,
+/* 285 */,
+/* 286 */,
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(190);
+	var content = __webpack_require__(295);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20024,8 +20145,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./layout.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./layout.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./layout.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./layout.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20035,7 +20156,7 @@
 	}
 
 /***/ },
-/* 190 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();
@@ -20043,7 +20164,7 @@
 
 
 	// module
-	exports.push([module.id, "body {\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n#header .menu {\n    height: 50px;\n    background: #eeeeee;\n}\n\n#footer {\n    /*width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;*/\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
+	exports.push([module.id, "body, html {\n    margin: 0;\n    padding: 0;\n    height: 100%;\n    width: 100%;\n    position: relative;\n}\n\n#app-nav {\n    height: 45px;\n    border: none;\n    box-shadow: none;\n    border-radius: 0;\n}\n\n/*.ui.menu .item {\n    color: rgba(255, 255, 255, 0.7);\n}\n\n.ui.menu a.item:hover {\n    color: rgba(255, 255, 255, 1.0);\n}*/\n\n#footer {\n    width: 100%;\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    right: 0;\n}\n#footer div.segment {\n    background: #eeeeee;\n}\n#footer a {\n    margin: 0 20px;\n}\n#footer a span {\n    text-decoration: underline;\n}\n#footer div.segment {\n    border-top: solid 1px #dddddd;\n}", ""]);
 
 	// exports
 

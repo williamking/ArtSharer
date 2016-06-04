@@ -1,0 +1,33 @@
+#artwork-list {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 70%;
+    margin-left: 15%;
+    padding: 3%;
+    height: 90%;
+}
+
+#pagination-wrapper {
+    width: 100%;
+    text-align: center;
+}
+
+.page-item {
+    justify-content: center;
+}
+
+.artwork-item {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.artwork-page {
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    justify-content: space-between;
+}
+
+#artwork-list-page header {
+    width: 100%;
+}

@@ -1,19 +1,32 @@
-body {
+body, html {
+    margin: 0;
+    padding: 0;
     height: 100%;
     width: 100%;
     position: relative;
 }
-#header .menu {
-    height: 50px;
-    background: #eeeeee;
+
+#app-nav {
+    height: 45px;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
 }
 
+/*.ui.menu .item {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.ui.menu a.item:hover {
+    color: rgba(255, 255, 255, 1.0);
+}*/
+
 #footer {
-    /*width: 100%;
+    width: 100%;
     position: fixed;
     bottom: 0;
     left: 0;
-    right: 0;*/
+    right: 0;
 }
 #footer div.segment {
     background: #eeeeee;

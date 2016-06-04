@@ -12,6 +12,11 @@ var EditorCanvas = React.createClass({
         }
     },
 
+    clearAll: function() {
+        var canvas = this.refs.canvas;
+        this.getContext().clearRect(0, 0, canvas.width, canvas.height);
+    },
+
     componentDidMount: function() {
         this.renderBackground();
         this.first = true;
@@ -41,6 +46,7 @@ var EditorCanvas = React.createClass({
     componentDidUpdate: function() {
         var image = this.props.image;
         this.first = false;
+        this.clearAll();
         this.renderImage();
     },
 

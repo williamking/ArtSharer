@@ -47,34 +47,83 @@
 	/**
 	 * Created by zhoujihao on 16-3-21.
 	 */
-	"use strict";
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 
-	__webpack_require__(191);
+	__webpack_require__(296);
 
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
-	        return React.createElement("div", { className: "ui piled segment" }, React.createElement("img", { className: "ui bordered fluid rounded centered image", src: "/imgs/avatar.gif", alt: "user avatar" }), React.createElement("h2", { className: "ui header" }, React.createElement("div", { className: "content" }, username)), React.createElement("hr", null), React.createElement("div", { className: "ui relaxed ul list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "user_name@qq.com"))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, "https://github.com")))), React.createElement("hr", null), React.createElement("div", { className: "ui two column grid" }, React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "20 Followers")), React.createElement("div", { className: "center aligned column" }, React.createElement("a", { className: "ui basic button" }, "34 Following"))));
+	        return React.createElement("div", { className: "ui segment", id: "user-info" }, React.createElement("div", { id: "simple-info" }, React.createElement("h2", { className: "ui header" }, React.createElement("img", { id: "avatar", src: "/imgs/avatar.jpg", alt: "user avatar" }), React.createElement("div", { className: "content" }, username, React.createElement("div", { id: "description" }, '\"' + descript + '\"')))), React.createElement("hr", null), React.createElement("div", { className: "ui horizontal list" }, React.createElement("div", { className: "item" }, React.createElement("i", { className: "marker icon" }), React.createElement("div", { className: "content" }, "GuangZhou China")), React.createElement("div", { className: "item" }, React.createElement("i", { className: "mail icon" }), React.createElement("div", { className: "content" }, React.createElement("a", { href: "mailto:" + email }, email))), React.createElement("div", { className: "item" }, React.createElement("i", { className: "linkify icon" }), React.createElement("div", { className: "content" }, React.createElement("a", null, " My Homepage ")))), React.createElement("hr", null), React.createElement("div", { id: "sff-list", className: "ui horizontal list" }, React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myartworks" }, "My Artworks"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#mystars" }, "My Stars"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollower" }, "My Follower"))), React.createElement("div", { className: "item" }, React.createElement("div", { className: "content" }, React.createElement("a", { href: "#myfollowing" }, "My Following")))));
 	    }
 	});
 
 	var ArtworkItem = React.createClass({ displayName: "ArtworkItem",
 	    render: function () {
-	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "image" }, React.createElement("img", { className: "ui bordered rounded centered image", src: "/imgs/avatar.gif" })), React.createElement("div", { className: "content" }, React.createElement("a", { className: "header" }, "My Artwork"), React.createElement("div", { className: "description" }, "Artwork Description Here")), React.createElement("div", { className: "extra content" }, React.createElement("span", { className: "left floated" }, React.createElement("span", { className: "ui label" }, "20"), React.createElement("i", { className: "star icon" }), React.createElement("a", null, "Star")), React.createElement("span", { className: "right floated" }, React.createElement("span", { className: "ui label" }, "15"), React.createElement("i", { className: "fork icon" }), React.createElement("a", null, "Fork"))));
+	        return React.createElement("div", { className: "card" }, React.createElement("div", { className: "content" }, React.createElement("div", { className: "header" }, React.createElement("i", { className: "camera retro icon" }), " ", React.createElement("a", { href: this.props.href }, this.props.item.workTitle)), React.createElement("div", { className: "description" }, React.createElement("p", null, "Artwork Description Here")), React.createElement("div", { className: "meta" }, React.createElement("p", { className: "" }, "Created By ", React.createElement("span", null, this.props.item.author)), React.createElement("p", { className: "" }, "Create Time: ", React.createElement("span", null, this.props.item.createTime)), React.createElement("p", { className: "" }, "Last Modified: ", React.createElement("span", null, this.props.item.lastModified)))), React.createElement("div", { className: "extra content" }, React.createElement("div", { className: "left floated" }, React.createElement("div", { className: "ui label" }, React.createElement("i", { className: "star icon" }), "20"), React.createElement("div", { id: "", className: "ui basic label star_btn" }, "Star")), React.createElement("div", { className: "left floated" }, React.createElement("span", { className: "ui label" }, React.createElement("i", { className: "fork icon" }), "15"), React.createElement("div", { id: "", className: "sf_btn ui basic label fork_btn" }, "Fork"))));
 	    }
 	});
 
 	var ArtworkPanel = React.createClass({ displayName: "ArtworkPanel",
+	    getInitialState: function () {
+	        return {
+	            currentList: []
+	        };
+	    },
+	    componentDidMount: function () {
+	        var url = "/handle_artwork_query_with_username";
+	        var queryForm = new FormData();
+	        queryForm.append('author', username);
+	        queryForm.append('startFrom', 1);
+	        queryForm.append('endAt', 9999);
+	        $.ajax({
+	            url: url,
+	            method: 'POST',
+	            data: queryForm,
+	            contentType: false,
+	            processData: false
+	        }).done(function (list) {
+	            console.log(list);
+	            this.setState({
+	                currentList: list
+	            });
+	        }.bind(this));
+	    },
 	    render: function () {
-	        return React.createElement("div", { className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Artwork List"), React.createElement("div", { className: "ui three stackable cards" }, React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null), React.createElement(ArtworkItem, null)));
+	        var artworkItems = this.state.currentList.map(function (item, key) {
+	            var href = '/user/' + username + '/' + item.workTitle;
+	            return React.createElement(ArtworkItem, { key: key, item: item, href: href });
+	        });
+	        return React.createElement("div", { id: "myartworks", className: "ui segment" }, React.createElement("h2", { className: "ui header" }, "My Artworks"), React.createElement("div", { className: "ui three stackable cards" }, artworkItems));
 	    }
 	});
 
+	var MyStarsPanel = React.createClass({ displayName: "MyStarsPanel",
+	    render: function () {
+	        return React.createElement("div", { id: "mystars", className: "ui segment" }, React.createElement("h2", { className: "ui header" }, "My Stars"), React.createElement("table", { className: "ui celled table" }, React.createElement("thead", null, React.createElement("tr", null, React.createElement("th", null, "Artwork Name"), React.createElement("th", null, "Author"), React.createElement("th", null, "Public Time"), React.createElement("th", null, "Category"), React.createElement("th", null, "And so on"))), React.createElement("tbody", null, React.createElement("tr", null), React.createElement("tr", null), React.createElement("tr", null))));
+	    }
+	});
+
+	var MyFollowerPanel = React.createClass({ displayName: "MyFollowerPanel",
+	    render: function () {
+	        return React.createElement("div", { id: "myfollower", className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Follower"));
+	    }
+	});
+
+	var MyFollowingPanel = React.createClass({ displayName: "MyFollowingPanel",
+	    render: function () {
+	        return React.createElement("div", { id: "myfollowing", className: "ui stacked segment" }, React.createElement("h2", { className: "ui header" }, "My Following"));
+	    }
+	});
+
+	var PersonalCenter = React.createClass({ displayName: "PersonalCenter",
+	    render: function () {
+	        return React.createElement("div", { className: "ui grid", id: "personal-center" }, React.createElement("div", { className: "row" }, React.createElement(UserInfo, null)), React.createElement("div", { className: "row" }, React.createElement(ArtworkPanel, null)), React.createElement("div", { className: "row" }, React.createElement(MyStarsPanel, null)), React.createElement("div", { className: "row" }, React.createElement(MyFollowerPanel, null)), React.createElement("div", { className: "row" }, React.createElement(MyFollowingPanel, null)));
+	    }
+	});
 	$(function () {
-	    ReactDOM.render(React.createElement(UserInfo, null), $("#left-side")[0], null);
-	    ReactDOM.render(React.createElement(ArtworkPanel, null), $("#right-side")[0], null);
+	    ReactDOM.render(React.createElement(PersonalCenter, null), $("#wrapper")[0], null);
 	});
 
 /***/ },
@@ -20021,13 +20070,118 @@
 /* 188 */,
 /* 189 */,
 /* 190 */,
-/* 191 */
+/* 191 */,
+/* 192 */,
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */,
+/* 213 */,
+/* 214 */,
+/* 215 */,
+/* 216 */,
+/* 217 */,
+/* 218 */,
+/* 219 */,
+/* 220 */,
+/* 221 */,
+/* 222 */,
+/* 223 */,
+/* 224 */,
+/* 225 */,
+/* 226 */,
+/* 227 */,
+/* 228 */,
+/* 229 */,
+/* 230 */,
+/* 231 */,
+/* 232 */,
+/* 233 */,
+/* 234 */,
+/* 235 */,
+/* 236 */,
+/* 237 */,
+/* 238 */,
+/* 239 */,
+/* 240 */,
+/* 241 */,
+/* 242 */,
+/* 243 */,
+/* 244 */,
+/* 245 */,
+/* 246 */,
+/* 247 */,
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */,
+/* 266 */,
+/* 267 */,
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */,
+/* 272 */,
+/* 273 */,
+/* 274 */,
+/* 275 */,
+/* 276 */,
+/* 277 */,
+/* 278 */,
+/* 279 */,
+/* 280 */,
+/* 281 */,
+/* 282 */,
+/* 283 */,
+/* 284 */,
+/* 285 */,
+/* 286 */,
+/* 287 */,
+/* 288 */,
+/* 289 */,
+/* 290 */,
+/* 291 */,
+/* 292 */,
+/* 293 */,
+/* 294 */,
+/* 295 */,
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(192);
+	var content = __webpack_require__(297);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(166)(content, {});
@@ -20036,8 +20190,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./personal_center.css", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./personal_center.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./personal_center.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./personal_center.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -20047,7 +20201,7 @@
 	}
 
 /***/ },
-/* 192 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(165)();
@@ -20055,7 +20209,7 @@
 
 
 	// module
-	exports.push([module.id, "#wrapper {\n    margin-top: 70px;\n    margin-bottom: 40px;\n    padding: 10px;\n}", ""]);
+	exports.push([module.id, "html, body {\n    background-color: #f5f5f5;\n}\na:hover {\n    text-decoration: underline;\n}\n#wrapper {\n    margin-top: 10px;\n    margin-bottom: 50px;\n    padding: 0 20px 0 20px;\n}\n\n#personal-center {\n    width: 100%;\n    height: 100%;\n    margin: 0;\n    padding: 0;\n}\n#personal-center .row .segment {\n    width: 100%;\n}\n\n#user-info #simple-info {\n    position: relative;\n    padding: 0;\n    margin: 0;\n}\n#user-info #simple-info h2 {\n    padding: 0;\n    margin: 0;\n    font-weight: normal;\n    display: block;\n    position: relative;\n}\n\n#user-info #simple-info #avatar {\n    width: 50px;\n    height: 50px;\n    -webkit-border-radius: 50%;\n    -moz-border-radius: 50%;\n    border-radius: 50%;\n    border: solid 1px gray;\n}\n\n#user-info #simple-info #description {\n    position: relative;\n    left: 10px;\n    font-style: italic;\n    font-size: 13px;\n}\n\n#user-info #sff-list {\n    width: 100%;\n    height: 100%;\n    padding: 0;\n    margin: 0;\n}\n\n#user-info #sff-list .item a {\n    display: block;\n    background-color: #6495ed;\n    margin: 0;\n    padding: 7px;\n    -webkit-border-radius: 2px;\n    -moz-border-radius: 2px;\n    border-radius: 2px;\n    text-align: center;\n    color: #fefefe;\n}\n\n#user-info #sff-list .item a:hover {\n    background: #0099d4;\n    text-decoration: none;\n}\n\n.card .header a {\n    color: #000;\n}\n.card .header a:hover {\n    text-decoration: none;\n    color: #6495ed;\n}\n\n.card .description {\n    margin-bottom: 7px;\n    font-size: 18px;\n    font-style: italic;\n}\n\n.card .meta p {\n    color: gray;\n}\n\n.card .extra.content div.left.floated {\n    margin: 0 10px 0 10px;\n}\n\n.card .star_btn:hover {\n    cursor: pointer;\n    background: #eadf30;\n    color: #ffffff;\n}\n\n.card .fork_btn:hover {\n    cursor: pointer;\n    background: #6495ed;\n    color: #ffffff;\n}\n", ""]);
 
 	// exports
 

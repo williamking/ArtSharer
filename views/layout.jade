@@ -3,7 +3,8 @@ html
     head
         include ./include/head
         block page-head
-        block page-header
+        script(type="text/javascript").
+            var username = "#{username}";
     body
         #header
         block content

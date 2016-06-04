@@ -16,7 +16,7 @@ var userSignIn = function(username, password, req, res) {
         } else {
             if (!users.length) {
                 console.log('login failed!');
-                res.redirect('/login');
+                res.render("signIn", {res_text: "LogIn Failed!"});
             } else {
                 req.session.username = username;
                 console.log('login succeed!');
@@ -34,7 +34,7 @@ var userSignUp = function(username, password, email, description, req, res) {
         } else {
             if (users.length) {
                 console.log('user exist!');
-                res.send("User already exists");
+                res.status(404).send("User already exists");
             } else {
                 mongoose.model('User').create({
                     'username' : username,
@@ -251,7 +251,7 @@ exports.showWorkListPage = function(req, res) {
             }
         }
     });
-}
+};
 
 
 
