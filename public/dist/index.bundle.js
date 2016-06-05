@@ -94,8 +94,8 @@
 	var UserInfo = React.createClass({ displayName: "UserInfo",
 	    render: function () {
 	        var createLink = '/user/' + username + '/artwork_create';
-	        var url = '/user/' + username + '/worklist';
-	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button red" }, React.createElement("a", { href: createLink }, "Create Artwork")), React.createElement("button", { className: "ui button orange" }, React.createElement("a", { href: url }, "My Artworks"))));
+	        var url = '/user/' + username;
+	        return React.createElement("div", { id: "user-info" }, React.createElement("div", { id: "user-info-detail" }, React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "Name"), React.createElement("p", null, "William")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "email"), React.createElement("p", null, "williamjwking@gmail.com")), React.createElement("div", { className: "info-item" }, React.createElement("a", { className: "io tag label" }, "description"), React.createElement("p", null, "A handsome boy"))), React.createElement("div", { id: "user-link" }, React.createElement("button", { className: "ui button red" }, React.createElement("a", { href: createLink }, "Create Artwork")), React.createElement("button", { className: "ui button orange" }, React.createElement("a", { href: url }, "My Personal Center"))));
 	    }
 	});
 
@@ -290,6 +290,9 @@
 	var queueIndex = -1;
 
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -20185,8 +20188,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./index.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./index.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./index.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./index.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});

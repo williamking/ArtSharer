@@ -1,12 +1,25 @@
+#editor-wrapper {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+
 #artwork-wrapper {
     margin-top: 70px;
     margin-bottom: 70px;
+    margin-left: 20px;
+    margin-right: 20px;
+    overflow: auto;
 }
 
 #artwork-status {
     margin-top: 10px;
     margin-bottom: 10px;
     overflow: hidden;
+}
+
+#artwork-detail {
+    margin: 0 auto;
 }
 
 #artwork-detail header{
@@ -33,4 +46,8 @@
 
 #artwork-image-wrapper {
     text-align: center;
+}
+
+#artwork-image-wrapper img{
+   width: 100%;
 }

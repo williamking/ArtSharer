@@ -66,9 +66,8 @@
 	    },
 
 	    getPage: function (page) {
-	        var url = '/handle_artwork_query_with_username';
+	        var url = '/handle_artwork_query_with_interval';
 	        var queryForm = new FormData();
-	        queryForm.append('author', username);
 	        queryForm.append('startFrom', (page - 1) * 10 + 1);
 	        queryForm.append('endAt', (page - 1) * 10 + 10);
 	        this.serverRequest = $.ajax({
@@ -95,7 +94,7 @@
 
 	    render: function () {
 	        var listUrl = '/user/' + username + '/worklist';
-	        return React.createElement("div", { id: "artwork-list-page" }, React.createElement("header", { className: "ui header breadcrumb dividing" }, React.createElement("h1", null, React.createElement("a", { className: "section", href: "#" }, username), React.createElement("div", { className: "divider" }, " / "), React.createElement("a", { className: "section", href: listUrl }, "Artworks"))), React.createElement(ArtworkPage, { list: this.state.list }), React.createElement(PageNav, { num: this.state.pages, active: this.state.currentPage, handleChange: this.changePage }));
+	        return React.createElement("div", { id: "artwork-list-page" }, React.createElement("header", { className: "ui header breadcrumb dividing" }, React.createElement("h1", null, React.createElement("a", { className: "section", href: "/" }, "Home"), React.createElement("div", { className: "divider" }, " / "), React.createElement("a", { className: "section", href: listUrl }, "Artworks"))), React.createElement(ArtworkPage, { list: this.state.list }), React.createElement(PageNav, { num: this.state.pages, active: this.state.currentPage, handleChange: this.changePage }));
 	    }
 	});
 
@@ -104,9 +103,10 @@
 	        var items = this.props.list.map(function (item, key) {
 	            var url = '/user/' + username + '/' + item.workTitle;
 	            var createTime = moment(item.createTime).format('YYYY-MM-DD h:mm:ss');
-	            return React.createElement("div", { className: "item artwork-item", key: key }, React.createElement("div", { className: "content" }, React.createElement("a", { className: "header", href: url }, item.workTitle), React.createElement("div", { className: "description" }, "Created at ", createTime)));
+	            var userLink = '/user/' + username;
+	            return React.createElement("div", { className: "artwork-item card", key: key }, React.createElement("div", { className: "content" }, React.createElement("header", { className: "ui header dividing" }, React.createElement("a", { className: "header", href: url }, item.workTitle), React.createElement("div", { className: "right floated" }, React.createElement("div", { className: "ui label" }, React.createElement("i", { className: "star icon" }), "20"), React.createElement("div", { id: "", className: "ui basic label star_btn" }, "Star")), React.createElement("div", { className: "right floated star" }, React.createElement("span", { className: "ui label" }, React.createElement("i", { className: "fork icon" }), "15"), React.createElement("div", { id: "", className: "sf_btn ui basic label fork_btn" }, "Fork"))), React.createElement("div", { className: "description" }, item.descript), React.createElement("div", { className: "meta" }, "Created at ", createTime, React.createElement("span", { className: "author" }, "By ", React.createElement("a", { href: userLink }, username), " "))));
 	        });
-	        return React.createElement("div", { className: "artwork-page ui relaxed divided list" }, items);
+	        return React.createElement("div", { className: "artwork-page ui stackable two cards" }, items);
 	    }
 	});
 
@@ -310,6 +310,9 @@
 	var queueIndex = -1;
 
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -33890,8 +33893,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./artwork_list.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./artwork_list.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./artwork_list.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./artwork_list.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -33909,7 +33912,7 @@
 
 
 	// module
-	exports.push([module.id, "#artwork-list {\n    margin-top: 50px;\n    margin-bottom: 50px;\n    width: 70%;\n    margin-left: 15%;\n    padding: 3%;\n    height: 90%;\n}\n\n#pagination-wrapper {\n    width: 100%;\n    text-align: center;\n}\n\n.page-item {\n    justify-content: center;\n}\n\n.artwork-item {\n    margin-top: 10px;\n    margin-bottom: 10px;\n}\n\n.artwork-page {\n    display: flex;\n    flex-direction: column;\n    height: 600px;\n    justify-content: space-between;\n}\n\n#artwork-list-page header {\n    width: 100%;\n}\n", ""]);
+	exports.push([module.id, "#artwork-list {\n    margin-top: 50px;\n    margin-bottom: 50px;\n    width: 70%;\n    margin-left: 15%;\n    padding: 3%;\n    height: 90%;\n}\n\n#pagination-wrapper {\n    width: 100%;\n    text-align: center;\n    margin-top: 20px;\n}\n\n.page-item {\n    justify-content: center;\n}\n\n.artwork-item {\n    margin-top: 10px;\n    margin-bottom: 10px;\n}\n\n.artwork-item .meta {\n    overflow: hidden;\n}\n\n.artwork-item header {\n    overflow: hidden;\n}\n\n.artwork-item .author {\n    float: right;\n}\n\n.artwork-item .star {\n    margin-bottom: 5px;\n}\n\n.artwork-page {\n    margin-top: 20px;\n    margin-bottom: 20px;\n}\n\n#artwork-list-page header {\n    width: 100%;\n    margin-bottom: 20px;\n}\n", ""]);
 
 	// exports
 

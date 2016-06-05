@@ -28,6 +28,8 @@ var ImageEditor = React.createClass({
         var image = new Image();
         image.src = this.props.src;
         return {
+            width: this.props.width,
+            height: this.props.height,
             image: image,
             tool: 'normal'
         }
@@ -51,8 +53,8 @@ var ImageEditor = React.createClass({
     },
 
     render: function() {
-        var surfaceWidth = this.props.width;
-        var surfaceHeight = this.props.height;
+        var surfaceWidth = this.state.width;
+        var surfaceHeight = this.state.height;
         var textStyle = {
             left: 0,
             width: window.innerWidth,
@@ -89,9 +91,16 @@ var ImageEditor = React.createClass({
                 filterItems={this.props.filterItems} handleImageFilter={this.handleImageFilter} handleClick={handleClick}
                 textColorListener={this.getTextColor} tool={this.state.tool}
                 updatePenState={this.setPenState} updateEraserState={this.setEraserState} />
-                <EditorCanvas width={surfaceWidth} height={surfaceHeight * 0.95} image={this.state.image} imageOnload={this.setInitState} ref='canvas' />
+                <EditorCanvas width={surfaceWidth} height={surfaceHeight * 0.95} image={this.state.image} imageOnload={this.setInitState} handleOverflow = {this.handleOverflow} ref='canvas' />
             </div>
         );
+    },
+
+    handleOverflow: function(w, h) {
+        this.setState({
+            width: w,
+            height: h * 1.0 / 0.95
+        });
     },
 
     setInitState: function() {

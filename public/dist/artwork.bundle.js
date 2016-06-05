@@ -312,6 +312,9 @@
 	var queueIndex = -1;
 
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -19785,6 +19788,8 @@
 	        var image = new Image();
 	        image.src = this.props.src;
 	        return {
+	            width: this.props.width,
+	            height: this.props.height,
 	            image: image,
 	            tool: 'normal'
 	        };
@@ -19808,8 +19813,8 @@
 	    },
 
 	    render: function () {
-	        var surfaceWidth = this.props.width;
-	        var surfaceHeight = this.props.height;
+	        var surfaceWidth = this.state.width;
+	        var surfaceHeight = this.state.height;
 	        var textStyle = {
 	            left: 0,
 	            width: window.innerWidth,
@@ -19843,7 +19848,14 @@
 	            updateTextState: this.setTextState, handleTextChange: this.handleTextChange, editor: this,
 	            filterItems: this.props.filterItems, handleImageFilter: this.handleImageFilter, handleClick: handleClick,
 	            textColorListener: this.getTextColor, tool: this.state.tool,
-	            updatePenState: this.setPenState, updateEraserState: this.setEraserState }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, imageOnload: this.setInitState, ref: "canvas" }));
+	            updatePenState: this.setPenState, updateEraserState: this.setEraserState }), React.createElement(EditorCanvas, { width: surfaceWidth, height: surfaceHeight * 0.95, image: this.state.image, imageOnload: this.setInitState, handleOverflow: this.handleOverflow, ref: "canvas" }));
+	    },
+
+	    handleOverflow: function (w, h) {
+	        this.setState({
+	            width: w,
+	            height: h * 1.0 / 0.95
+	        });
 	    },
 
 	    setInitState: function () {
@@ -22931,8 +22943,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./imageEditor.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./imageEditor.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./imageEditor.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./imageEditor.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -23279,8 +23291,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../../node_modules/css-loader/index.js!./dropdown.min.css", function() {
-				var newContent = require("!!./../../../../../node_modules/css-loader/index.js!./dropdown.min.css");
+			module.hot.accept("!!./../../../../node_modules/css-loader/index.js!./dropdown.min.css", function() {
+				var newContent = require("!!./../../../../node_modules/css-loader/index.js!./dropdown.min.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -23701,8 +23713,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../node_modules/css-loader/index.js!./ColorPicker.css", function() {
-				var newContent = require("!!./../../../../node_modules/css-loader/index.js!./ColorPicker.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./ColorPicker.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -23907,16 +23919,20 @@
 	        image.onload = function (e) {
 	            var w = image.width,
 	                h = image.height;
+	            var overflow = false;
 	            if (h > that.state.height) {
 	                that.setState({
 	                    height: h
 	                });
+	                overflow = true;
 	            }
 	            if (w > that.state.width) {
 	                that.setState({
 	                    width: w
 	                });
+	                overflow = true;
 	            }
+	            if (overflow) that.props.handleOverflow(that.state.width, that.state.height);
 	            var left = (that.state.width - w) / 2,
 	                top = (that.state.height - h) / 2;
 	            that.left = left;
@@ -23959,8 +23975,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./editor_canvas.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./editor_canvas.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./editor_canvas.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./editor_canvas.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -37792,8 +37808,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./artworkDetail.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./artworkDetail.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./artworkDetail.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./artworkDetail.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -37811,7 +37827,7 @@
 
 
 	// module
-	exports.push([module.id, "#artwork-wrapper {\n    margin-top: 70px;\n    margin-bottom: 70px;\n}\n\n#artwork-status {\n    margin-top: 10px;\n    margin-bottom: 10px;\n    overflow: hidden;\n}\n\n#artwork-detail header{\n    color: #2185d0;\n}\n\n#artwork-info {\n    display: inline-block;\n}\n\n#artwork-process {\n    display: inline-block;\n    float: right;\n}\n\n#artwork-main {\n    min-height: 600px;\n    min-width: 900px;\n    border: solid 1px rgba(34, 36, 38, .15);\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n#artwork-image-wrapper {\n    text-align: center;\n}\n", ""]);
+	exports.push([module.id, "#editor-wrapper {\n    margin-left: 10px;\n    margin-right: 10px;\n}\n\n\n#artwork-wrapper {\n    margin-top: 70px;\n    margin-bottom: 70px;\n    margin-left: 20px;\n    margin-right: 20px;\n    overflow: auto;\n}\n\n#artwork-status {\n    margin-top: 10px;\n    margin-bottom: 10px;\n    overflow: hidden;\n}\n\n#artwork-detail {\n    margin: 0 auto;\n}\n\n#artwork-detail header{\n    color: #2185d0;\n}\n\n#artwork-info {\n    display: inline-block;\n}\n\n#artwork-process {\n    display: inline-block;\n    float: right;\n}\n\n#artwork-main {\n    min-height: 600px;\n    min-width: 900px;\n    border: solid 1px rgba(34, 36, 38, .15);\n    display: flex;\n    justify-content: center;\n    align-items: center;\n}\n\n#artwork-image-wrapper {\n    text-align: center;\n}\n\n#artwork-image-wrapper img{\n   width: 100%;\n}\n", ""]);
 
 	// exports
 

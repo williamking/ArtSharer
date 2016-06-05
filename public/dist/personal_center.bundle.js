@@ -291,6 +291,9 @@
 	var queueIndex = -1;
 
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -20190,8 +20193,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./personal_center.css", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js!./personal_center.css");
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./personal_center.css", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./personal_center.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});

@@ -10,6 +10,7 @@
 #pagination-wrapper {
     width: 100%;
     text-align: center;
+    margin-top: 20px;
 }
 
 .page-item {
@@ -21,13 +22,28 @@
     margin-bottom: 10px;
 }
 
+.artwork-item .meta {
+    overflow: hidden;
+}
+
+.artwork-item header {
+    overflow: hidden;
+}
+
+.artwork-item .author {
+    float: right;
+}
+
+.artwork-item .star {
+    margin-bottom: 5px;
+}
+
 .artwork-page {
-    display: flex;
-    flex-direction: column;
-    height: 600px;
-    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 #artwork-list-page header {
     width: 100%;
+    margin-bottom: 20px;
 }

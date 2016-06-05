@@ -21,9 +21,8 @@ var ArtworkList = React.createClass({
     },
 
     getPage: function(page) {
-        var url = '/handle_artwork_query_with_username';
+        var url = '/handle_artwork_query_with_interval';
         var queryForm = new FormData();
-        queryForm.append('author', username);
         queryForm.append('startFrom', (page - 1) * 10 + 1);
         queryForm.append('endAt', (page - 1) * 10 + 10);
         this.serverRequest = $.ajax({
@@ -55,7 +54,7 @@ var ArtworkList = React.createClass({
             <div id="artwork-list-page">
                 <header className="ui header breadcrumb dividing">
                     <h1>
-                    <a className="section" href="#">{username}</a>
+                    <a className="section" href="/">Home</a>
                     <div className="divider"> / </div>
                     <a className="section" href={listUrl}>Artworks</a>
                     </h1>
@@ -72,17 +71,40 @@ var ArtworkPage = React.createClass({
         var items = this.props.list.map(function(item, key) {
             var url = '/user/' + username + '/' + item.workTitle;
             var createTime = moment(item.createTime).format('YYYY-MM-DD h:mm:ss');
+            var userLink = '/user/' + username;
             return (
-                <div className="item artwork-item" key={key}>
+                <div className="artwork-item card" key={key}>
                     <div className="content">
-                        <a className="header" href={url} >{item.workTitle}</a>
-                        <div className="description">Created at {createTime}</div>
+                        <header className="ui header dividing">
+                            <a className="header" href={url} >
+                                {item.workTitle}
+                            </a>
+                            <div className="right floated">
+                                <div className="ui label"><i className="star icon"/>20</div>
+                                <div id="" className="ui basic label star_btn">
+                                    Star
+                                </div>
+                            </div>
+                            <div className="right floated star">
+                                <span className="ui label"><i className="fork icon"/>15</span>
+                                <div id="" className="sf_btn ui basic label fork_btn">
+                                    Fork
+                                </div>
+                            </div>
+                        </header>
+                        <div className="description">
+                            {item.descript}
+                        </div>
+                        <div className="meta">
+                            Created at {createTime}
+                            <span className="author">By <a href={userLink}>{username}</a> </span>
+                        </div>
                     </div>
                 </div>
             );
         });
         return (
-            <div className="artwork-page ui relaxed divided list">
+            <div className="artwork-page ui stackable two cards">
                 {items}
             </div>
         );

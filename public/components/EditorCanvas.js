@@ -63,16 +63,20 @@ var EditorCanvas = React.createClass({
         var that = this;
         image.onload = function(e) {
             var w = image.width, h = image.height;
+            var overflow = false;
             if (h > that.state.height) {
                 that.setState({
                     height: h
                 });
+                overflow = true;
             }
             if (w > that.state.width) {
                 that.setState({
                     width: w
                 });
+                overflow = true;
             }
+            if (overflow) that.props.handleOverflow(that.state.width, that.state.height);
             var left = (that.state.width - w) / 2,
                 top = (that.state.height - h ) / 2;
             that.left = left;
